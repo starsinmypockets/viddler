@@ -92,8 +92,8 @@ div.jp-interface {
 	padding: 0px 20px 0px 20px;
 	height: 66px;
 	margin-top: 20px;
-	-webkit-box-shadow: inset 2px 2px 2px 2px rgba(1, 1, 1, .4);
-box-shadow: inset 2px 2px 2px 2px rgba(1, 1, 1, .4); 
+	-webkit-box-shadow: inset 1px 1px 2px 2px rgba(1, 1, 1, .4);
+box-shadow: inset 1px 1px 2px rgba(1, 1, 1, .4); 
 }
 
 div.jp-audio div.jp-type-single div.jp-interface {
@@ -159,7 +159,17 @@ div.jp-interface ul.jp-controls a {
 	overflow:hidden;
 	text-indent:-9999px;
 	position: relative;
-	top: 18px;
+	top: 20px;
+}
+.greyarrow{
+	position: absolute;
+	left: 200px;
+	top: 10px;
+}
+.orangearrow{
+	position: absolute;
+	left: 100px;
+	top: 10px
 }
 a.jp-play,
 a.jp-pause {
@@ -230,7 +240,8 @@ div.jp-audio div.jp-progress {
 }
 .time{
 	position: relative;
-	top: 21px;
+	top: 18px;
+	left: -10px;
 	display:inline-block;
 }
 div.jp-audio div.jp-type-single div.jp-progress {
@@ -258,6 +269,7 @@ div.jp-seek-bar {
 	height:100%;
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(1, 1, 1, .4);
 box-shadow: inset 1px 1px 1px 1px rgba(1, 1, 1, .4);
+	border-radius: 10px;
 	cursor: pointer;
 }
 div.jp-play-bar {
@@ -275,8 +287,8 @@ border-radius: 10px 0px 0px 10px;
 	float:right;
 	z-index: 999999999;
 	position: relative;
-	top: -10px;
-	left: 20px;
+	top: -12px;
+	left: 30px;
 }
 /* The seeking class is added/removed inside jPlayer */
 div.jp-seeking-bg {
