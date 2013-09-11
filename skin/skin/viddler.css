@@ -245,6 +245,7 @@ div.jp-video div.jp-progress {
 	width:50%;
 	height:14px;
 	position: relative;
+	z-index: 1;
 	top: 30px;
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
@@ -265,12 +266,18 @@ div.jp-play-bar {
 	height: 10px;
 	position: relative;
 	top: 2px;
+	z-index: 1000000;
 	left: 2px;
 -webkit-border-radius: 10px 0px 0px 10px;
 border-radius: 10px 0px 0px 10px; 
-
 }
-
+#time{
+	float:right;
+	z-index: 999999999;
+	position: relative;
+	top: -10px;
+	left: 20px;
+}
 /* The seeking class is added/removed inside jPlayer */
 div.jp-seeking-bg {
 	background: url("jplayer.blue.monday.seeking.gif");
