@@ -120,7 +120,7 @@ div.jp-controls-holder {
 	width:100%;
 	margin:0 auto;
 	position: relative;
-	overflow:hidden;
+	overflow: visible;
  /* This negative value depends on the size of the text in jp-currentTime and jp-duration */
 }
 
@@ -215,7 +215,7 @@ a.jp-next:hover {
 /* @group progress bar */
 
 div.jp-progress {
-	overflow:hidden;
+	overflow: visible;
 	background-color: #1a2025;
 	display:block;
 	position: relative;
