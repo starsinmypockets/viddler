@@ -37,6 +37,7 @@ div.jp-video {
 }
 .wrap{
 	width: 80%;
+	max-width: 980px;
 	margin: 0 auto;
 }
 
@@ -88,9 +89,9 @@ div.jp-video-full div.jp-interface {
 div.jp-interface {
 	position: relative;
 	background-color:#272d33;
-	width:980px;
-	padding: 0px 20px 0px 20px;
-	height: 66px;
+	width:800px;
+	padding: 0px 15px 0px 15px;
+	height: 54px;
 	margin-top: 20px;
 	-webkit-box-shadow: inset 1px 1px 2px 2px rgba(1, 1, 1, .4);
 box-shadow: inset 1px 1px 2px rgba(1, 1, 1, .4); 
@@ -159,7 +160,7 @@ div.jp-interface ul.jp-controls a {
 	overflow:hidden;
 	text-indent:-9999px;
 	position: relative;
-	top: 20px;
+	top: 15px;
 }
 .greyarrow{
 	position: absolute;
@@ -240,7 +241,7 @@ div.jp-audio div.jp-progress {
 }
 .time{
 	position: relative;
-	top: 18px;
+	top: 12px;
 	left: -10px;
 	display:inline-block;
 }
@@ -253,11 +254,11 @@ div.jp-audio div.jp-type-playlist div.jp-progress {
 	width:130px;
 }
 div.jp-video div.jp-progress {
-	width:50%;
-	height:14px;
+	width:45%;
+	height:11px;
 	position: relative;
 	z-index: 1;
-	top: 30px;
+	top: 25px;
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
 	border-bottom: #42474d solid thin; 
@@ -277,7 +278,7 @@ div.jp-play-bar {
 	width:0px;
 	height: 10px;
 	position: relative;
-	top: 2px;
+	top: 1px;
 	z-index: 1000000;
 	left: 2px;
 -webkit-border-radius: 10px 0px 0px 10px;
@@ -287,8 +288,10 @@ border-radius: 10px 0px 0px 10px;
 	float:right;
 	z-index: 999999999;
 	position: relative;
-	top: -12px;
-	left: 30px;
+	top: -5px;
+	width: 20px !important;
+	height: 20px !important;
+	left: 10px;
 }
 /* The seeking class is added/removed inside jPlayer */
 div.jp-seeking-bg {
@@ -303,8 +306,8 @@ div.jp-seeking-bg {
 a.jp-mute,
 a.jp-unmute,
 a.jp-volume-max {
-	width:28px;
-	height:15px;
+	width:11px;
+	height:22px;
 	margin-top:12px;
 }
 
@@ -351,21 +354,21 @@ div.jp-video a.jp-volume-max {
 }
 
 a.jp-mute {
-	height:28px !important;
-	width: 27px !important;
+	height:22px !important;
+	width: 23px !important;
 	background: url("../img/volume.png") no-repeat;
 
 }
 a.jp-mute:hover {
-	height:28px !important;
-	width: 27px !important;
+	height:22px !important;
+	width: 23px !important;
 	background: url("../img/volumehover.png") no-repeat;
 }
 a.jp-unmute {
 	background: url("../img/mute.png")no-repeat;
 	display: none;
-	height: 28px !important;
-	width: 27px !important;
+	height: 22px !important;
+	width: 23px !important;
 }
 a.jp-unmute:hover {
 	background: url("../img/mutehover.png")no-repeat;
@@ -374,8 +377,8 @@ a.jp-volume-max {
 	background: url("../img/maxvolume.png") no-repeat;
 	margin-left: -5px;
 	padding-right: 10px;
-	height: 27px !important;
-	width: 13px !important;
+	height: 22px !important;
+	width: 11px !important;
 }
 a.jp-volume-max:hover {
 	background: url("../img/maxvolumehover.png") no-repeat;
@@ -385,7 +388,7 @@ div.jp-volume-bar {
 	position: absolute;
 	overflow:hidden;
 	background: url("../img/level2.png") repeat-x;
-	width:46px;
+	width:40px;
 	height:26px;
 	cursor: pointer;
 }
@@ -405,8 +408,8 @@ div.jp-video div.jp-volume-bar {
 }
 div.jp-volume-bar-value {
 	background: url("../img/level.png") repeat-x;
-	width:0px;
-	height:26px;
+	width:2px;
+	height:22px;
 }
 
 /* @end */
@@ -628,8 +631,8 @@ ul.jp-toggles li a {
 
 a.jp-hd{
 	background: url(../img/hd.png) no-repeat;
-	width: 42px !important;
-	height: 27px !important;
+	width: 34px !important;
+	height: 22px !important;
 	position: relative;
 	left: 5px;
 }
@@ -637,33 +640,35 @@ a.jp-hd:hover{
 	background: url(../img/hdhover.png) no-repeat;
 }
 a.jp-comment{
-	width: 41px !important;
-	height: 38px !important;
+	width: 33px !important;
+	height: 31px !important;
 	background: url(../img/comment.png);
 	top: -4px;
 	left: -20px;
 	position: relative;
 }
 a.jp-comment:hover{
+	width: 33px !important;
+	height: 31px !important;
 	background: url(../img/commenthover.png);
 }
 a.jp-full-screen {
 	background: url("../img/fullscreen.png") no-repeat;
 	margin-left: 20px;
-	height: 30px !important;
-	width: 30px !important;
+	height: 23px !important;
+	width: 24px !important;
 }
 
 a.jp-full-screen:hover {
 	background: url("../img/fullscreenhover.png") no-repeat;
 	margin-left: 20px;
-	height: 30px !important;
-	width: 30px !important;
+	height: 23px !important;
+	width: 24px !important;
 }
 a.jp-doohickey{
 	background: url(../img/doohickey.png);
-	width: 25px !important;
-	height: 29px !important;
+	width: 20px !important;
+	height: 23px !important;
 	position: relative;
 	left: -5px;
 }
