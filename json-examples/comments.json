@@ -1,0 +1,9 @@
+{
+ "Comments" :[
+	"1000" : { 
+		"title" : "Comment Title 1"
+		"commentText" : "This is a rant about the comment"
+		"thumbnail" : "http://images.viddler.com/thumb.png"
+		"reply-url" : http://api.viddler.com/comment/reply/someid"
+	}
+]

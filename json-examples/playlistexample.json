@@ -1,0 +1,70 @@
+{
+  "title": "User Phil's great playlist!",
+  "shortdescription": "User phil has a great playlist with a short description.",
+  "timeline": {
+    "title": "phils timeline",
+    "media_elements": [
+      {
+        "title": "h264 video of week",
+        "position": 0,
+        "z-layer": 0,
+        "playhead-start": 0,
+        "playhead-stop": 15000,
+        "element_type": "video",
+        "element_url": "http://viddler.com/getClip/3232",
+        "media_element": {
+          
+        },
+        "transition-in": {
+          
+        },
+        "transition-out": {
+          
+        }
+      },
+      {
+        "title": "videocomments",
+        "position": 0,
+        "z-layer": 0,
+        "playhead-start": 0,
+        "playhead-stop": 15000,
+        "element_type": "overlay",
+        "element_url": "http://viddler.com/getClip/3232",
+        "media_element": {
+          
+        },
+        "transition-in": {
+          
+        },
+        "transition-out": {
+          
+        }
+      }
+    ]
+  },
+  "known-useragent": [
+    "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/537.13+ (KHTML, like Gecko) Version/5.1.7 Safari/534.57.2",
+    "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1468.0 Safari/537.36"
+  ],
+  "initializationParams": {
+    "autoplay": true
+  },
+  "timeline": 30000,
+  "playerverstion": "0.9.10",
+  "plugins": [
+    {
+      "name": "h.264",
+      "lang": "javaScript",
+      "id": "h264-0001",
+      "jsonpurl": "http://vidder.com/getPlugin/h264-001?callback=player.loadPlugin"
+    },
+    {
+      "name": "videocommentPlayer",
+      "lang": "javaScript",
+      "id": "h264-0001",
+      "jsonpurl": "http://vidder.com/getPlugin/h264-001?callback=player.loadPlugin"
+    }
+  ],
+  "playlistid": 2342213
+}
