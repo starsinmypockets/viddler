@@ -1,3 +1,5 @@
+//http://google-styleguide.googlecode.com/svn/trunk/jsoncstyleguide.xml
+
 {
   "title": "User Phil's great playlist!",
   "shortdescription": "User phil has a great playlist with a short description.",
@@ -7,18 +9,19 @@
       {
         "title": "h264 video of week",
         "position": 0,
-        "z-layer": 0,
-        "playhead-start": 0,
-        "playhead-stop": 15000,
-        "element_type": "video",
-        "element_url": "http://viddler.com/getClip/3232",
-        "media_element": {
+        "zLayer": 0,
+        "playheadStart": 0,
+        "playheadStop": 15000,
+        "elementType": "mp4",
+        "elementURL": "http://viddler.com/getClip/3232",
+        "commentID
+        "mediaElement": {
           
         },
-        "transition-in": {
+        "transitionIn": {
           
         },
-        "transition-out": {
+        "transitionOut": {
           
         }
       },
