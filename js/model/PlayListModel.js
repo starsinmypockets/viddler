@@ -13,9 +13,7 @@ PlaylistModel = Backbone.Model.extend({
 	initialize: function () {
 		this.fetch()
 	},
-	url : function () {
-		var base = ''
-	}
+	url : PlayerOptions.opts.baseJSONURL + "/PlayList"
 
 });
 
