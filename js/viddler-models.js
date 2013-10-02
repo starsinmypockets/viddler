@@ -8,8 +8,12 @@
     });
     
     window.PlayListModel = ViddlerModel.extend({
+        parse : function (response) {
+            return response;
+        },
+
         url : function () {
-            return '../json-examples/playlists/comments2.json';
+            return '../json-examples/playlists/playlistexample2.json';
         }
     });
     

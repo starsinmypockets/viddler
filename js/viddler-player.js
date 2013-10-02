@@ -11,13 +11,13 @@ window.loadViddlerComments = function (id) {
 }
 
 window.loadViddlerPlaylist = function (id) {
-    model = new PlayListModel([], {id : id});
+    model = new PlayListModel();
     playListView = new PlayListView({
         model : model,
         tmp : '#tmp-playlist',
         el : "#playlist-container"
     });
-    playListView.render();
+    playListView.loadPlayList();
 }
 
 rainReady(function(){

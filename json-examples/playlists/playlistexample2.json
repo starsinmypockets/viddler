@@ -13,15 +13,9 @@
         "playheadStop": 15000,
         "elementType": "mp4",
         "elementURL": "http://viddler.com/getClip/3232",
-        "commentID"
-        "mediaElement": {
-          
-        },
-        "transitionIn": {
-          
-        },
+        "mediaElement": {},
+        "transitionIn": {},
         "transitionOut": {
-          
         }
       },
       {
@@ -32,15 +26,9 @@
         "playheadStop": 15000,
         "elementType": "overlay",
         "elementURL": "http://viddler.com/getClip/3232",
-        "media_element": {
-          
-        },
-        "transitionIn": {
-          
-        },
-        "transitionOut": {
-          
-        }
+        "media_element": {},
+        "transitionIn": {},
+        "transitionOut": {}
       }
     ]
   },
@@ -52,7 +40,6 @@
   "initializationParams": {
     "autoplay": true
   },
-  "timeline": 30000,
   "playerverstion": "0.9.10",
   "plugins": [
     {

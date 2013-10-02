@@ -26,14 +26,11 @@
             var that = this;
             this.collection.fetch({
                 success : function (collection, response) {
-                     console.log(collection);
-                     console.log(response);
                      that.collection = collection;
                      that.render();
                 },
                 error : function (collection, response) {
                     that.render({error : true});
-                    console.log(response.responseText);
                 }  
             });
         },
@@ -56,7 +53,20 @@
             this.__init(opts);
         },
         
+        loadPlayList : function (opts) {
+            var that = this;
+            this.model.fetch({
+                success : function (model, response, opts) {
+                    that.render();
+                },
+                error : function (model, response) {
+                    console.log(response);
+                }
+            });
+        },
+        
         render : function () {
+            console.log(this.model);
             data = {};
             data.update = "Update"
             this.$el.html(this.template(data))
