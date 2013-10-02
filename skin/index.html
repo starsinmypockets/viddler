@@ -7,12 +7,16 @@
 	<link rel="stylesheet" type="text/css" href="skin/viddler.css">
 	<script src="jquery.js"></script>
 	<script src="js/jquery.jplayer.min.js"></script>
-  <script src="/js/lib/underscore.js"></script>
-  <script src="/js/lib/backbone.js"></script>
-  <script src="/js/lib/rain_lib.js"></script>
-  <script src="/js/playerOptions.js"></script>
-  <script src="/js/viddlerPlaylist.js"></script>
-  <script src="/js/viddler-player.js"></script>
+  <script src="../js/lib/underscore.js"></script>
+  <script src="../js/lib/backbone.js"></script>
+  <script src="../js/lib/rain_lib.js"></script>
+  <script src="../js/playerOptions.js"></script>
+  <script src="../js/viddlerPlaylist.js"></script>
+  <script src="../js/viddler-player.js"></script>
+  <script src="../js/viddler-models.js"></script>
+  <script src="../js/viddler-collections.js"></script>
+  <script src="../js/viddler-views.js"></script>
+
 	<script type="text/javascript">
     $(document).ready(function(){
       $("#jquery_jplayer_1").jPlayer({
@@ -28,9 +32,14 @@
       });
     });
   </script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+        window.loadVidComments('12345');
+    });
+  </script>
 </head>
 <body>
-  <div class="wrap">
+<div class="wrap">
   <div id="jp_container_1" class="jp-video">
     <div class="jp-type-single">
       <div id="jquery_jplayer_1" class="jp-jplayer"></div>
@@ -86,62 +95,34 @@
       </div>
     </div>
   </div>
+  <div id="comments-container"></div>
 
-  <div class="comments clearfix">
-    <div class="row clearfix">
-    <a href="#" class="also">Also Viewed</a>
-    <div class="comments2">Comments <span class="number">(12)</span></div>
-    <img src="img/viddler.jpg" class="logo" alt="Viddler">
-    </div>
-    <div class="row clearfix">
-    <div class="avatar"></div>
-    <div class="comment">
-      <div class="user">User 123</div>
-      <div class="words">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi minus odit libero assumenda minima quisquam.
-      </div>
-      <div class="datetime">
-      <div class="date">Yesterday</div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time">1:30</div>
-      </div>
-    </div>
-    </div>
-    <div class="row clearfix">
-    <div class="avatar"></div>
-    <div class="comment">
-      <div class="user">User 123</div>
-      <div class="words">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi minus odit libero assumenda minima quisquam.
-      </div>
-      <div class="datetime">
-      <div class="date">Yesterday</div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time">1:30</div>
-      </div>
-    </div>
-    </div>
-    <div class="row clearfix">
-    <div class="avatar"></div>
-    <div class="comment">
-      <div class="user">User 123</div>
-      <div class="words">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi minus odit libero assumenda minima quisquam.
-      </div>
-      <div class="datetime">
-      <div class="date">Yesterday</div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time">1:30</div>
-      </div>
-    </div>
-    </div>
-    <div class="row clearfix">
-    <div class="avatar"></div>
-    <div class="comment">
-      <div class="user">User 123</div>
-      <div class="words">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi minus odit libero assumenda minima quisquam.
-      </div>
-      <div class="datetime">
-      <div class="date">Yesterday</div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time">1:30</div>
-      </div>
-    </div>
-    </div>
+
   </div>
   </div>
 </body>
 </html>
+
+<!-- Underscore Templates -->
+<script type="text/template" id="tmp-comment">
+  <div class="comments clearfix" id="comments-container">
+        <div class="row clearfix">
+            <a href="#" class="also">Also Viewed</a>
+            <div class="comments2">Comments <span class="number">(<%= items.length %>)</span></div>
+            <img src="img/viddler.jpg" class="logo" alt="Viddler">
+        </div>
+        <div class="row clearfix">
+        <% _.each(items, function (item) { %>
+            <div class="row clearfix">
+                <div class="avatar"><img src="<%- item.thumbnail %>" width=60px height=60px /></div>
+                <div class="comment">
+                      <div class="user"><%= item.userName %></div>
+                      <div class="words"><%= item.commentText %></div>
+                      <div class="datetime"><%= item.created %>
+                          <div class="date"><%= item.daysAgo %></div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time"><%= item.time %></div>
+                      </div>
+                </div>
+            </div>
+        <% }); %>
+  </div>
+</script>
