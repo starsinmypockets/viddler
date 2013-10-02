@@ -38,11 +38,11 @@
             });
         },
         
-        render : function (options) {
+        render : function (opts) {
             data = {};
             data.items = this.collection.toJSON();
             // If error, just load view with no comments
-            if (options && options.error === true) {
+            if (opts && opts.error === true) {
                 data.error = true;
                 data.items = [];
             }
@@ -51,14 +51,15 @@
         }
     });
     
-    window.loadVidComments = function (id) {
-        collection = new CommentCollection([], {media_element : id});
-          commentsView = new CommentView({
-            collection : collection,
-            tmp : '#tmp-comment',
-            el : "#comments-container"
-        });
-        commentsView.loadComments();
-    }
-    
+    window.PlayListView = BaseView.extend({
+        initialize : function (opts) {
+            this.__init(opts);
+        },
+        
+        render : function () {
+            data = {};
+            data.update = "Update"
+            this.$el.html(this.template(data))
+        }
+    });
 })(jQuery);

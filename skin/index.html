@@ -34,7 +34,8 @@
   </script>
   <script type="text/javascript">
     $(document).ready(function () {
-        window.loadVidComments('12345');
+        window.loadViddlerComments('12345');
+        window.loadViddlerPlaylist();
     });
   </script>
 </head>
@@ -95,6 +96,7 @@
       </div>
     </div>
   </div>
+  <div id="playlist-container">Playlist here</div>
   <div id="comments-container"></div>
 
 
@@ -125,4 +127,8 @@
             </div>
         <% }); %>
   </div>
+</script>
+
+<script type="text/template" id="tmp-playlist">
+    <h2><%= update %></h2>
 </script>

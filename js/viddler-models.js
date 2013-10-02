@@ -7,4 +7,10 @@
         
     });
     
+    window.PlayListModel = ViddlerModel.extend({
+        url : function () {
+            return '../json-examples/playlists/comments2.json';
+        }
+    });
+    
 })(jQuery);
