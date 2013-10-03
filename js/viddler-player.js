@@ -1,11 +1,22 @@
+( function ($) {
 var ViddlerPlayer = ViddlerPlayer || {};
 
+/* Events aggregator */
+ViddlerPlayer.vent = _.extend({}, Backbone.Events);
+
+ViddlerPlayer.vent.bind('test', function (e) {
+    console.log('test click vent')
+    console.log(e);
+});
+
+/* Basic routing / workflow delegation */
 window.loadViddlerComments = function (id) {
     collection = new CommentCollection([], {media_element : id});
       commentsView = new CommentView({
         collection : collection,
         tmp : '#tmp-comment',
-        el : "#comments-container"
+        el : "#comments-container",
+        vent : ViddlerPlayer.vent
     });
     commentsView.loadComments();
 }
@@ -15,15 +26,23 @@ window.loadViddlerPlaylist = function (id) {
     playListView = new PlayListView({
         model : model,
         tmp : '#tmp-playlist',
-        el : "#playlist-container"
+        el : "#playlist-container",
+        vent : ViddlerPlayer.vent
     });
     playListView.loadPlayList();
 }
 
-rainReady(function(){
+/* Global DOM events (trigger vent) */
 
+
+window.getCommentModal 
+
+rainReady(function(){
     $(document).ready(function(){  // is JQuery ready. if rain ready than it should be
-    	console.log("hi");
+        console.log('rainReady');
+        /* trigger events in global DOM */
+    	$('.bar').not('.jp-progress').on('click', function (e) {ViddlerPlayer.vent.trigger('test', e)});
     });
 
-});
+});    
+})(jQuery);

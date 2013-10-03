@@ -1,12 +1,28 @@
 (function ($) {
-
+    /* Abstract */
     window.BaseView = Backbone.View.extend({
         id : 'content',
         tag : 'div',
-        el : '#comments1',
+        el : '<br/>',
+        vent : {},
+        
+        // define global events here
+        events : {
+            'click .bar' : 'test'   
+        },
+        
+        test : function () {
+            this.vent.trigger('test');  
+        },
         
         __init : function (opts) {
+            _.bindAll(this, 'test');
+            this.vent = opts.vent; 
             this.template = _.template($(opts.tmp).html());
+        },
+        
+        initialize : function (opts) {
+            this.__init(opts);
         },
         
         render : function (attrs) {
@@ -16,7 +32,69 @@
         
     });
     
-    window.CommentView = BaseView.extend({
+    window.PlayListView = BaseView.extend({
+        jPlayer : '',
+        playheadPost : '',
+        currentMediaElement : '',
+        // set player element
+        
+        events : {
+            'click' : 'getCommentModal'
+        },
+        
+        initialize : function (opts) {
+            this.__init(opts);
+            this.getJPlayer(opts.playerOpts);
+            _.bindAll(this, 'getCommentModal');
+        },
+        
+        loadPlayList : function (opts) {
+            var that = this;
+            this.model.fetch({
+                success : function (model, response, opts) {
+                    that.render();
+                },
+                error : function (model, response) {
+                    console.log(response);
+                }
+            });
+        },
+        
+        // instantiate jPlayer
+        getJPlayer : function (opts) {
+            this.jPlayer = this.$el.jPlayer({
+                
+            });
+            return this;
+        },
+        
+        renderPlayer : function (opts) {
+            
+        },
+        
+        renderControls : function (opts) {},
+        
+        loadComments : function (opts) {},
+        
+        updateComments : function (opts) {},  // on playhead timed event
+        
+        renderComments : function (opts) {},  
+        
+        addComment : function (opts) {},
+        
+        render : function () {
+            data = {};
+            data.update = "Update"
+            this.$el.html(this.template(data))
+        },
+        
+        getCommentModal : function (opts) {
+            console.log('Hey!');
+        }
+    });
+
+    
+    window.CommentView = BaseView.extend({  
         initialize : function (opts) {
             this.__init(opts);
             console.log(this.collection);
@@ -45,31 +123,6 @@
             }
             this.$el.html(this.template(data));
             return this;
-        }
-    });
-    
-    window.PlayListView = BaseView.extend({
-        initialize : function (opts) {
-            this.__init(opts);
-        },
-        
-        loadPlayList : function (opts) {
-            var that = this;
-            this.model.fetch({
-                success : function (model, response, opts) {
-                    that.render();
-                },
-                error : function (model, response) {
-                    console.log(response);
-                }
-            });
-        },
-        
-        render : function () {
-            console.log(this.model);
-            data = {};
-            data.update = "Update"
-            this.$el.html(this.template(data))
         }
     });
 })(jQuery);
