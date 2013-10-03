@@ -18,26 +18,21 @@
         __init : function (opts) {
             _.bindAll(this, 'test');
             this.vent = opts.vent; 
-            this.template = _.template($(opts.tmp).html());
+            if (opts.tmp) {
+                this.template = _.template($(opts.tmp).html());            
+            };
         },
         
         initialize : function (opts) {
             this.__init(opts);
         },
         
-        render : function (attrs) {
-            this.$el.html(this.template());
-            return this;
-        },
-        
     });
     
     window.PlayListView = BaseView.extend({
         jPlayer : '',
-        playheadPost : '',
-        currentMediaElement : '',
-        // set player element
-        
+        el : '#jquery_jplayer_1',
+                
         events : {
             'click' : 'getCommentModal'
         },
@@ -62,10 +57,20 @@
         
         // instantiate jPlayer
         getJPlayer : function (opts) {
-            this.jPlayer = this.$el.jPlayer({
-                
+            var that = this;
+            this.$el.jPlayer({
+                ready: function () {
+                    that.$el.jPlayer("setMedia", {
+                        m4v: "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
+                        ogv: "http://www.jplayer.org/video/ogv/Big_Buck_Bunny_Trailer_480x270.ogv",
+                        poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
+                    });
+                    // create handle so the view can interact with the player
+                    that.jPlayer = that.$el.jPlayer();
+                },
+                swfPath: "/js",
+                supplied: "m4v, ogv"                
             });
-            return this;
         },
         
         renderPlayer : function (opts) {
@@ -85,7 +90,7 @@
         render : function () {
             data = {};
             data.update = "Update"
-            this.$el.html(this.template(data))
+            //this.$el.html(this.template(data))
         },
         
         getCommentModal : function (opts) {

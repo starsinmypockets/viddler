@@ -7,9 +7,17 @@ ViddlerPlayer.vent = _.extend({}, Backbone.Events);
 ViddlerPlayer.vent.bind('test', function (e) {
     console.log('test click vent')
     console.log(e);
+    window.addComment();
 });
 
 /* Basic routing / workflow delegation */
+
+window.testInit = function () {
+    playlist = new PlayListView({
+        vent : ViddlerPlayer.vent        
+    });    
+};
+
 window.loadViddlerComments = function (id) {
     collection = new CommentCollection([], {media_element : id});
       commentsView = new CommentView({
@@ -19,7 +27,7 @@ window.loadViddlerComments = function (id) {
         vent : ViddlerPlayer.vent
     });
     commentsView.loadComments();
-}
+};
 
 window.loadViddlerPlaylist = function (id) {
     model = new PlayListModel();
@@ -30,7 +38,8 @@ window.loadViddlerPlaylist = function (id) {
         vent : ViddlerPlayer.vent
     });
     playListView.loadPlayList();
-}
+};
+
 
 /* Global DOM events (trigger vent) */
 
