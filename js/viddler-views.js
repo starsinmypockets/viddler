@@ -39,7 +39,6 @@
         
         initialize : function (opts) {
             this.__init(opts);
-            this.getJPlayer(opts.playerOpts);
             _.bindAll(this, 'getCommentModal');
         },
         
@@ -56,7 +55,7 @@
         },
         
         // instantiate jPlayer
-        getJPlayer : function (opts) {
+        loadJPlayer : function (opts) {
             var that = this;
             this.$el.jPlayer({
                 ready: function () {
@@ -71,6 +70,10 @@
                 swfPath: "/js",
                 supplied: "m4v, ogv"                
             });
+        },
+        
+        loadPlayerGui : function (opts) {
+            $('#jp-gui-container').html(_.template($('#tmp-jplayer-gui').html()));
         },
         
         renderPlayer : function (opts) {

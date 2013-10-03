@@ -15,7 +15,9 @@ ViddlerPlayer.vent.bind('test', function (e) {
 window.testInit = function () {
     playlist = new PlayListView({
         vent : ViddlerPlayer.vent        
-    });    
+    });
+    playlist.loadJPlayer();
+    playlist.loadPlayerGui();
 };
 
 window.loadViddlerComments = function (id) {
