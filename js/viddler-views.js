@@ -6,14 +6,7 @@
         el : '<br/>',
         vent : {},
         
-        // define global events here
-        
-        test : function () {
-            this.vent.trigger('test');  
-        },
-        
         __init : function (opts) {
-            _.bindAll(this, 'test');
             this.vent = opts.vent; 
             if (opts.tmp) {
                 this.template = _.template($(opts.tmp).html());            
@@ -26,17 +19,25 @@
         
     });
     
+    // Instantiates jPlayer, handles comments etc
+    // use this.$el.jPlayer() to manipulate player instance
     window.PlayListView = BaseView.extend({
-        jPlayer : '',
         el : '#jquery_jplayer_1',
-                
         events : {
-            'click' : 'addComment'
+            'click #comment-form-submit' : 'commentSubmit'
         },
         
         initialize : function (opts) {
             this.__init(opts);
-            _.bindAll(this, 'addComment');
+            _.bindAll(this, 'commentSubmit');
+        },
+        
+        // this is bound on canplay event 
+        // after player is loaded
+        onMediaReady : function () {
+            console.log('DATA LODED');
+            this.renderCommentMarkers();
+            return this;
         },
         
         loadPlayList : function (opts) {
@@ -61,8 +62,8 @@
                         ogv: "http://www.jplayer.org/video/ogv/Big_Buck_Bunny_Trailer_480x270.ogv",
                         poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
                     });
-                    // create handle so the view can interact with the player
-                    that.jPlayer = that.$el.jPlayer();
+                    // bind events once player is ready
+                    $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(that.onMediaReady, that));
                 },
                 swfPath: "/js",
                 supplied: "m4v, ogv"                
@@ -79,13 +80,57 @@
             return status;
         },
         
-        addComment : function (e) {
-            console.log('foo');
+        loadCommentPopUp : function (data) {
+            var that = this;
+            this.$el.jPlayer("pause");
+
+            data = {};
+            playerData = this.$el.jPlayer().data().jPlayer.status;
+            data.time = playerData.currentTime;
+            data.avatar = "http://placekitten.com/75/75";
+            console.log(playerData);
+            console.log(data)
+            $('#comment-popup-container').html(_.template($('#tmp-comment-popup').html(), data));
+            this.delegateEvents();
+        },
+        
+        // create comment popup form and submit it
+        commentSubmit : function (e) {
+            e.preventDefault();
+            console.log('foop');
+            this.$el.jPlayer("pause");
+            comment = new CommentModel({
+                avatar : 'http://placekitten.com',
+                mediaElement : '###',
+                created : Date(),
+                title : $('.comment-form input[name=title]').val(),
+                commentText : $('.comment-form input[name=commentText]').val(),
+                playHeadPos : $('#comment-play-head-pos').val()
+            });
+            console.log(comment);
+            data = {};
+            
+        },
+        
+        // Make sure media is loaded before calling
+        // or player values will be empty
+        renderCommentMarkers : function () {
+            playerData = this.$el.jPlayer().data('jPlayer').status;
+            console.log(playerData);
+
+            // [width of bar] / [ width of marker+4px ]
+            var numbMarkers = Math.floor($('.jp-progress').width() / 20);
+            // [ length of video ] / [ number of Markers ]
+            var markerSecs = Math.floor(playerData.duration) / numbMarkers;
+            console.log(playerData['duration']);
+            console.log($('.jp-progress').width());
+            console.log(numbMarkers);
+            console.log(markerSecs);
         },
         
         render : function () {
             this.delegateEvents();
-        },
+        }
     });
 
     

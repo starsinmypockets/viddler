@@ -53,7 +53,7 @@
       </div>
     </div>
   </div>
-  <div id="playlist-container">Playlist here</div>
+  <div id="comment-popup-container"></div>
   <div id="comments-container"></div>
 
 
@@ -135,4 +135,20 @@
 
 <script type="text/template" id="tmp-playlist">
     <h2><%= update %></h2>
+</script>
+
+<script type="text/template" id="tmp-comment-popup">
+    <div class="comment-popup">
+        <form class="comment-form">
+            <h3>Add comment</h3>
+            <img src="<%= avatar %>"/>
+            <label for="title">Title</label>
+            <input name="title" type="text"/>
+            <label for="comment">Comment</label>
+            <input name="commentText" type="text"/>
+            <label for="time">Time</label>
+            <input name="time" type="text" value="<%= time %>"/>
+            <input type="submit" value="ok" id="comment-form-submit"/>
+        </form>
+    </div>
 </script>

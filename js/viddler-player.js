@@ -13,11 +13,10 @@ window.testInit = function () {
     });
     playlist.loadPlayerGui();
     playlist.loadJPlayer();
-    playlist.render();
+    playlist.renderCommentMarkers();
+//    playlist.render();
     $('.bar').on('click', function (e) {
-        console.log(e);
-        data = playlist.jPlayer.data().jPlayer.status;
-        console.log(data);
+        playlist.loadCommentPopUp();
     });
 };
 
