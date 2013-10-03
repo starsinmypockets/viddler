@@ -73,7 +73,7 @@
         },
         
         loadPlayerGui : function (opts) {
-            $('#jp-gui-container').html(_.template($('#tmp-jplayer-gui').html()));
+            $('.jp-gui').html(_.template($('#tmp-jplayer-gui').html()));
         },
         
         renderPlayer : function (opts) {

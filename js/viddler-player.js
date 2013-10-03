@@ -16,8 +16,8 @@ window.testInit = function () {
     playlist = new PlayListView({
         vent : ViddlerPlayer.vent        
     });
-    playlist.loadJPlayer();
     playlist.loadPlayerGui();
+    playlist.loadJPlayer();
 };
 
 window.loadViddlerComments = function (id) {
