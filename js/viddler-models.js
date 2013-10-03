@@ -20,7 +20,9 @@
         defauls : {
             id : '',
             userId : '',
-            thumbnail : '',
+            title : '',
+            commentText : '',
+            avatar : '',
             mediaElement : '',
             created : '',
             playHeadPos : '',

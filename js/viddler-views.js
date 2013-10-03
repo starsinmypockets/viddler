@@ -131,7 +131,8 @@
         // Make sure media is loaded before calling
         // or player values will be empty
         renderCommentMarkers : function () {
-            playerData = this.$el.jPlayer().data('jPlayer').status;
+            var that=this;
+            var playerData = this.$el.jPlayer().data('jPlayer').status;
             console.log(playerData);
 
             // [width of bar] / [ width of marker+4px ]
@@ -141,27 +142,39 @@
             
             console.log(playerData['duration']);
             console.log($('.jp-progress').width());
-            console.log(numbMarkers);
-            console.log(markerSecs);
+            console.log('number markers '+numbMarkers);
+            console.log('marker secs '+markerSecs);
             
             // build array of marker-points with start / stop attrs
             var markerArray = [];
             function funcs(markerArray, i) {
                 markerArray[i] = {};
-                console.log(i);
                 markerArray[i].start = parseInt(i*markerSecs);
                 markerArray[i].stop = parseInt(markerArray[i].start + markerSecs);
             }
             for (var i = 0; i < numbMarkers; i++) {
                 funcs(markerArray, i);
             }
-            
             console.log(markerArray);
             
-            _.each(this.comments.models, function (comment) {
-                console.log(comment.attributes.time);
+            // now build array of populated marker positions for rendering
+            markers = [];
+            var j = 0;
+            var pos = 1;
+            _.each(markerArray, function(spot) {
+                _.each(that.comments.models, function (comment) {
+                    if (comment.attributes.time >= spot.start && comment.attributes.time <= spot.stop) {
+                        markers[j] = {};
+                        markers[j].start = spot.start;
+                        markers[j].stop = spot.stop;
+                        markers[j].pos = pos;
+                        markers[j].left = (100/numbMarkers)*pos; // express the left value as a percent
+                        j++;
+                    }
+                });
+                pos++; // keep track of which position we're in
             });
-
+            console.log(markers);
             
         },
         
