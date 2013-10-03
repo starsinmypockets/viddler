@@ -147,8 +147,14 @@
             <label for="comment">Comment</label>
             <input name="commentText" type="text"/>
             <label for="time">Time</label>
-            <input name="time" type="text" value="<%= time %>"/>
+            <input name="time" id = "comment-play-head-pos"type="text" value="<%= time %>"/>
             <input type="submit" value="ok" id="comment-form-submit"/>
         </form>
     </div>
+</script>
+
+<script type="text/template" id="tmp-comment-markers">
+    <% _.each(markers, function (marker) {
+        <img src="img/orangearrow.png" style="left: <%= martker.left %>"/>
+    <% }); %>
 </script>

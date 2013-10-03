@@ -23,6 +23,23 @@
     // use this.$el.jPlayer() to manipulate player instance
     window.PlayListView = BaseView.extend({
         el : '#jquery_jplayer_1',
+        comments : {},
+        
+        getPlayListComments : function () {
+            var that = this;
+            comments = new CommentCollection([], {media_element : '123'});
+            comments.fetch({
+                success : function (collection, response) {
+                     console.log(collection);
+                     that.comments = collection;
+                },
+                error : function (collection, response) {
+                    console.log(response);
+                }  
+            });
+            return this;
+        }, 
+
         events : {
             'click #comment-form-submit' : 'commentSubmit'
         },
@@ -107,7 +124,6 @@
                 commentText : $('.comment-form input[name=commentText]').val(),
                 playHeadPos : $('#comment-play-head-pos').val()
             });
-            console.log(comment);
             data = {};
             
         },
@@ -122,10 +138,31 @@
             var numbMarkers = Math.floor($('.jp-progress').width() / 20);
             // [ length of video ] / [ number of Markers ]
             var markerSecs = Math.floor(playerData.duration) / numbMarkers;
+            
             console.log(playerData['duration']);
             console.log($('.jp-progress').width());
             console.log(numbMarkers);
             console.log(markerSecs);
+            
+            // build array of marker-points with start / stop attrs
+            var markerArray = [];
+            function funcs(markerArray, i) {
+                markerArray[i] = {};
+                console.log(i);
+                markerArray[i].start = parseInt(i*markerSecs);
+                markerArray[i].stop = parseInt(markerArray[i].start + markerSecs);
+            }
+            for (var i = 0; i < numbMarkers; i++) {
+                funcs(markerArray, i);
+            }
+            
+            console.log(markerArray);
+            
+            _.each(this.comments.models, function (comment) {
+                console.log(comment.attributes.time);
+            });
+
+            
         },
         
         render : function () {
@@ -137,7 +174,6 @@
     window.CommentView = BaseView.extend({  
         initialize : function (opts) {
             this.__init(opts);
-            console.log(this.collection);
         },
         
         loadComments : function (opts) {

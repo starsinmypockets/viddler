@@ -14,6 +14,8 @@ window.testInit = function () {
     playlist.loadPlayerGui();
     playlist.loadJPlayer();
     playlist.renderCommentMarkers();
+    playlist.getPlayListComments();
+
 //    playlist.render();
     $('.bar').on('click', function (e) {
         playlist.loadCommentPopUp();
@@ -31,6 +33,8 @@ window.loadViddlerComments = function (id) {
     commentsView.loadComments();
 };
 
+
+// @@ not in use:
 window.loadViddlerPlaylist = function (id) {
     model = new PlayListModel();
     playListView = new PlayListView({
