@@ -97,8 +97,10 @@
               <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
             </ul>
             <div class="bar clearfix">
-                <img src="img/orangearrow.png" class="orangearrow" alt="arrow">
-                <img src="img/greyarrow.png" alt="arrow" class="greyarrow">
+                <div id="markers-container">
+                    <img src="img/orangearrow.png" class="orangearrow" alt="arrow">
+                    <img src="img/greyarrow.png" alt="arrow" class="greyarrow">
+                </div>
             <div class="jp-progress" style="position: relative; z-index: 888;">
             <div class="jp-seek-bar" style="position: relative; z-index: 1;">
               <div class="jp-play-bar"><img src="img/time.png" id="time" /></div>
@@ -154,7 +156,7 @@
 </script>
 
 <script type="text/template" id="tmp-comment-markers">
-    <% _.each(markers, function (marker) {
-        <img src="img/orangearrow.png" style="left: <%= martker.left %>"/>
+    <% _.each(markers, function (marker) { %>
+        <img src="img/orangearrow.png" style="left: <%= marker.left %>%; position : absolute"/>
     <% }); %>
 </script>

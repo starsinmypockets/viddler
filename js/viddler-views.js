@@ -174,8 +174,12 @@
                 });
                 pos++; // keep track of which position we're in
             });
-            console.log(markers);
-            
+
+            // now render this nonsense 
+            data = {};
+            data.markers = markers;
+            console.log(data);
+            $('#markers-container').html(_.template($('#tmp-comment-markers').html(), data));
         },
         
         render : function () {
