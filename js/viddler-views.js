@@ -7,9 +7,6 @@
         vent : {},
         
         // define global events here
-        events : {
-            'click .bar' : 'test'   
-        },
         
         test : function () {
             this.vent.trigger('test');  
@@ -34,12 +31,12 @@
         el : '#jquery_jplayer_1',
                 
         events : {
-            'click' : 'getCommentModal'
+            'click' : 'addComment'
         },
         
         initialize : function (opts) {
             this.__init(opts);
-            _.bindAll(this, 'getCommentModal');
+            _.bindAll(this, 'addComment');
         },
         
         loadPlayList : function (opts) {
@@ -76,29 +73,19 @@
             $('.jp-gui').html(_.template($('#tmp-jplayer-gui').html()));
         },
         
-        renderPlayer : function (opts) {
-            
+        // If attr is passed, return attr value, else return status obj
+        getPlayerStatus : function (attr) {
+            var status = this.$el.jPlayer.data();
+            return status;
         },
         
-        renderControls : function (opts) {},
-        
-        loadComments : function (opts) {},
-        
-        updateComments : function (opts) {},  // on playhead timed event
-        
-        renderComments : function (opts) {},  
-        
-        addComment : function (opts) {},
+        addComment : function (e) {
+            console.log('foo');
+        },
         
         render : function () {
-            data = {};
-            data.update = "Update"
-            //this.$el.html(this.template(data))
+            this.delegateEvents();
         },
-        
-        getCommentModal : function (opts) {
-            console.log('Hey!');
-        }
     });
 
     
