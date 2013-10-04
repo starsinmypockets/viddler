@@ -9,12 +9,16 @@ ViddlerPlayer.vent = _.extend({}, Backbone.Events);
 
 window.testInit = function () {
     playlist = new PlayListView({
-        vent : ViddlerPlayer.vent        
+        model : new PlayListModel({id : 2342213}),
+        vent : ViddlerPlayer.vent
     });
+    playlist.loadPlayList();
+/*
     playlist.loadPlayerGui();
     playlist.loadJPlayer();
     playlist.renderCommentMarkers();
     playlist.getPlayListComments();
+*/
 
 //    playlist.render();
     $('.bar').on('click', function (e) {

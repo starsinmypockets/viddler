@@ -11,8 +11,8 @@
         "zLayer": 0,
         "playheadStart": 0,
         "playheadStop": 15000,
-        "elementType": "mp4",
-        "elementURL": "http://viddler.com/getClip/3232",
+        "elementType": "m4v",
+        "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
         "mediaElement": {},
         "transitionIn": {},
         "transitionOut": {

@@ -24,6 +24,8 @@
     window.PlayListView = BaseView.extend({
         el : '#jquery_jplayer_1',
         comments : {},
+        timeline : {},
+        timelineStep : 0,
         
         getPlayListComments : function () {
             var that = this;
@@ -57,10 +59,17 @@
             return this;
         },
         
+        onModelReady : function () {
+            this.loadPlayerGui();
+            this.loadJPlayer();
+        },
+                
         loadPlayList : function (opts) {
             var that = this;
             this.model.fetch({
                 success : function (model, response, opts) {
+                    that.timeline = model.get('timeline');
+                    that.onModelReady();
                     that.render();
                 },
                 error : function (model, response) {
@@ -74,15 +83,17 @@
             var that = this;
             this.$el.jPlayer({
                 ready: function () {
-                    
-                    
+                    that.playTimeLine();     
+                    $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(that.onMediaReady, that));
+               
+/*
                     that.$el.jPlayer("setMedia", {
                         m4v: "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
                         ogv: "http://www.jplayer.org/video/ogv/Big_Buck_Bunny_Trailer_480x270.ogv",
                         poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
                     });
+*/
                     // bind events once player is ready
-                    $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(that.onMediaReady, that));
                 },
                 swfPath: "/js",
                 supplied: "m4v, ogv"                
@@ -91,6 +102,18 @@
         
         loadPlayerGui : function (opts) {
             $('.jp-gui').html(_.template($('#tmp-jplayer-gui').html()));
+        },
+        
+        
+        playTimeLine : function () {
+            mediaElement = this.timeline.mediaElements[this.timelineStep];
+            console.log(mediaElement);
+            data = {};
+            data[mediaElement.elementType] = mediaElement.elementURL;
+            data['poster'] = "http://www.placekitten.com/480/270";
+            console.log(data);
+            console.log(this.$el.jPlayer());
+            this.$el.jPlayer("setMedia", data);
         },
         
         // If attr is passed, return attr value, else return status obj
@@ -142,10 +165,12 @@
             // [ length of video ] / [ number of Markers ]
             var markerSecs = Math.floor(playerData.duration) / numbMarkers;
             
+/*
             console.log(playerData['duration']);
             console.log($('.jp-progress').width());
             console.log('number markers '+numbMarkers);
             console.log('marker secs '+markerSecs);
+*/
             
             // build array of marker-points with start / stop attrs
             var markerArray = [];
@@ -157,7 +182,6 @@
             for (var i = 0; i < numbMarkers; i++) {
                 funcs(markerArray, i);
             }
-            console.log(markerArray);
             
             // now build array of populated marker positions for rendering
             markers = [];
@@ -180,7 +204,6 @@
             // now render this nonsense 
             data = {};
             data.markers = markers;
-            console.log(data);
             $('#markers-container').html(_.template($('#tmp-comment-markers').html(), data));
         },
         
