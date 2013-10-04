@@ -36,7 +36,7 @@
                      that.comments = collection;
                 },
                 error : function (collection, response) {
-                    console.log(response);
+                    alert('Error loading playlist');
                 }  
             });
             return this;
@@ -73,7 +73,7 @@
                     that.render();
                 },
                 error : function (model, response) {
-                    console.log(response.error());
+                    alert('error loading playlist model');
                 }
             });
         },
@@ -109,7 +109,7 @@
         playTimeLine : function () {
             var that = this;
             mediaElement = this.timeline.mediaElements[this.timeLineStep];
-            console.log('Timeline step :'+this.timeLineStepl);
+            console.log('Timeline step :'+this.timeLineStep);
             console.log(mediaElement);
             data = {};
             data[mediaElement.elementType] = mediaElement.elementURL;
@@ -117,6 +117,9 @@
             console.log(data);
             console.log(this.$el.jPlayer());
             this.$el.jPlayer("setMedia", data);
+            if (this.timeLineStep > 0) {
+                this.$el.jPlayer("play");
+            };
             // bind video end event
             $(this.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(function () {
                 console.log('ended event triggered');

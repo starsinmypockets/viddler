@@ -20,17 +20,18 @@
         }
       },
       {
-        "title": "videocomments",
+        "title": "h264 video of week",
         "position": 0,
         "zLayer": 0,
         "playheadStart": 0,
         "playheadStop": 15000,
         "elementType": "m4v",
         "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
-        "poster" : "http://placekitten.com/479/269",
-        "media_element": {},
+        "poster" : "http://placekitten.com/480/270",
+        "mediaElement": {},
         "transitionIn": {},
-        "transitionOut": {}
+        "transitionOut": {
+        }
       }
     ]
   },
