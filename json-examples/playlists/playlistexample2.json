@@ -6,6 +6,7 @@
     "title": "phils timeline",
     "mediaElements": [
       {
+        "id" : 123,
         "title": "h264 video of week",
         "position": 0,
         "zLayer": 0,
@@ -20,6 +21,7 @@
         }
       },
       {
+        "id" : 124,
         "title": "h264 video of week",
         "position": 0,
         "zLayer": 0,

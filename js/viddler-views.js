@@ -27,16 +27,18 @@
         timeline : {},
         timeLineStep : 0,
         
-        getPlayListComments : function () {
+        getMediaElementComments : function () {
+            console.log('hit this');
             var that = this;
-            comments = new CommentCollection([], {media_element : '123'});
+            comments = new CommentCollection([], {media_element : that.timeline.mediaElements[that.timeLineStep].id});
             comments.fetch({
                 success : function (collection, response) {
                      console.log(collection);
                      that.comments = collection;
+                     that.renderCommentMarkers();
                 },
                 error : function (collection, response) {
-                    alert('Error loading playlist');
+                    alert('Error loading playlist comments');
                 }  
             });
             return this;
@@ -51,15 +53,13 @@
             _.bindAll(this, 'commentSubmit');
         },
         
-        // this is bound on canplay event 
-        // after player is loaded
-        onMediaReady : function () {
-            console.log('DATA LODED');
-            this.renderCommentMarkers();
+        onPlayerReady : function () {
+            console.log('Player Ready Event');
             return this;
         },
         
         onModelReady : function () {
+            console.log('Model Ready Event');
             this.loadPlayerGui();
             this.loadJPlayer();
         },
@@ -86,7 +86,7 @@
                     // bind events once player is ready
                     that.playTimeLine();
 
-                    $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(that.onMediaReady, that));
+                    $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(that.onPlayerReady, that));
 /*
                     that.$el.jPlayer("setMedia", {
                         m4v: "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
@@ -115,11 +115,17 @@
             data[mediaElement.elementType] = mediaElement.elementURL;
             data['poster'] = mediaElement.poster;
             console.log(data);
-            console.log(this.$el.jPlayer());
             this.$el.jPlayer("setMedia", data);
-            if (this.timeLineStep > 0) {
-                this.$el.jPlayer("play");
-            };
+            
+            // when the media's ready
+            $(this.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function () {
+                console.log('Timeline video ready');
+                that.getMediaElementComments();
+                if (that.timeLineStep > 0) {
+                    that.$el.jPlayer("play");
+                };                
+            }, this));
+            
             // bind video end event
             $(this.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(function () {
                 console.log('ended event triggered');
@@ -151,7 +157,6 @@
         // create comment popup form and submit it
         commentSubmit : function (e) {
             e.preventDefault();
-            console.log('foop');
             this.$el.jPlayer("pause");
             comment = new CommentModel({
                 avatar : 'http://placekitten.com',
@@ -177,12 +182,10 @@
             // [ length of video ] / [ number of Markers ]
             var markerSecs = Math.floor(playerData.duration) / numbMarkers;
             
-/*
-            console.log(playerData['duration']);
+            console.log(playerData.duration);
             console.log($('.jp-progress').width());
             console.log('number markers '+numbMarkers);
             console.log('marker secs '+markerSecs);
-*/
             
             // build array of marker-points with start / stop attrs
             var markerArray = [];
@@ -216,6 +219,7 @@
             // now render this nonsense 
             data = {};
             data.markers = markers;
+            console.log(data);
             $('#markers-container').html(_.template($('#tmp-comment-markers').html(), data));
         },
         
