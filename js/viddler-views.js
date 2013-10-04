@@ -25,7 +25,7 @@
         el : '#jquery_jplayer_1',
         comments : {},
         timeline : {},
-        timelineStep : 0,
+        timeLineStep : 0,
         
         getPlayListComments : function () {
             var that = this;
@@ -73,7 +73,7 @@
                     that.render();
                 },
                 error : function (model, response) {
-                    console.log(response);
+                    console.log(response.error());
                 }
             });
         },
@@ -83,9 +83,10 @@
             var that = this;
             this.$el.jPlayer({
                 ready: function () {
-                    that.playTimeLine();     
+                    // bind events once player is ready
+                    that.playTimeLine();
+
                     $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(that.onMediaReady, that));
-               
 /*
                     that.$el.jPlayer("setMedia", {
                         m4v: "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
@@ -93,27 +94,34 @@
                         poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
                     });
 */
-                    // bind events once player is ready
                 },
                 swfPath: "/js",
                 supplied: "m4v, ogv"                
             });
         },
         
+        // Get the controls
         loadPlayerGui : function (opts) {
             $('.jp-gui').html(_.template($('#tmp-jplayer-gui').html()));
         },
         
-        
+        // cue and play media elements
         playTimeLine : function () {
-            mediaElement = this.timeline.mediaElements[this.timelineStep];
+            var that = this;
+            mediaElement = this.timeline.mediaElements[this.timeLineStep];
             console.log(mediaElement);
             data = {};
             data[mediaElement.elementType] = mediaElement.elementURL;
-            data['poster'] = "http://www.placekitten.com/480/270";
+            data['poster'] = mediaElement.poster;
             console.log(data);
             console.log(this.$el.jPlayer());
             this.$el.jPlayer("setMedia", data);
+            // bind video end event
+            $(this.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(function () {
+                console.log('ended event triggered');
+                that.timeLineStep++;
+                that.playTimeLine();
+            }, this));
         },
         
         // If attr is passed, return attr value, else return status obj

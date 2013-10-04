@@ -13,6 +13,7 @@
         "playheadStop": 15000,
         "elementType": "m4v",
         "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
+        "poster" : "http://placekitten.com/480/270",
         "mediaElement": {},
         "transitionIn": {},
         "transitionOut": {
@@ -24,8 +25,9 @@
         "zLayer": 0,
         "playheadStart": 0,
         "playheadStop": 15000,
-        "elementType": "overlay",
-        "elementURL": "http://viddler.com/getClip/3232",
+        "elementType": "m4v",
+        "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
+        "poster" : "http://placekitten.com/479/269",
         "media_element": {},
         "transitionIn": {},
         "transitionOut": {}
