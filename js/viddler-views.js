@@ -74,6 +74,8 @@
             var that = this;
             this.$el.jPlayer({
                 ready: function () {
+                    
+                    
                     that.$el.jPlayer("setMedia", {
                         m4v: "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
                         ogv: "http://www.jplayer.org/video/ogv/Big_Buck_Bunny_Trailer_480x270.ogv",
