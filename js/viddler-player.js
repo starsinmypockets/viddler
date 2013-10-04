@@ -15,6 +15,7 @@ window.testInit = function () {
     playlist.loadPlayList();
 
     $('.bar').on('click', function (e) {
+        console.log('bar click');
         playlist.loadCommentPopUp();
     });
 };

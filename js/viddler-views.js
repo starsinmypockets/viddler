@@ -28,9 +28,8 @@
         timeLineStep : 0,
         
         getMediaElementComments : function () {
-            console.log('hit this');
             var that = this;
-            comments = new CommentCollection([], {media_element : that.timeline.mediaElements[that.timeLineStep].id});
+            comments = new CommentCollection([], {media_element : this.timeline.mediaElements[this.timeLineStep].id});
             comments.fetch({
                 success : function (collection, response) {
                      console.log(collection);
@@ -39,14 +38,19 @@
                      that.renderCommentMarkers();
                 },
                 error : function (collection, response) {
-                    alert('Error loading playlist comments');
+                    alert('Error mediaElemen comments');
                 }  
             });
             return this;
         }, 
 
         events : {
-            'click #comment-form-submit' : 'commentSubmit'
+            'click #comment-form-submit' : 'commentSubmit',
+            'click .bar' : 'foo'
+        },
+        
+        foo : function () {
+            console.log('foo');
         },
         
         initialize : function (opts) {
@@ -56,13 +60,14 @@
         
         onPlayerReady : function () {
             console.log('Player Ready Event');
-            return this;
+            this.playTimeLine();
         },
         
         onModelReady : function () {
             console.log('Model Ready Event');
             this.loadPlayerGui();
             this.loadJPlayer();
+            this.delegateEvents();
         },
                 
         loadPlayList : function (opts) {
@@ -85,9 +90,7 @@
             this.$el.jPlayer({
                 ready: function () {
                     // bind events once player is ready
-                    that.playTimeLine();
-
-                    $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(that.onPlayerReady, that));
+                    that.onPlayerReady();
 /*
                     that.$el.jPlayer("setMedia", {
                         m4v: "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
@@ -108,31 +111,55 @@
         
         // cue and play media elements
         playTimeLine : function () {
+            var steps = this.timeline.mediaElements.length;
             var that = this;
-            mediaElement = this.timeline.mediaElements[this.timeLineStep];
-            console.log('Timeline step :'+this.timeLineStep);
-            console.log(mediaElement);
-            data = {};
-            data[mediaElement.elementType] = mediaElement.elementURL;
-            data['poster'] = mediaElement.poster;
-            console.log(data);
-            this.$el.jPlayer("setMedia", data);
+            var playerData = this.$el.jPlayer().data().jPlayer.status;
+            var mediaElement = this.timeline.mediaElements[this.timeLineStep];
             
-            // when the media's ready
-            $(this.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function () {
-                console.log('Timeline video ready');
-                that.getMediaElementComments();
-                if (that.timeLineStep > 0) {
-                    that.$el.jPlayer("play");
-                };                
-            }, this));
+             // If playheadStop then poll for end point
+            if (mediaElement) {
+                if (mediaElement.playheadStop) {
+                    console.log(mediaElement.playheadStop);
+                    that.pollId = setInterval(function() {
+                       // Restrict playback to first 60 seconds.
+                       if (that.$el.jPlayer().data().jPlayer.status.currentTime > mediaElement.playheadStop/1000) {
+                          clearInterval(that.PollId);
+                          that.$el.jPlayer("stop");
+                          that.timeLineStep++;
+                          that.playTimeLine();
+                       }
+                    },100);       
+                }                     
             
-            // bind video end event
-            $(this.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(function () {
-                console.log('ended event triggered');
-                that.timeLineStep++;
-                that.playTimeLine();
-            }, this));
+                data = {};
+                data[mediaElement.elementType] = mediaElement.elementURL;
+                data['poster'] = mediaElement.poster;
+                
+                that.$el.jPlayer("setMedia", data);
+                
+                $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function () {
+                    if (that.timeLineStep > 0) {
+                        that.$el.jPlayer("play");
+                    }
+                    that.getMediaElementComments();
+                }, that));
+    
+                $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(function () {
+                    console.log('ended event triggered');
+                    if (that.timeLineStep < steps) {
+                        that.timeLineStep++;
+                        that.playTimeLine();
+                    }
+                }, that));            }
+
+            if (this.timeLineStep === steps) {
+                this.timeLineFinished();
+            }
+        },
+        
+        timeLineFinished : function () {
+            clearInterval(this.pollId);
+            console.log('Time Line Finished');
         },
         
         // If attr is passed, return attr value, else return status obj
@@ -150,7 +177,7 @@
             data.time = playerData.currentTime;
             data.avatar = "http://placekitten.com/75/75";
             console.log(playerData);
-            console.log(data)
+            console.log(data);
             $('#comment-popup-container').html(_.template($('#tmp-comment-popup').html(), data));
             this.delegateEvents();
         },
@@ -183,10 +210,12 @@
             // [ length of video ] / [ number of Markers ]
             var markerSecs = Math.floor(playerData.duration) / numbMarkers;
             
+/*
             console.log(playerData.duration);
             console.log($('.jp-progress').width());
             console.log('number markers '+numbMarkers);
             console.log('marker secs '+markerSecs);
+*/
             
             // build array of marker-points with start / stop attrs
             var markerArray = [];
