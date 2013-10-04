@@ -38,7 +38,10 @@
                      that.renderCommentMarkers();
                 },
                 error : function (collection, response) {
-                    alert('Error mediaElemen comments');
+                    collection = {};
+                    collection.comments = [];
+                    that.loadComments();
+                    that.renderCommentMarkers();
                 }  
             });
             return this;
@@ -118,30 +121,41 @@
             
              // If playheadStop then poll for end point
             if (mediaElement) {
+                data = {};
+                data[mediaElement.elementType] = mediaElement.elementURL;
+                data['poster'] = mediaElement.poster;
+                that.$el.jPlayer("setMedia", data);
+                
+                console.log(mediaElement);
+                
                 if (mediaElement.playheadStop) {
                     console.log(mediaElement.playheadStop);
                     that.pollId = setInterval(function() {
                        // Restrict playback to first 60 seconds.
                        if (that.$el.jPlayer().data().jPlayer.status.currentTime > mediaElement.playheadStop/1000) {
+                          console.log('stopped');
                           clearInterval(that.PollId);
                           that.$el.jPlayer("stop");
                           that.timeLineStep++;
                           that.playTimeLine();
                        }
                     },100);       
-                }                     
-            
-                data = {};
-                data[mediaElement.elementType] = mediaElement.elementURL;
-                data['poster'] = mediaElement.poster;
-                
-                that.$el.jPlayer("setMedia", data);
-                
-                $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function () {
+                }
+
+                // prob need click event to start player at right spot
+                $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
+                    // Autoplay after 1st step
+                    console.log('can play');
                     if (that.timeLineStep > 0) {
-                        that.$el.jPlayer("play");
+                        that.$el.jPlayer("play", mediaElement.playheadStart/1000);
+                    } else {
+                        // override native play button and provide appropriate start time
+                        $('.jp-play').on('click', function (e) {
+                            e.preventDefault();
+                            that.$el.jPlayer("play", mediaElement.playheadStart/1000);
+                        })
                     }
-                    that.getMediaElementComments();
+//                    that.getMediaElementComments();
                 }, that));
     
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(function () {
@@ -152,9 +166,11 @@
                     }
                 }, that));            }
 
+/*
             if (this.timeLineStep === steps) {
                 this.timeLineFinished();
             }
+*/
         },
         
         timeLineFinished : function () {
