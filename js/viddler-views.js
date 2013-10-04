@@ -35,6 +35,7 @@
                 success : function (collection, response) {
                      console.log(collection);
                      that.comments = collection;
+                     that.loadComments();
                      that.renderCommentMarkers();
                 },
                 error : function (collection, response) {
@@ -223,40 +224,20 @@
             $('#markers-container').html(_.template($('#tmp-comment-markers').html(), data));
         },
         
-        render : function () {
-            this.delegateEvents();
-        }
-    });
-
-    
-    window.CommentView = BaseView.extend({  
-        initialize : function (opts) {
-            this.__init(opts);
-        },
-        
         loadComments : function (opts) {
-            var that = this;
-            this.collection.fetch({
-                success : function (collection, response) {
-                     that.collection = collection;
-                     that.render();
-                },
-                error : function (collection, response) {
-                    that.render({error : true});
-                }  
-            });
-        },
-        
-        render : function (opts) {
             data = {};
-            data.items = this.collection.toJSON();
+            data.items = this.comments.toJSON();
             // If error, just load view with no comments
             if (opts && opts.error === true) {
                 data.error = true;
                 data.items = [];
             }
-            this.$el.html(this.template(data));
+            $('#comments-container').html(_.template($('#tmp-comments').html(), data));
             return this;
+        },
+        
+        render : function () {
+            this.delegateEvents();
         }
     });
 })(jQuery);

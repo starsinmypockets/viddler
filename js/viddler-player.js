@@ -13,19 +13,13 @@ window.testInit = function () {
         vent : ViddlerPlayer.vent
     });
     playlist.loadPlayList();
-/*
-    playlist.loadPlayerGui();
-    playlist.loadJPlayer();
-    playlist.renderCommentMarkers();
-    playlist.getPlayListComments();
-*/
 
-//    playlist.render();
     $('.bar').on('click', function (e) {
         playlist.loadCommentPopUp();
     });
 };
 
+/*
 window.loadViddlerComments = function (id) {
     collection = new CommentCollection([], {media_element : id});
       commentsView = new CommentView({
@@ -36,6 +30,7 @@ window.loadViddlerComments = function (id) {
     });
     commentsView.loadComments();
 };
+*/
 
 
 // @@ not in use:
