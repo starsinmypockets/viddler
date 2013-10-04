@@ -109,6 +109,7 @@
         playTimeLine : function () {
             var that = this;
             mediaElement = this.timeline.mediaElements[this.timeLineStep];
+            console.log('Timeline step :'+this.timeLineStepl);
             console.log(mediaElement);
             data = {};
             data[mediaElement.elementType] = mediaElement.elementURL;
