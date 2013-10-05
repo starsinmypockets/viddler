@@ -147,6 +147,7 @@
                     if (stop) {
                         runStopListener(stop);
                     };
+                    that.getMediaElementComments();
                     // unbind canplay
                     $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
                 }, that));
