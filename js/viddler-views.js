@@ -118,10 +118,8 @@
             var mediaElements = this.timeline.mediaElements;
             var steps = mediaElements.length;
             var stepMedia = mediaElements[this.timeLineStep];
-            console.log(Boolean(stepMedia));
             console.log(steps); //3
             console.log(this.timeLineStep);
-            console.log(stepMedia);
             
             // bind player events on first time through
             if (this.timeLineStep === 0) {
@@ -130,21 +128,21 @@
             }
             
             if (stepMedia) {
-                console.log('has step');
+                console.log(stepMedia);
                 data = {};
                 data[stepMedia.elementType] = stepMedia.elementURL;
                 data['poster'] = stepMedia.poster;
-                doTimeLineStep(data);
+                doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);
             } else {
                 timeLineDone();
             }
             
-            function doTimeLineStep(data) {
+            function doTimeLineStep(data, start, stop) {
                 console.log('doTimeLineStep!');
                 that.$el.jPlayer("setMedia", data);
 
                 if (that.timeLineStep > 0) {
-                    that.$el.jPlayer("play");
+                    that.$el.jPlayer("play", start/1000);
                 }
             };
             
