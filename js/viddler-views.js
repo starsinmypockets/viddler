@@ -22,7 +22,7 @@
     // Instantiates jPlayer, handles comments etc
     // use this.$el.jPlayer() to manipulate player instance
     window.PlayListView = BaseView.extend({
-        el : '#jquery_jplayer_1',
+        el : '#jp_container_1',
         comments : {},
         timeline : {},
         timeLineStep : 0,
@@ -49,7 +49,7 @@
 
         events : {
             'click #comment-form-submit' : 'commentSubmit',
-            'click .bar' : 'foo'
+            'click .jp-comment' : 'foo'
         },
         
         foo : function () {
@@ -58,7 +58,7 @@
         
         initialize : function (opts) {
             this.__init(opts);
-            _.bindAll(this, 'commentSubmit');
+            _.bindAll(this, 'commentSubmit', 'foo');
         },
         
         onPlayerReady : function () {
@@ -70,7 +70,6 @@
             console.log('Model Ready Event');
             this.loadPlayerGui();
             this.loadJPlayer();
-            this.delegateEvents();
         },
                 
         loadPlayList : function (opts) {
@@ -89,6 +88,7 @@
         
         // instantiate jPlayer
         loadJPlayer : function (opts) {
+            this.setElement('#jquery_jplayer_1');
             var that = this;
             this.$el.jPlayer({
                 ready: function () {
@@ -109,7 +109,13 @@
         
         // Get the controls
         loadPlayerGui : function (opts) {
-            $('.jp-gui').html(_.template($('#tmp-jplayer-gui').html()));
+            var that = this;
+            this.setElement('.jp-gui');
+            this.$el.html(_.template($('#tmp-jplayer-gui').html()));
+            this.$('.jp-comment').on('click', function () {
+                that.loadCommentPopUp();
+            });
+//            $('.jp-gui').html(_.template($('#tmp-jplayer-gui').html()));
         },
         
         playTimeLine : function () {
@@ -173,73 +179,12 @@
             
             function timeLineDone() {
                 console.log('finished');
+                that.$el.jPlayer("setMedia", {});
                 return;
             };
             
         },
-        
-        // cue and play media elements
-        playTimeLine2 : function () {
-            var steps = this.timeline.mediaElements.length;
-            var that = this;
-            var playerData = this.$el.jPlayer().data().jPlayer.status;
-            var mediaElement = this.timeline.mediaElements[this.timeLineStep];
-            console.log(this.timeLineStep);
-            console.log(steps);
-             // If playheadStop then poll for end point
-                if (mediaElement) {
-                    data = {};
-                    data[mediaElement.elementType] = mediaElement.elementURL;
-                    data['poster'] = mediaElement.poster;
-                    that.$el.jPlayer("setMedia", data);
-                    
-                    console.log(mediaElement);
-                    
-                    if (mediaElement.playheadStop) {
-                        console.log(mediaElement.playheadStop);
-                        that.pollId = setInterval(function() {
-                           // Restrict playback to first 60 seconds.
-                           if (that.$el.jPlayer().data().jPlayer.status.currentTime > mediaElement.playheadStop/1000) {
-                              console.log('stopped');
-                              clearInterval(that.PollId);
-                              that.$el.jPlayer("stop");
-                              that.timeLineStep++;
-                              that.playTimeLine();
-                           }
-                        },100);       
-                } 
-                
-                $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(function () {
-                        console.log('ended event triggered');
-                        if (that.timeLineStep < steps) {
-                            that.timeLineStep++;
-                            that.playTimeLine();
-                        }
-                    }, that)); 
-                
-                $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
-                    // Autoplay after 1st step
-                    console.log('can play');
-                    if (that.timeLineStep > 0) {
-                        that.$el.jPlayer("play", mediaElement.playheadStart/1000);
-                    } else {
-                        // override native play button and provide appropriate start time
-                        $('.jp-play').on('click', function (e) {
-                            e.preventDefault();
-                            that.$el.jPlayer("play", mediaElement.playheadStart/1000);
-                        })
-                    }
-                    that.getMediaElementComments();
-                }, that));
-           }
-
-/*
-            if (this.timeLineStep === steps) {
-                this.timeLineFinished();
-            }
-*/
-        },
-        
+               
         timeLineFinished : function () {
             clearInterval(this.pollId);
             console.log('Time Line Finished');
@@ -252,23 +197,19 @@
         },
         
         loadCommentPopUp : function (data) {
-            var that = this;
-            this.$el.jPlayer("pause");
-
+            //var that = this;
+            //this.setElement('#comment-popup-container');
             data = {};
             playerData = this.$el.jPlayer().data().jPlayer.status;
-            data.time = playerData.currentTime;
+            data.time = Math.floor(playerData.currentTime);
             data.avatar = "http://placekitten.com/75/75";
-            console.log(playerData);
-            console.log(data);
             $('#comment-popup-container').html(_.template($('#tmp-comment-popup').html(), data));
-            this.delegateEvents();
+            $('#comment-form-submit').on('click', this.commentSubmit);//$('#comment-popup-container').html(_.template($('#tmp-comment-popup').html(), data));
         },
         
         // create comment popup form and submit it
         commentSubmit : function (e) {
             e.preventDefault();
-            this.$el.jPlayer("pause");
             comment = new CommentModel({
                 avatar : 'http://placekitten.com',
                 mediaElement : '###',
@@ -278,7 +219,9 @@
                 playHeadPos : $('#comment-play-head-pos').val()
             });
             data = {};
-            
+            // @@ Do save here
+            console.log(comment);
+            $('#comment-popup-container').empty();
         },
         
         // Make sure media is loaded before calling
