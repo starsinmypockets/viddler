@@ -114,17 +114,13 @@
         
         playTimeLine : function () {
             var that = this;
-//            this.timeLineStep = 3;
             var mediaElements = this.timeline.mediaElements;
             var steps = mediaElements.length;
             var stepMedia = mediaElements[this.timeLineStep];
-            console.log(steps); //3
-            console.log(this.timeLineStep);
             
             // bind player events on first time through
             if (this.timeLineStep === 0) {
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
-                
             }
             
             if (stepMedia) {
@@ -138,19 +134,40 @@
             }
             
             function doTimeLineStep(data, start, stop) {
-                console.log('doTimeLineStep!');
+                var playerData, duration;
+                console.log(stop);
                 that.$el.jPlayer("setMedia", data);
-
-                if (that.timeLineStep > 0) {
-                    that.$el.jPlayer("play", start/1000);
-                }
+                // wait for media to load
+                $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
+                    playerData = that.$el.jPlayer().data('jPlayer').status;
+                    duration = Math.floor(playerData.duration*1000); // convert to ms
+                    if (that.timeLineStep > 0) {
+                        that.$el.jPlayer("play", start/1000);
+                    }
+                    if (stop) {
+                        runStopListener(stop);
+                    };
+                    // unbind canplay
+                    $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
+                }, that));
             };
             
             
-            // we need to do this on 'ended' event OR if we reach playheadStop
+            // trigger this on 'ended' event OR if we reach playheadStop
             function doNext() {
                 that.timeLineStep++;
                 that.playTimeLine();
+            };
+            
+            // listen for stop
+            function runStopListener(stop) {
+                var intvId = setInterval(function() {
+                   if (that.$el.jPlayer().data().jPlayer.status.currentTime > stop/1000) {
+                      console.log('stop listener stop');
+                      clearInterval(intvId);
+                      $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
+                   }
+                },100);  
             };
             
             function timeLineDone() {
@@ -188,7 +205,7 @@
                               that.timeLineStep++;
                               that.playTimeLine();
                            }
-                        },1000);       
+                        },100);       
                 } 
                 
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(function () {
