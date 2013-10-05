@@ -123,9 +123,14 @@
             console.log(this.timeLineStep);
             console.log(stepMedia);
             
+            // bind player events on first time through
+            if (this.timeLineStep === 0) {
+                $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
+                
+            }
+            
             if (stepMedia) {
                 console.log('has step');
-                bindPlayerEvents();
                 data = {};
                 data[stepMedia.elementType] = stepMedia.elementURL;
                 data['poster'] = stepMedia.poster;
@@ -150,12 +155,9 @@
                 that.playTimeLine();
             };
             
-            function bindPlayerEvents() {
-                $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
-            };
-            
             function timeLineDone() {
                 console.log('finished');
+                return;
             };
             
         },
