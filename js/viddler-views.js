@@ -112,37 +112,93 @@
             $('.jp-gui').html(_.template($('#tmp-jplayer-gui').html()));
         },
         
-        // cue and play media elements
         playTimeLine : function () {
+            var that = this;
+//            this.timeLineStep = 3;
+            var mediaElements = this.timeline.mediaElements;
+            var steps = mediaElements.length;
+            var stepMedia = mediaElements[this.timeLineStep];
+            console.log(Boolean(stepMedia));
+            console.log(steps); //3
+            console.log(this.timeLineStep);
+            console.log(stepMedia);
+            
+            if (stepMedia) {
+                console.log('has step');
+                bindPlayerEvents();
+                data = {};
+                data[stepMedia.elementType] = stepMedia.elementURL;
+                data['poster'] = stepMedia.poster;
+                doTimeLineStep(data);
+            } else {
+                timeLineDone();
+            }
+            
+            function doTimeLineStep(data) {
+                console.log('doTimeLineStep!');
+                that.$el.jPlayer("setMedia", data);
+
+                if (that.timeLineStep > 0) {
+                    that.$el.jPlayer("play");
+                }
+            };
+            
+            
+            // we need to do this on 'ended' event OR if we reach playheadStop
+            function doNext() {
+                that.timeLineStep++;
+                that.playTimeLine();
+            };
+            
+            function bindPlayerEvents() {
+                $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
+            };
+            
+            function timeLineDone() {
+                console.log('finished');
+            };
+            
+        },
+        
+        // cue and play media elements
+        playTimeLine2 : function () {
             var steps = this.timeline.mediaElements.length;
             var that = this;
             var playerData = this.$el.jPlayer().data().jPlayer.status;
             var mediaElement = this.timeline.mediaElements[this.timeLineStep];
-            
+            console.log(this.timeLineStep);
+            console.log(steps);
              // If playheadStop then poll for end point
-            if (mediaElement) {
-                data = {};
-                data[mediaElement.elementType] = mediaElement.elementURL;
-                data['poster'] = mediaElement.poster;
-                that.$el.jPlayer("setMedia", data);
+                if (mediaElement) {
+                    data = {};
+                    data[mediaElement.elementType] = mediaElement.elementURL;
+                    data['poster'] = mediaElement.poster;
+                    that.$el.jPlayer("setMedia", data);
+                    
+                    console.log(mediaElement);
+                    
+                    if (mediaElement.playheadStop) {
+                        console.log(mediaElement.playheadStop);
+                        that.pollId = setInterval(function() {
+                           // Restrict playback to first 60 seconds.
+                           if (that.$el.jPlayer().data().jPlayer.status.currentTime > mediaElement.playheadStop/1000) {
+                              console.log('stopped');
+                              clearInterval(that.PollId);
+                              that.$el.jPlayer("stop");
+                              that.timeLineStep++;
+                              that.playTimeLine();
+                           }
+                        },1000);       
+                } 
                 
-                console.log(mediaElement);
+                $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(function () {
+                        console.log('ended event triggered');
+                        if (that.timeLineStep < steps) {
+                            that.timeLineStep++;
+                            that.playTimeLine();
+                        }
+                    }, that)); 
                 
-                if (mediaElement.playheadStop) {
-                    console.log(mediaElement.playheadStop);
-                    that.pollId = setInterval(function() {
-                       // Restrict playback to first 60 seconds.
-                       if (that.$el.jPlayer().data().jPlayer.status.currentTime > mediaElement.playheadStop/1000) {
-                          console.log('stopped');
-                          clearInterval(that.PollId);
-                          that.$el.jPlayer("stop");
-                          that.timeLineStep++;
-                          that.playTimeLine();
-                       }
-                    },100);       
-                }
-
-                // prob need click event to start player at right spot
                 $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
                     // Autoplay after 1st step
                     console.log('can play');
@@ -155,16 +211,9 @@
                             that.$el.jPlayer("play", mediaElement.playheadStart/1000);
                         })
                     }
-//                    that.getMediaElementComments();
+                    that.getMediaElementComments();
                 }, that));
-    
-                $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(function () {
-                    console.log('ended event triggered');
-                    if (that.timeLineStep < steps) {
-                        that.timeLineStep++;
-                        that.playTimeLine();
-                    }
-                }, that));            }
+           }
 
 /*
             if (this.timeLineStep === steps) {
