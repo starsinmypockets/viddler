@@ -115,7 +115,16 @@
             var mediaElements = this.timeline.mediaElements;
             var steps = mediaElements.length;
             var stepMedia = mediaElements[this.timeLineStep];
+            var progressCounterIntv;
+            var timeLineLength = 0; // total length in ms
+            var timeLineComplete = 0; // length in ms of completed steps
+            var timeLineCurrent = 0;
 
+            _.each(mediaElements, function (el) {
+                el.length = el.playheadStop - el.playheadStart;
+                timeLineLength += el.length;
+            });
+                        
             // bind player events on first time through
             if (this.timeLineStep === 0) {
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
@@ -136,22 +145,63 @@
             function doTimeLineStep(data, start, stop) {
                 var playerData, duration;
                 that.$el.jPlayer("setMedia", data);
+                
                 // wait for media to load
                 $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
                     console.log('canPlay');
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
                     that.$el.jPlayer("play", start/1000);                    
+                    if (this.timeLineStep === 0) {
+                        that.$el.jPlayer('pause');
+                    }
+                    
+                    updateCompletedTime();
+
                     if (stop) {
                         runStopListener(stop);
                     };
+                    updateCurrentTime();
+
                     that.getMediaElementComments();
                     // unbind canplay
                     $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
                 }, that));
             };
             
+            function updateCompletedTime() {
+                // get total ms elapsed in previous steps
+                if (that.timeLineStep > 0) {
+                    for (var i = 0; i < that.timeLineStep; i++) {
+                        console.log(parseInt(mediaElements[i].length));
+                        timeLineComplete += parseInt(mediaElements[i].length);
+                    }
+                }
+                // add current playhead position
+                
+            };
             
+            function runStopListener(stop) {
+                var stopIntv = setInterval(function() {
+                   if (that.$el.jPlayer().data().jPlayer.status.currentTime > stop/1000) {
+                      console.log('stop listener stop');
+                      clearInterval(stopIntv);
+                      $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
+                   }
+                },100);  
+            };
+            function updateCurrentTime() {
+                this.progressCounterIntv = setInterval(function() {
+                    console.log('current time: '+that.$el.jPlayer().data().jPlayer.status.currentTime*1000);
+                    console.log('playheadStart: '+mediaElements[that.timeLineStep].playheadStart);
+                   timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - mediaElements[that.timeLineStep].playheadStart + timeLineComplete);// + timeLineComplete);
+                    console.log('timeline current: '+timeLineCurrent);
+                    console.log('timeline complete: '+timeLineComplete);
+                },500);
+
+                // playheadPosition - startTime + timeLineComplete
+            };
+
             // trigger this on 'ended' event OR if we reach playheadStop
             function doNext() {
                 that.timeLineStep++;
@@ -171,9 +221,10 @@
             
             function timeLineDone() {
                 console.log('finished');
-                that.$el.jPlayer("setMedia", {});
+                console.log(progressCounterIntv);
+                clearInterval(progressCounterIntv);
+                that.$el.jPlayer("pause");
                 // reclass play button to restart timeline
-                $('.jp-play').addClass('init-timeline');
                 return;
             };
             
