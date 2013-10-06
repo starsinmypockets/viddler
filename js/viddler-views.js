@@ -49,22 +49,34 @@
 
         events : {
             'click #comment-form-submit' : 'commentSubmit',
+            'click .timeline-init' : 'doTimeLineStart'
         },
         
         initialize : function (opts) {
             this.__init(opts);
-            _.bindAll(this, 'commentSubmit');
+            _.bindAll(this, 'commentSubmit', 'doTimeLineStart');
+        },
+        
+        doTimeLineStart : function (e) {
+            e.preventDefault();
+            console.log('clikt');
+            $('.jp-play').removeClass('.timeline-init');
+            this.playTimeLine();
         },
         
         onPlayerReady : function () {
             console.log('Player Ready Event');
-            this.playTimeLine();
+            // this.playTimeLine();
         },
         
         onModelReady : function () {
             console.log('Model Ready Event');
+            var that = this;
             this.loadPlayerGui();
             this.loadJPlayer();
+            $('.timeline-init').on('click', function (e) {
+                that.doTimeLineStart(e)
+            });
         },
                 
         loadPlayList : function (opts) {
@@ -72,9 +84,11 @@
             this.model.fetch({
                 success : function (model, response, opts) {
                     that.timeline = model.get('timeline');
+                    that.timeLineSteps = that.timeline.mediaElements.length;
                     that.onModelReady();
                     that.render();
                 },
+                // @@ TODO proper error rendering
                 error : function (model, response) {
                     alert('error loading playlist model');
                 }
@@ -91,7 +105,8 @@
                     that.onPlayerReady();
                 },
                 swfPath: "/js",
-                supplied: "m4v, ogv"                
+                supplied: "m4v, ogv",
+                errorAlerts : true
             });
         },
         
@@ -110,7 +125,7 @@
             var mediaElements = this.timeline.mediaElements;
             var steps = mediaElements.length;
             var stepMedia = mediaElements[this.timeLineStep];
-            
+
             // bind player events on first time through
             if (this.timeLineStep === 0) {
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
@@ -121,22 +136,21 @@
                 data = {};
                 data[stepMedia.elementType] = stepMedia.elementURL;
                 data['poster'] = stepMedia.poster;
-                doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);
+                // autoplay steps after first
+                doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                
             } else {
                 timeLineDone();
             }
             
             function doTimeLineStep(data, start, stop) {
                 var playerData, duration;
-                console.log(stop);
                 that.$el.jPlayer("setMedia", data);
                 // wait for media to load
                 $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
+                    console.log('canPlay');
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
-                    if (that.timeLineStep > 0) {
-                        that.$el.jPlayer("play", start/1000);
-                    }
+                    that.$el.jPlayer("play", start/1000);                    
                     if (stop) {
                         runStopListener(stop);
                     };
@@ -145,6 +159,7 @@
                     $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
                 }, that));
             };
+            
             
             // trigger this on 'ended' event OR if we reach playheadStop
             function doNext() {
@@ -166,6 +181,8 @@
             function timeLineDone() {
                 console.log('finished');
                 that.$el.jPlayer("setMedia", {});
+                // reclass play button to restart timeline
+                $('.jp-play').addClass('init-timeline');
                 return;
             };
             
@@ -183,14 +200,12 @@
         },
         
         loadCommentPopUp : function (data) {
-            //var that = this;
-            //this.setElement('#comment-popup-container');
             data = {};
             playerData = this.$el.jPlayer().data().jPlayer.status;
             data.time = Math.floor(playerData.currentTime);
             data.avatar = "http://placekitten.com/75/75";
             $('#comment-popup-container').html(_.template($('#tmp-comment-popup').html(), data));
-            $('#comment-form-submit').on('click', this.commentSubmit);//$('#comment-popup-container').html(_.template($('#tmp-comment-popup').html(), data));
+            $('#comment-form-submit').on('click', this.commentSubmit);
         },
         
         // create comment popup form and submit it
@@ -276,6 +291,9 @@
     });
     
     MgPlayListView = PlayListView.extend({
-        
+        loadMgPlaylist: function () {
+            
+        }
     });
+    
 })(jQuery);

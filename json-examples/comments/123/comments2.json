@@ -2,10 +2,50 @@
         "id" : 678,
         "media_element" : 123,
         "title": "Comment Title 2",
+        "commentText": "This is a rant about thexx comment",
+        "thumbnail": "http://placekitten.com/75/75",
+        "replyUrl": "http://api.viddler.com/comment/reply/someid",
+        "userName" : "JP Slim",
+        "daysAgo" : "Today",
+        "time" : "6"
+},{
+        "id" : 679,
+        "media_element" : 123,
+        "title": "Comment Title 2",
         "commentText": "This is a rant about the comment",
         "thumbnail": "http://placekitten.com/75/75",
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
         "time" : "6"
+},{
+        "id" : 680,
+        "media_element" : 123,
+        "title": "Comment Title 2",
+        "commentText": "This is a rant about the comment",
+        "thumbnail": "http://placekitten.com/75/75",
+        "replyUrl": "http://api.viddler.com/comment/reply/someid",
+        "userName" : "JP Slim",
+        "daysAgo" : "Today",
+        "time" : "15"
+},{
+        "id" : 681,
+        "media_element" : 123,
+        "title": "Comment Title 2",
+        "commentText": "This is a rant about the comment",
+        "thumbnail": "http://placekitten.com/75/75",
+        "replyUrl": "http://api.viddler.com/comment/reply/someid",
+        "userName" : "JP Slim",
+        "daysAgo" : "Today",
+        "time" : "16"
+},{
+        "id" : 682,
+        "media_element" : 123,
+        "title": "Comment Title 2",
+        "commentText": "This is a rant about the comment",
+        "thumbnail": "http://placekitten.com/75/75",
+        "replyUrl": "http://api.viddler.com/comment/reply/someid",
+        "userName" : "JP Slim",
+        "daysAgo" : "Today",
+        "time" : "26"
 }]
