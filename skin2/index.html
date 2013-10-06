@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Viddler Player - MP TestBed</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" type="text/css" href="skin/viddler.css">
+	<script src="jquery.js"></script>
+	<script src="js/jquery.jplayer.min.js"></script>
+  <script src="../js/lib/underscore.js"></script>
+  <script src="../js/lib/backbone.js"></script>
+  <script src="../js/lib/rain_lib.js"></script>
+  <script src="../js/playerOptions.js"></script>
+  <script src="../js/viddler-player.js"></script>
+  <script src="../js/viddler-models.js"></script>
+  <script src="../js/viddler-collections.js"></script>
+  <script src="../js/viddler-views.js"></script>
+
+	<script type="text/javascript">
+    $(rainReady).ready(function(){
+        window.testMPInit();
+    });
+  </script>
+</head>
+<body>
+<div class="wrap">
+  <div id="jp_container_1" class="jp-video">
+    <div class="jp-type-single">
+      <div id="jquery_jplayer_1" class="jp-jplayer"></div>
+      <div class="jp-no-solution">
+        <span>Update Required</span>
+        To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+      </div>
+    </div>
+      <div class="jp-gui"></div>
+      <div id="errors"></div>
+      <div id="comment-popup-container"></div>
+      <div id="comments-container"></div>
+
+  </div>
+
+
+  </div>
+  </div>
+</body>
+</html>
+
+<!-- Underscore Templates -->
+<script type="text/template" id="tmp-comments">
+  <div class="comments clearfix" id="comments-container">
+        <div class="row clearfix">
+            <a href="#" class="also">Also Viewed</a>
+            <div class="comments2">Comments <span class="number">(<%= items.length %>)</span></div>
+            <img src="img/viddler.jpg" class="logo" alt="Viddler">
+        </div>
+        <div class="row clearfix">
+        <% _.each(items, function (item) { %>
+            <div class="row clearfix">
+                <div class="avatar"><img src="<%- item.thumbnail %>" width=60px height=60px /></div>
+                <div class="comment">
+                      <div class="user"><%= item.userName %></div>
+                      <div class="words"><%= item.commentText %></div>
+                      <div class="datetime"><%= item.created %>
+                          <div class="date"><%= item.daysAgo %></div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time"><%= item.time %></div>
+                      </div>
+                </div>
+            </div>
+        <% }); %>
+  </div>
+</script>
+
+<script type="text/template" id="tmp-jplayer-gui">
+        <div class="jp-video-play">
+          <a href="javascript:;" class="jp-video-play-icon" tabindex="1">play</a>
+        </div>
+        <div class="jp-interface clearfix">
+          <div class="jp-controls-holder">
+            <ul class="jp-controls">
+              <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
+              <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+            </ul>
+            <div class="bar clearfix">
+                <div id="markers-container"></div>
+            <div class="jp-progress" style="position: relative; z-index: 888;">
+            <div class="jp-seek-bar" style="position: relative; z-index: 1;">
+              <div class="jp-play-bar"><img src="img/time.png" id="time" /></div>
+            </div>
+          </div>
+          <a href="javascript:;"><img src="img/mobile/search.png" alt="Search" class="searchimg"></a>
+          <div class="time">
+          <div class="jp-current-time"></div>
+          <span class="slash">/</span>
+          <div class="jp-duration"></div>
+          </div>
+        </div>
+            <ul class="jp-toggles">
+              <li><a href="javascript:;" title="comments" class="jp-comment" tabindex="1">Comments</a></li> 
+              <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+              <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+               <div class="jp-volume-bar">
+              <div class="jp-volume-bar-value"></div>
+            </div>
+              <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+                <li><a href="javascript:;" class="jp-doohickey" tabindex="1" title="doohickey">Doohickey</a></li>
+              <li><a href="javascript:;" title="hd" class="jp-hd" tabindex="1" title="hd">HD</a></li>
+            <li><a href="javascript:;" class="jp-full-screen" tabindex="1" title="full screen">full screen</a></li>
+            <div class="time2">
+          <div class="jp-current-time"></div>
+          <span class="slash">/</span>
+          <div class="jp-duration"></div>
+            <a href="javascript:;"><img src="img/mobile/video.png" class="videoimg" alt="Video"></a>
+          </div>
+            </ul>
+          </div>
+        </div>
+</script>
+
+<script type="text/template" id="tmp-playlist">
+    <h2><%= update %></h2>
+</script>
+
+<script type="text/template" id="tmp-comment-popup">
+    <div class="comment-popup">
+        <form class="comment-form">
+            <h3>Add comment</h3>
+            <img src="<%= avatar %>"/>
+            <label for="title">Title</label>
+            <input name="title" type="text"/>
+            <label for="comment">Comment</label>
+            <input name="commentText" type="text"/>
+            <label for="time">Time</label>
+            <input name="time" id = "comment-play-head-pos"type="text" value="<%= time %>"/>
+            <input type="submit" value="ok" id="comment-form-submit"/>
+        </form>
+    </div>
+</script>
+
+<script type="text/template" id="tmp-comment-markers">
+    <% _.each(markers, function (marker) { %>
+        <img src="img/orangearrow.png" style="left: <%= marker.left %>%; position : absolute"/>
+    <% }); %>
+</script>
