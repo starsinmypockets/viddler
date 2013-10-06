@@ -49,16 +49,11 @@
 
         events : {
             'click #comment-form-submit' : 'commentSubmit',
-            'click .jp-comment' : 'foo'
-        },
-        
-        foo : function () {
-            console.log('foo');
         },
         
         initialize : function (opts) {
             this.__init(opts);
-            _.bindAll(this, 'commentSubmit', 'foo');
+            _.bindAll(this, 'commentSubmit');
         },
         
         onPlayerReady : function () {
@@ -94,13 +89,6 @@
                 ready: function () {
                     // bind events once player is ready
                     that.onPlayerReady();
-/*
-                    that.$el.jPlayer("setMedia", {
-                        m4v: "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
-                        ogv: "http://www.jplayer.org/video/ogv/Big_Buck_Bunny_Trailer_480x270.ogv",
-                        poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
-                    });
-*/
                 },
                 swfPath: "/js",
                 supplied: "m4v, ogv"                
@@ -115,7 +103,6 @@
             this.$('.jp-comment').on('click', function () {
                 that.loadCommentPopUp();
             });
-//            $('.jp-gui').html(_.template($('#tmp-jplayer-gui').html()));
         },
         
         playTimeLine : function () {
@@ -158,7 +145,6 @@
                     $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
                 }, that));
             };
-            
             
             // trigger this on 'ended' event OR if we reach playheadStop
             function doNext() {
@@ -236,13 +222,6 @@
             // [ length of video ] / [ number of Markers ]
             var markerSecs = Math.floor(playerData.duration) / numbMarkers;
             
-/*
-            console.log(playerData.duration);
-            console.log($('.jp-progress').width());
-            console.log('number markers '+numbMarkers);
-            console.log('marker secs '+markerSecs);
-*/
-            
             // build array of marker-points with start / stop attrs
             var markerArray = [];
             function funcs(markerArray, i) {
@@ -271,7 +250,7 @@
                 });
                 pos++; // keep track of which position we're in
             });
-
+            
             // now render this nonsense 
             data = {};
             data.markers = markers;
@@ -294,5 +273,9 @@
         render : function () {
             this.delegateEvents();
         }
+    });
+    
+    MgPlayListView = PlayListView.extend({
+        
     });
 })(jQuery);
