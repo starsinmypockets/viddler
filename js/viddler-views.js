@@ -49,19 +49,11 @@
 
         events : {
             'click #comment-form-submit' : 'commentSubmit',
-            'click .timeline-init' : 'doTimeLineStart'
         },
         
         initialize : function (opts) {
             this.__init(opts);
-            _.bindAll(this, 'commentSubmit', 'doTimeLineStart');
-        },
-        
-        doTimeLineStart : function (e) {
-            e.preventDefault();
-            console.log('clikt');
-            $('.jp-play').removeClass('.timeline-init');
-            this.playTimeLine();
+            _.bindAll(this, 'commentSubmit');
         },
         
         onPlayerReady : function () {
@@ -74,9 +66,7 @@
             var that = this;
             this.loadPlayerGui();
             this.loadJPlayer();
-            $('.timeline-init').on('click', function (e) {
-                that.doTimeLineStart(e)
-            });
+            this.playTimeLine();
         },
                 
         loadPlayList : function (opts) {
@@ -136,8 +126,9 @@
                 data = {};
                 data[stepMedia.elementType] = stepMedia.elementURL;
                 data['poster'] = stepMedia.poster;
-                // autoplay steps after first
-                doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                
+                if (this.timeLineStep < steps) {
+                    doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
+                }
             } else {
                 timeLineDone();
             }
