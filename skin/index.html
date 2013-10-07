@@ -11,7 +11,6 @@
   <script src="../js/lib/backbone.js"></script>
   <script src="../js/lib/rain_lib.js"></script>
   <script src="../js/playerOptions.js"></script>
-  <script src="../js/viddlerPlaylist.js"></script>
   <script src="../js/viddler-player.js"></script>
   <script src="../js/viddler-models.js"></script>
   <script src="../js/viddler-collections.js"></script>
@@ -19,6 +18,8 @@
 
 	<script type="text/javascript">
     $(document).ready(function(){
+        window.testInit();
+/*
       $("#jquery_jplayer_1").jPlayer({
         ready: function () {
           $(this).jPlayer("setMedia", {
@@ -30,11 +31,7 @@
         swfPath: "/js",
         supplied: "m4v, ogv"
       });
-    });
-  </script>
-  <script type="text/javascript">
-    $(document).ready(function () {
-        window.loadVidComments('12345');
+*/
     });
   </script>
 </head>
@@ -43,19 +40,60 @@
   <div id="jp_container_1" class="jp-video">
     <div class="jp-type-single">
       <div id="jquery_jplayer_1" class="jp-jplayer"></div>
-      <div class="jp-gui">
+      <div class="jp-no-solution">
+        <span>Update Required</span>
+        To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+      </div>
+    </div>
+      <div class="jp-gui"></div>
+      <div id="errors"></div>
+      <div id="comment-popup-container"></div>
+      <div id="comments-container"></div>
+
+  </div>
+
+
+  </div>
+  </div>
+</body>
+</html>
+
+<!-- Underscore Templates -->
+<script type="text/template" id="tmp-comments">
+  <div class="comments clearfix" id="comments-container">
+        <div class="row clearfix">
+            <a href="#" class="also">Also Viewed</a>
+            <div class="comments2">Comments <span class="number">(<%= items.length %>)</span></div>
+            <img src="img/viddler.jpg" class="logo" alt="Viddler">
+        </div>
+        <div class="row clearfix">
+        <% _.each(items, function (item) { %>
+            <div class="row clearfix">
+                <div class="avatar"><img src="<%- item.thumbnail %>" width=60px height=60px /></div>
+                <div class="comment">
+                      <div class="user"><%= item.userName %></div>
+                      <div class="words"><%= item.commentText %></div>
+                      <div class="datetime"><%= item.created %>
+                          <div class="date"><%= item.daysAgo %></div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time"><%= item.time %></div>
+                      </div>
+                </div>
+            </div>
+        <% }); %>
+  </div>
+</script>
+
+<script type="text/template" id="tmp-jplayer-gui">
         <div class="jp-video-play">
           <a href="javascript:;" class="jp-video-play-icon" tabindex="1">play</a>
         </div>
         <div class="jp-interface clearfix">
           <div class="jp-controls-holder">
             <ul class="jp-controls">
-              <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
+              <li><a href="javascript:;" class="jp-play init-timeline" tabindex="1">play</a></li>
               <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
             </ul>
             <div class="bar clearfix">
-            <img src="img/orangearrow.png" class="orangearrow" alt="arrow">
-            <img src="img/greyarrow.png" alt="arrow" class="greyarrow">
+                <div id="markers-container"></div>
             <div class="jp-progress" style="position: relative; z-index: 888;">
             <div class="jp-seek-bar" style="position: relative; z-index: 1;">
               <div class="jp-play-bar"><img src="img/time.png" id="time" /></div>
@@ -88,41 +126,30 @@
             </ul>
           </div>
         </div>
-      </div>
-      <div class="jp-no-solution">
-        <span>Update Required</span>
-        To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
-      </div>
+</script>
+
+<script type="text/template" id="tmp-playlist">
+    <h2><%= update %></h2>
+</script>
+
+<script type="text/template" id="tmp-comment-popup">
+    <div class="comment-popup">
+        <form class="comment-form">
+            <h3>Add comment</h3>
+            <img src="<%= avatar %>"/>
+            <label for="title">Title</label>
+            <input name="title" type="text"/>
+            <label for="comment">Comment</label>
+            <input name="commentText" type="text"/>
+            <label for="time">Time</label>
+            <input name="time" id = "comment-play-head-pos"type="text" value="<%= time %>"/>
+            <input type="submit" value="ok" id="comment-form-submit"/>
+        </form>
     </div>
-  </div>
-  <div id="comments-container"></div>
+</script>
 
-
-  </div>
-  </div>
-</body>
-</html>
-
-<!-- Underscore Templates -->
-<script type="text/template" id="tmp-comment">
-  <div class="comments clearfix" id="comments-container">
-        <div class="row clearfix">
-            <a href="#" class="also">Also Viewed</a>
-            <div class="comments2">Comments <span class="number">(<%= items.length %>)</span></div>
-            <img src="img/viddler.jpg" class="logo" alt="Viddler">
-        </div>
-        <div class="row clearfix">
-        <% _.each(items, function (item) { %>
-            <div class="row clearfix">
-                <div class="avatar"><img src="<%- item.thumbnail %>" width=60px height=60px /></div>
-                <div class="comment">
-                      <div class="user"><%= item.userName %></div>
-                      <div class="words"><%= item.commentText %></div>
-                      <div class="datetime"><%= item.created %>
-                          <div class="date"><%= item.daysAgo %></div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time"><%= item.time %></div>
-                      </div>
-                </div>
-            </div>
-        <% }); %>
-  </div>
+<script type="text/template" id="tmp-comment-markers">
+    <% _.each(markers, function (marker) { %>
+        <img src="img/orangearrow.png" style="left: <%= marker.left %>%; position : absolute"/>
+    <% }); %>
 </script>

@@ -1,0 +1,78 @@
+{
+  "id": 2342213,
+  "title": "User Phil's great playlist!",
+  "shortdescription": "User phil has a great playlist with a short description.",
+  "timeline": {
+    "title": "phils timeline",
+    "mediaElements": [
+      {
+        "id" : 123,
+        "title": "h264 video of week",
+        "position": 0,
+        "zLayer": 0,
+        "playheadStart": 10000,
+        "playheadStop": 20000,
+        "elementType": "m4v",
+        "elementURL": "http://raineverywhere.com/client/viddler/philly.mp4",
+        "poster" : "http://placekitten.com/480/270",
+        "mediaElement": {},
+        "transitionIn": {},
+        "transitionOut": {
+        }
+      },
+      {
+        "id" : 124,
+        "title": "h264 video of week",
+        "position": 0,
+        "zLayer": 0,
+        "playheadStart": 0,
+        "playheadStop": 10000,
+        "elementType": "m4v",
+        "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
+        "poster" : "http://placekitten.com/480/270",
+        "mediaElement": {},
+        "transitionIn": {},
+        "transitionOut": {
+        }
+      },
+      {
+        "id" : 125,
+        "title": "h264 video of week",
+        "position": 0,
+        "zLayer": 0,
+        "playheadStart": 16000,
+        "playheadStop": 24000,
+        "elementType": "m4v",
+        "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
+        "poster" : "http://placekitten.com/480/270",
+        "mediaElement": {},
+        "transitionIn": {},
+        "transitionOut": {
+        }
+      }
+    ]
+  },
+  "knownUserAgent": [
+    "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/537.13+ (KHTML, like Gecko) Version/5.1.7 Safari/534.57.2",
+    "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1468.0 Safari/537.36"
+  ],
+  "initializationParams": {
+    "autoplay": true
+  },
+  "playerverstion": "0.9.10",
+  "plugins": [
+    {
+      "name": "h.264",
+      "lang": "javaScript",
+      "id": "h264-0001",
+      "jsonpurl": "http://vidder.com/getPlugin/h264-001?callback=player.loadPlugin"
+    },
+    {
+      "name": "videocommentPlayer",
+      "lang": "javaScript",
+      "id": "h264-0001",
+      "jsonpurl": "http://vidder.com/getPlugin/h264-001?callback=player.loadPlugin"
+    }
+  ]
+}
