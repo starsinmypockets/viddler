@@ -1,16 +1,3 @@
-//ie console for dev
- var alertFallback = true;
-   if (typeof console === "undefined" || typeof console.log === "undefined") {
-     console = {};
-     if (alertFallback) {
-         console.log = function(msg) {
-              // alert(msg);
-         };
-     } else {
-         console.log = function() {};
-     }
-   }
-
 ( function ($) {
 var ViddlerPlayer = ViddlerPlayer || {};
 
@@ -43,7 +30,6 @@ window.testMPInit = function () {
 
 rainReady(function(){
     $(document).ready(function(){  // is JQuery ready. if rain ready than it should be
-        console.log('rainReady');
     });
 
 });    
