@@ -14,7 +14,7 @@
         "playheadStop": 20000,
         "elementType": "m4v",
         "elementURL": "http://build.toomodernmedia.com/philly.mp4",
-        "poster" : "http://placekitten.com/480/270",
+        "poster" : "",
         "mediaElement": {},
         "transitionIn": {},
         "transitionOut": {
@@ -29,7 +29,7 @@
         "playheadStop": 10000,
         "elementType": "m4v",
         "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
-        "poster" : "http://placekitten.com/480/270",
+        "poster" : "",
         "mediaElement": {},
         "transitionIn": {},
         "transitionOut": {
@@ -44,7 +44,7 @@
         "playheadStop": 24000,
         "elementType": "m4v",
         "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
-        "poster" : "http://placekitten.com/480/270",
+        "poster" : "",
         "mediaElement": {},
         "transitionIn": {},
         "transitionOut": {
