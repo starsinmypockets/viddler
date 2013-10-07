@@ -90,7 +90,7 @@
                     // bind events once player is ready
                     that.onPlayerReady();
                 },
-                swfPath: "/js",
+                swfPath: "./js",
                 supplied: "m4v, ogv",
                 errorAlerts : true
             });
