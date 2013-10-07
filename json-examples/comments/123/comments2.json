@@ -2,7 +2,7 @@
         "id" : 678,
         "media_element" : 123,
         "title": "Comment Title 2",
-        "commentText": "This is a rant about thexx comment",
+        "commentText": "Comment 1",
         "thumbnail": "http://placekitten.com/75/75",
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
@@ -12,17 +12,17 @@
         "id" : 679,
         "media_element" : 123,
         "title": "Comment Title 2",
-        "commentText": "This is a rant about the comment",
+        "commentText": "Comment 2",
         "thumbnail": "http://placekitten.com/75/75",
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "6"
+        "time" : "12"
 },{
         "id" : 680,
         "media_element" : 123,
         "title": "Comment Title 2",
-        "commentText": "This is a rant about the comment",
+        "commentText": "Comment 3",
         "thumbnail": "http://placekitten.com/75/75",
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
@@ -32,7 +32,7 @@
         "id" : 681,
         "media_element" : 123,
         "title": "Comment Title 2",
-        "commentText": "This is a rant about the comment",
+        "commentText": "Comment 4",
         "thumbnail": "http://placekitten.com/75/75",
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
@@ -42,10 +42,10 @@
         "id" : 682,
         "media_element" : 123,
         "title": "Comment Title 2",
-        "commentText": "This is a rant about the comment",
+        "commentText": "Comment 5",
         "thumbnail": "http://placekitten.com/75/75",
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "26"
+        "time" : "19"
 }]
