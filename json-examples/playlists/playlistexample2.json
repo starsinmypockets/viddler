@@ -13,7 +13,7 @@
         "playheadStart": 10000,
         "playheadStop": 20000,
         "elementType": "m4v",
-        "elementURL": "http://raineverywhere.com/client/viddler/philly.mp4",
+        "elementURL": "http://build.toomodernmedia.com/philly.mp4",
         "poster" : "http://placekitten.com/480/270",
         "mediaElement": {},
         "transitionIn": {},
