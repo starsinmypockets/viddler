@@ -59,6 +59,7 @@
         
         onPlayerReady : function () {
             console.log('Player Ready Event');
+            this.playTimeLine();
             // this.playTimeLine();
         },
         
@@ -66,7 +67,7 @@
             console.log('Model Ready Event');
             this.loadPlayerGui();
             this.loadJPlayer();
-            this.playTimeLine();
+           
             error = new ErrorMsgView({
                 errorType : "generic",
                 errorMsg : "Testing error broadcasting system"
