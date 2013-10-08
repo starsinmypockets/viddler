@@ -64,7 +64,6 @@
         
         onModelReady : function () {
             console.log('Model Ready Event');
-<<<<<<< HEAD
             this.loadPlayerGui();
             this.loadJPlayer();
             this.playTimeLine();
@@ -72,10 +71,6 @@
                 errorType : "generic",
                 errorMsg : "Testing error broadcasting system"
             }).set();
-=======
-            var that = this;
-            this.loadJPlayer();
->>>>>>> 0bb0bd61621258ccb5ad565dd379a617a2659521
         },
                 
         loadPlayList : function (opts) {
@@ -107,8 +102,6 @@
                 ready: function () {
                     // bind events once player is ready
                     that.onPlayerReady();
-                    that.loadPlayerGui();
-                    that.playTimeLine();
                 },
                 swfPath: "../skin/js`",
                 supplied: "m4v, ogv",
@@ -119,8 +112,8 @@
         // Get the controls
         loadPlayerGui : function (opts) {
             var that = this;
-            //this.setElement('.jp-gui');
-            $('.jp-gui').html(_.template($('#tmp-jplayer-gui').html()));
+            this.setElement('.jp-gui');
+            this.$el.html(_.template($('#tmp-jplayer-gui').html()));
             this.$('.jp-comment').on('click', function () {
                 that.loadCommentPopUp();
             });
