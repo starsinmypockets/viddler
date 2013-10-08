@@ -66,7 +66,8 @@ rainReady(function(){
         $('.user-login').on('click', function () {ViddlerPlayer.vent.trigger('doLogin')});
         $('.user-signup').on('click', function () {ViddlerPlayer.vent.trigger('doSignup')});
         $('.no').on('click', function () {ViddlerPlayer.vent.trigger('noAuth')});
-        /* Session Authentication */
+       
+       /* Session Authentication */
         var $doc = $(document);
         
         $doc.ajaxSend(function (event, xhr) {
@@ -78,7 +79,7 @@ rainReady(function(){
 
         $doc.ajaxError(function (event, xhr) {
             if (xhr.status == 401)
-                redirectToLogin();
+                ViddlerPlayer.vent.trigger('noAuth');
         });
     });
 
