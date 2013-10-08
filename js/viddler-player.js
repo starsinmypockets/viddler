@@ -17,7 +17,19 @@ var ViddlerPlayer = ViddlerPlayer || {};
 /* Events aggregator */
 ViddlerPlayer.vent = _.extend({}, Backbone.Events);
 
+// get login view
+ViddlerPlayer.vent.bind('doLogin', function () {
+    login = new UserLoginView({
+        tmp : '#tmp-user-login-form'
+    }).render();
+});
 
+// get signup view
+ViddlerPlayer.vent.bind('doSignup', function () {
+    login = new UserSignupView({
+        tmp : '#tmp-user-signup-form'
+    }).render();
+});
 /* Basic routing / workflow delegation */
 
 window.testInit = function () {
@@ -35,7 +47,7 @@ window.testMPInit = function () {
     });
     playlist.loadPlayList();
 
-    $('.bar').on('click', function (e) {
+    $('.bar').on('click ', function (e) {
         console.log('bar click');
         playlist.loadCommentPopUp();
     });    console.log('tesg MP');
@@ -44,6 +56,23 @@ window.testMPInit = function () {
 rainReady(function(){
     $(document).ready(function(){  // is JQuery ready. if rain ready than it should be
         console.log('rainReady');
+        $('#user-login').on('click', function () {ViddlerPlayer.vent.trigger('doLogin')});
+        $('#user-signup').on('click', function () {ViddlerPlayer.vent.trigger('doSignup')});
+        
+        /* Session Authentication */
+        var $doc = $(document);
+        
+        $doc.ajaxSend(function (event, xhr) {
+            var authToken = $.cookie('access_token');
+            if (authToken) {
+                xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+            }
+        });
+
+        $doc.ajaxError(function (event, xhr) {
+            if (xhr.status == 401)
+                redirectToLogin();
+        });
     });
 
 });    

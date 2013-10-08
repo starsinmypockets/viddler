@@ -17,6 +17,10 @@
             this.__init(opts);
         },
         
+        render : function () {
+            this.$el.html(this.template());
+        }
+        
     });
     
     // Instantiates jPlayer, handles comments etc
@@ -60,14 +64,12 @@
         onPlayerReady : function () {
             console.log('Player Ready Event');
             this.playTimeLine();
-            // this.playTimeLine();
         },
         
         onModelReady : function () {
             console.log('Model Ready Event');
             this.loadPlayerGui();
             this.loadJPlayer();
-           
             error = new ErrorMsgView({
                 errorType : "generic",
                 errorMsg : "Testing error broadcasting system"
@@ -104,7 +106,7 @@
                     // bind events once player is ready
                     that.onPlayerReady();
                 },
-                swfPath: "../skin/js",
+                swfPath: "../skin/js`",
                 supplied: "m4v, ogv",
                 errorAlerts : true
             });
@@ -122,12 +124,13 @@
         
         playTimeLine : function () {
             var that = this;
+            var status = that.$el.jPlayer().data().jPlayer.status;
             var mediaElements = this.timeline.mediaElements;
             var steps = mediaElements.length;
             var stepMedia = mediaElements[this.timeLineStep];
             var progressCounterIntv;
-            var timeLineLength = 0; // total length in ms
             var timeLineComplete = 0; // length in ms of completed steps
+            var timeLineLength = 0; // total length in ms of timeline
             var timeLineCurrent = 0;
             var jp = $(that.$el.jPlayer());
             var jpe = $.jPlayer.event;
@@ -146,7 +149,8 @@
             if (stepMedia) {
                 data = {};
                 data[stepMedia.elementType] = stepMedia.elementURL;
-                data['poster'] = stepMedia.poster;
+              //  data['poster'] = stepMedia.poster;
+                console.log(data);
                 if (this.timeLineStep < steps) {
                     doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
                 }
@@ -154,6 +158,19 @@
                 timeLineDone();
             }
             
+            $(that.$el.jPlayer()).bind($.jPlayer.event.suspend, _.bind(function (event) {
+                console.log('PROGRESS');
+                console.log(event.jPlayer.status.currentPercentRelative);
+                that.$el.jPlayer().data('jPlayer').status.currentPercentAbsolute = 98;
+                that.$el.jPlayer().data('jPlayer').status.currentPercentRelative = 98;
+                console.log(that.$el.jPlayer().data('jPlayer'));
+            }, that));
+
+            $(that.$el.jPlayer()).bind($.jPlayer.event.durationchange, _.bind(function (event) {
+                console.log('Duration change');
+            }, that));
+            
+                        
             function doTimeLineStep(data, start, stop) {
                 var playerData, duration;
                 that.$el.jPlayer("setMedia", data);
@@ -166,17 +183,17 @@
                     that.$el.jPlayer("play", start/1000);                    
                     console.log(timeLineComplete);
                     if (this.timeLineStep === 0) {
+                        // start timeline pause
                         that.$el.jPlayer('pause');
-                        // start our own progress counter
                     }
-                    
+                    window.timeLinePercent = 75;
+
                     updateCompletedTime();
                     updateCurrentTime();
                     
                     if (stop) {
                         runStopListener(stop);
                     };
-                    
                     that.getMediaElementComments();
                     // unbind canplay
                     $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
@@ -193,17 +210,16 @@
             };
             
             function updateCurrentTime() {
+                var win = window
                 var updateIntv = setInterval(function() {
-                   timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + timeLineComplete);// + timeLineComplete);
-                    console.log('timeline current: '+timeLineCurrent);
-                    console.log('timeline complete: '+timeLineComplete);
-                    console.log('tme lin length '+timeLineLength);
-                    // reset for each step
-                    console.log('stepMedia length: '+stepMedia.length);
+                   console.log('hey');
+                   timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + timeLineComplete, 10);// + timeLineComplete);
                     if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                         clearInterval(updateIntv);
                     };
-                    seekBarWidth = timeLineLength / timeLineCurrent;
+                    console.log('current: '+timeLineCurrent);
+                    console.log('total: '+timeLineLength);
+                    console.log('%: '+ timeLineLength / timeLineCurrent);
                 },1000);
             };
             function runStopListener(stop) {
@@ -353,7 +369,7 @@
         initialize : function (opts) {
             this.errorType = opts.errorType;
             this.errorMsg = opts.errorMsg;
-            this.__init;
+            this.__init(opts);
         },
         
         set : function () {
@@ -362,6 +378,33 @@
             data.msg = this.errorMsg;
             this.$el.html(_.template($('#tmp-error-msg').html(), data));
         }
+    });
+    
+    UserLoginView = BaseView.extend({
+        el : '#user-login-container',
+        
+        events : {
+            'click #user-login-submit' : 'doLogin'
+        },
+        
+        doLogin : function () {
+            alert('login!');
+            // do api login call here
+            this.$el.remove();
+        }
+    });
+    
+    UserSignupView = UserLoginView.extend({
+       events : {
+            'click #user-signup-submit' : 'doSignup'
+        },
+        
+        doSignup : function () {
+            alert('signup');
+            // do api signup here
+            this.$el.remove();
+        }
+        
     });
     
     MgPlayListView = PlayListView.extend({
