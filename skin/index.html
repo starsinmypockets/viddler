@@ -36,8 +36,9 @@
     </div>
       <div class="jp-gui"></div>
       <div id="account-container">
-          <a href="#" id="user-login">Login</a>
-          <a href="#" id="user-signup">Sign up</a>
+          <a href="#" class="user-login">Login</a>
+          <a href="#" class="user-signup">Sign up</a>
+          <a href="#" class="no">No!</a>
       </div>
       <div id="errors"></div>
       <div id="user-login-container"></div>
@@ -177,4 +178,16 @@
         <input type="password" id="password_input"/>
         <input type="submit" id="user-login-submit" value="Login">
     </form>
+</script>
+
+<script type="text/template" id="tmp-no-auth-form">
+    <span>You must be signed in to view this content</span>
+    <form id="user-login-form">
+        <label for="username">Username</label>
+        <input type="text" id="username_input"/>
+        <label for="password"> Password</label>
+        <input type="password" id="password_input"/>
+        <input type="submit" id="user-login-submit" value="Login">
+    </form>
+    <a href="#" class="user-signup">Sign up</a>
 </script>

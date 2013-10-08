@@ -30,6 +30,13 @@ ViddlerPlayer.vent.bind('doSignup', function () {
         tmp : '#tmp-user-signup-form'
     }).render();
 });
+
+// Unauthorized view
+ViddlerPlayer.vent.bind('noAuth', function () {
+    login = new UserLoginView({
+        tmp : "#tmp-no-auth-form"
+    }).render();
+});
 /* Basic routing / workflow delegation */
 
 window.testInit = function () {
@@ -56,9 +63,9 @@ window.testMPInit = function () {
 rainReady(function(){
     $(document).ready(function(){  // is JQuery ready. if rain ready than it should be
         console.log('rainReady');
-        $('#user-login').on('click', function () {ViddlerPlayer.vent.trigger('doLogin')});
-        $('#user-signup').on('click', function () {ViddlerPlayer.vent.trigger('doSignup')});
-        
+        $('.user-login').on('click', function () {ViddlerPlayer.vent.trigger('doLogin')});
+        $('.user-signup').on('click', function () {ViddlerPlayer.vent.trigger('doSignup')});
+        $('.no').on('click', function () {ViddlerPlayer.vent.trigger('noAuth')});
         /* Session Authentication */
         var $doc = $(document);
         
