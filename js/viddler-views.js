@@ -65,8 +65,8 @@
         onModelReady : function () {
             console.log('Model Ready Event');
             var that = this;
-            this.loadPlayerGui();
             this.loadJPlayer();
+            this.loadPlayerGui();
             this.playTimeLine();
         },
                 
