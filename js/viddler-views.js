@@ -10,13 +10,12 @@
             this.vent = opts.vent; 
             if (opts.tmp) {
                 this.template = _.template($(opts.tmp).html());            
-            };
+            }
         },
         
         initialize : function (opts) {
             this.__init(opts);
-        },
-        
+        }
     });
     
     // Instantiates jPlayer, handles comments etc
@@ -30,10 +29,9 @@
         
         getMediaElementComments : function () {
             var that = this;
-            comments = new CommentCollection([], {media_element : this.timeline.mediaElements[this.timeLineStep].id});
+            var comments = new CommentCollection([], {media_element : this.timeline.mediaElements[this.timeLineStep].id});
             comments.fetch({
                 success : function (collection, response) {
-                     console.log(collection);
                      that.comments = collection;
                      that.loadComments();
                      that.renderCommentMarkers();
@@ -49,7 +47,7 @@
         }, 
 
         events : {
-            'click #comment-form-submit' : 'commentSubmit',
+            'click #comment-form-submit' : 'commentSubmit'
         },
         
         initialize : function (opts) {
@@ -58,13 +56,13 @@
         },
         
         onPlayerReady : function () {
+
             console.log('Player Ready Event');
             this.playTimeLine();
             // this.playTimeLine();
         },
         
         onModelReady : function () {
-            console.log('Model Ready Event');
             this.loadPlayerGui();
             this.loadJPlayer();
            
@@ -131,22 +129,21 @@
             var timeLineCurrent = 0;
             var jp = $(that.$el.jPlayer());
             var jpe = $.jPlayer.event;
-            
+
+            var data = {};
+                        
             _.each(mediaElements, function (el) {
                 el.length = el.playheadStop - el.playheadStart;
-                console.log(el.length)
                 timeLineLength += el.length;
             });
-            
             // bind player events on first time through
             if (this.timeLineStep === 0) {
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
             }
             
             if (stepMedia) {
-                data = {};
                 data[stepMedia.elementType] = stepMedia.elementURL;
-                data['poster'] = stepMedia.poster;
+                data.poster = stepMedia.poster;
                 if (this.timeLineStep < steps) {
                     doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
                 }
@@ -160,11 +157,9 @@
                 
                 // wait for media to load
                 $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
-                    console.log('canPlay');
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
                     that.$el.jPlayer("play", start/1000);                    
-                    console.log(timeLineComplete);
                     if (this.timeLineStep === 0) {
                         that.$el.jPlayer('pause');
                         // start our own progress counter
@@ -172,79 +167,65 @@
                     
                     updateCompletedTime();
                     updateCurrentTime();
+//                    updatePlayBar();
                     
                     if (stop) {
                         runStopListener(stop);
-                    };
+                    }
                     
                     that.getMediaElementComments();
                     // unbind canplay
                     $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
                 }, that));
-            };
+            }
             
             // get total ms elapsed in previous steps
             function updateCompletedTime() {
                 if (that.timeLineStep > 0) {
                     for (var i = 0; i < that.timeLineStep; i++) {
-                        timeLineComplete += parseInt(mediaElements[i].length);
+                        timeLineComplete += parseInt(mediaElements[i].length, 10);
                     }
                 }
-            };
+            }
             
             function updateCurrentTime() {
                 var updateIntv = setInterval(function() {
-                   timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + timeLineComplete);// + timeLineComplete);
-                    console.log('timeline current: '+timeLineCurrent);
-                    console.log('timeline complete: '+timeLineComplete);
-                    console.log('tme lin length '+timeLineLength);
+                   timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000, 10) - stepMedia.playheadStart + timeLineComplete, 10);// + timeLineComplete);
                     // reset for each step
-                    console.log('stepMedia length: '+stepMedia.length);
                     if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                         clearInterval(updateIntv);
-                    };
+                    }
                     seekBarWidth = timeLineLength / timeLineCurrent;
                 },1000);
-            };
+            }
+            
+            // run stop listener
             function runStopListener(stop) {
                 var stopIntv = setInterval(function() {
                    if (that.$el.jPlayer().data().jPlayer.status.currentTime > stop/1000) {
-                      console.log('stop listener stop');
                       clearInterval(stopIntv);
                       $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
                    }
                 },100);  
-            };
+            }
+            
             
             // trigger this on 'ended' event OR if we reach playheadStop
             function doNext() {
                 that.timeLineStep++;
                 that.playTimeLine();
-            };
-            
-            // listen for stop
-            function runStopListener(stop) {
-                var intvId = setInterval(function() {
-                   if (that.$el.jPlayer().data().jPlayer.status.currentTime > stop/1000) {
-                      console.log('stop listener stop');
-                      clearInterval(intvId);
-                      $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
-                   }
-                },100);  
-            };
+            }
             
             function timeLineDone() {
-                console.log('finished');
                 that.$el.jPlayer("pause");
                 // reclass play button to restart timeline
                 return;
-            };
+            }
             
         },
                
         timeLineFinished : function () {
             clearInterval(this.pollId);
-            console.log('Time Line Finished');
         },
         
         // If attr is passed, return attr value, else return status obj
@@ -275,7 +256,6 @@
             });
             data = {};
             // @@ Do save here
-            console.log(comment);
             $('#comment-popup-container').empty();
         },
         
@@ -284,7 +264,6 @@
         renderCommentMarkers : function () {
             var that=this;
             var playerData = this.$el.jPlayer().data('jPlayer').status;
-            console.log(playerData);
 
             // [width of bar] / [ width of marker+4px ]
             var numbMarkers = Math.floor($('.jp-progress').width() / 20);
@@ -295,8 +274,8 @@
             var markerArray = [];
             function funcs(markerArray, i) {
                 markerArray[i] = {};
-                markerArray[i].start = parseInt(i*markerSecs);
-                markerArray[i].stop = parseInt(markerArray[i].start + markerSecs);
+                markerArray[i].start = parseInt(i*markerSecs, 10);
+                markerArray[i].stop = parseInt(markerArray[i].start + markerSecs, 10);
             }
             for (var i = 0; i < numbMarkers; i++) {
                 funcs(markerArray, i);
@@ -323,7 +302,6 @@
             // now render this nonsense 
             data = {};
             data.markers = markers;
-            console.log(data);
             $('#markers-container').html(_.template($('#tmp-comment-markers').html(), data));
         },
         

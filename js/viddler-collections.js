@@ -5,12 +5,11 @@
 
         
         initialize : function(models, options) {
-            this.media_element = options.media_element
+            this.media_element = options.media_element;
             return this;
         },
         
         parse : function (response) {
-            console.log(response);
             return response;
         },
 
