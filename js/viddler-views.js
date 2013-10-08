@@ -95,7 +95,7 @@
                     // bind events once player is ready
                     that.onPlayerReady();
                 },
-                swfPath: "/client/viddler/skin/",
+                swfPath: "/client/viddler/skin/jQuery.jPlayer.2.4.0",
                 supplied: "m4v, ogv",
                 errorAlerts : true
             });
