@@ -95,7 +95,7 @@
                     // bind events once player is ready
                     that.onPlayerReady();
                 },
-                swfPath: "../skin/js",
+                swfPath: "./",
                 supplied: "m4v, ogv",
                 errorAlerts : true
             });
