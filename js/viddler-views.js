@@ -66,8 +66,6 @@
             console.log('Model Ready Event');
             var that = this;
             this.loadJPlayer();
-            this.loadPlayerGui();
-            this.playTimeLine();
         },
                 
         loadPlayList : function (opts) {
@@ -94,6 +92,8 @@
                 ready: function () {
                     // bind events once player is ready
                     that.onPlayerReady();
+                    that.loadPlayerGui();
+                    that.playTimeLine();
                 },
                 swfPath: "/client/viddler/skin/jQuery.jPlayer.2.4.0",
                 supplied: "m4v, ogv",
@@ -104,8 +104,8 @@
         // Get the controls
         loadPlayerGui : function (opts) {
             var that = this;
-            this.setElement('.jp-gui');
-            this.$el.html(_.template($('#tmp-jplayer-gui').html()));
+            //this.setElement('.jp-gui');
+            $('.jp-gui').html(_.template($('#tmp-jplayer-gui').html()));
             this.$('.jp-comment').on('click', function () {
                 that.loadCommentPopUp();
             });
