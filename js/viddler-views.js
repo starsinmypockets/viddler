@@ -64,10 +64,13 @@
         
         onModelReady : function () {
             console.log('Model Ready Event');
-            var that = this;
             this.loadPlayerGui();
             this.loadJPlayer();
             this.playTimeLine();
+            error = new ErrorMsgView({
+                errorType : "generic",
+                errorMsg : "Testing error broadcasting system"
+            }).set();
         },
                 
         loadPlayList : function (opts) {
@@ -81,7 +84,12 @@
                 },
                 // @@ TODO proper error rendering
                 error : function (model, response) {
-                    alert('error loading playlist model');
+                    that.loadPlayerGui();
+                    that.loadJPlayer();
+                    error = new ErrorMsgView({
+                        errorType : "server",
+                        errorMsg : "Error retrieving playlist data from server"
+                    }).set();
                 }
             });
         },
@@ -95,7 +103,7 @@
                     // bind events once player is ready
                     that.onPlayerReady();
                 },
-                swfPath: "/client/viddler/skin/jQuery.jPlayer.2.4.0",
+                swfPath: "../skin/js`",
                 supplied: "m4v, ogv",
                 errorAlerts : true
             });
@@ -122,7 +130,6 @@
             var timeLineCurrent = 0;
             var jp = $(that.$el.jPlayer());
             var jpe = $.jPlayer.event;
-            console.log(jpe);
             
             _.each(mediaElements, function (el) {
                 el.length = el.playheadStop - el.playheadStart;
@@ -130,8 +137,6 @@
                 timeLineLength += el.length;
             });
             
-            console.log(mediaElements);
-                        
             // bind player events on first time through
             if (this.timeLineStep === 0) {
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
@@ -335,6 +340,26 @@
         
         render : function () {
             this.delegateEvents();
+        }
+    });
+    
+    // Render Errors    
+    ErrorMsgView = BaseView.extend({
+        errorType : '',
+        errorMsg : '',
+        el : '#error-message-container',
+        
+        initialize : function (opts) {
+            this.errorType = opts.errorType;
+            this.errorMsg = opts.errorMsg;
+            this.__init;
+        },
+        
+        set : function () {
+            data = {};
+            data.type = this.errorType;
+            data.msg = this.errorMsg;
+            this.$el.html(_.template($('#tmp-error-msg').html(), data));
         }
     });
     

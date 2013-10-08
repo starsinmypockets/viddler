@@ -49,11 +49,9 @@
       <div class="jp-gui"></div>
       <div id="errors"></div>
       <div id="comment-popup-container"></div>
+      <div id="error-message-container"></div>
       <div id="comments-container"></div>
-
   </div>
-
-
   </div>
   </div>
 </body>
@@ -149,59 +147,6 @@
             <input name="time" id = "comment-play-head-pos"type="text" value="<%= time %>"/>
             <input type="submit" value="ok" id="comment-form-submit"/>
         </form>
-  <div class="comments clearfix">
-    <div class="row clearfix">
-    <a href="#" class="also">Also Viewed</a>
-    <div class="comments2">Comments <span class="number">(12)</span></div>
-    <img src="img/viddler.jpg" class="logo" alt="Viddler">
-    </div>
-    <div class="row clearfix">
-    <div class="avatar"></div>
-    <div class="comment">
-      <div class="user">User 123</div>
-      <div class="words">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi minus odit libero assumenda minima quisquam.
-      </div>
-      <div class="datetime">
-      <div class="date">Yesterday</div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time3">1:30</div>
-      </div>
-    </div>
-    </div>
-    <div class="row clearfix">
-    <div class="avatar"></div>
-    <div class="comment">
-      <div class="user">User 123</div>
-      <div class="words">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi minus odit libero assumenda minima quisquam.
-      </div>
-      <div class="datetime">
-      <div class="date">Yesterday</div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time3">1:30</div>
-      </div>
-    </div>
-    </div>
-    <div class="row clearfix">
-    <div class="avatar"></div>
-    <div class="comment">
-      <div class="user">User 123</div>
-      <div class="words">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi minus odit libero assumenda minima quisquam.
-      </div>
-      <div class="datetime">
-      <div class="date">Yesterday</div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time3">1:30</div>
-      </div>
-    </div>
-    </div>
-    <div class="row clearfix">
-    <div class="avatar"></div>
-    <div class="comment">
-      <div class="user">User 123</div>
-      <div class="words">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi minus odit libero assumenda minima quisquam.
-      </div>
-      <div class="datetime">
-      <div class="date">Yesterday</div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time3">1:30</div>
-      </div>
-    </div>
     </div>
 </script>
 
@@ -209,4 +154,10 @@
     <% _.each(markers, function (marker) { %>
         <img src="img/orangearrow.png" style="left: <%= marker.left %>%; position : absolute"/>
     <% }); %>
+</script>
+
+<script type="text/template" id="tmp-error-msg">
+    <div class="vid-error-msg <%= type %>">
+        <span><%= msg %></span>
+    </div>
 </script>
