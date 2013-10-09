@@ -817,22 +817,25 @@ a.also{
 .row:first-child{
 	padding: 0px 0px 10px 0px;
 }
+
 .avatar{
 	height: 50px;
 	width: 50px;
 	background: #ffffff;
 	float:left;
-	display:inline-block;
+	display:block;
+}
+.commentinfo{
+	margin-left: 60px;
 }
 .words{
 	font-weight: 100;
 	margin-top: 5px;
 }
 .comment{
-	display:block;
 	margin-top: 5px;
 	display:inline-block;
-	margin-left: 15px;
+	font-size: 14px;
 }
 .date{
 	font-size: 16px;
@@ -843,12 +846,16 @@ a.also{
 	font-size: 16px;
 	display: inline-block;
 	color: #999999;
+	margin-left: 5px;
 }
 .datetime{
 	margin-top: 20px;
 }
 .datetime img{
 	margin-left: 70px;
+}
+.stuff{
+	float:right;
 }
 @media only screen and (max-width: 981px){
 .comment{
