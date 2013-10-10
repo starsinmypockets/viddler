@@ -72,12 +72,14 @@
         <div class="row clearfix">
         <% _.each(items, function (item) { %>
             <div class="row clearfix">
-                <div class="avatar"><img src="<%- item.thumbnail %>" width=60px height=60px /></div>
+                <div class="avatar"><img src="<%- item.thumbnail %>" width=50px height=50px /></div>
+                <div class="commentinfo">
                 <div class="user"><%= item.userName %></div>
                 <div class="comment">
                       <div class="words"><%= item.commentText %></div>
                       <div class="datetime"><%= item.created %>
-                          <div class="date"><%= item.daysAgo %></div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time"><%= item.time %></div>
+                          <div class="date"><%= item.daysAgo %></div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time3"><%= item.time %></div>
+                          </div>
                       </div>
                 </div>
             </div>
