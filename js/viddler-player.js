@@ -47,6 +47,14 @@ window.testInit = function () {
     playlist.loadPlayList();
 };
 
+window.testInitPopcorn = function () {
+    playlist = new PopcornPlayListView({
+        model : new PlayListModel({id : 2342213}),
+        vent : ViddlerPlayer.vent
+    });
+    playlist.loadPlayList();
+};
+
 window.testMPInit = function () {
     playlist = new MgPlayListView({
         model : new PlayListModel({id : 2342213}),
@@ -67,6 +75,16 @@ rainReady(function(){
         $('.user-signup').on('click', function () {ViddlerPlayer.vent.trigger('doSignup')});
         $('.no').on('click', function () {ViddlerPlayer.vent.trigger('noAuth')});
        
+        /* Popcorn Jawn */
+/*
+         var pop = Popcorn( $("#jquery_player_1"), {
+             defaults: {
+             subtitle: {
+             target: "subtitle-div"
+         }
+       }
+       });
+*/
        /* Session Authentication */
         var $doc = $(document);
         

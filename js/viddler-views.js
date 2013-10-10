@@ -1,4 +1,5 @@
 (function ($) {
+    var DEBUG = true;
     /* Abstract */
     window.BaseView = Backbone.View.extend({
         id : 'content',
@@ -31,6 +32,8 @@
         timeline : {},
         timeLineStep : 0,
         currentTime : 0,
+        jPlayer : {},
+        pop : {},
         
         getMediaElementComments : function () {
             var that = this;
@@ -63,7 +66,7 @@
         
         onPlayerReady : function () {
             console.log('Player Ready Event');
-            this.playTimeLine();
+             this.playTimeLine();
         },
         
         onModelReady : function () {
@@ -137,7 +140,6 @@
             
             _.each(mediaElements, function (el) {
                 el.length = el.playheadStop - el.playheadStart;
-                console.log(el.length)
                 timeLineLength += el.length;
             });
             
@@ -150,7 +152,6 @@
                 data = {};
                 data[stepMedia.elementType] = stepMedia.elementURL;
               //  data['poster'] = stepMedia.poster;
-                console.log(data);
                 if (this.timeLineStep < steps) {
                     doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
                 }
@@ -159,15 +160,14 @@
             }
             
             $(that.$el.jPlayer()).bind($.jPlayer.event.suspend, _.bind(function (event) {
-                console.log('PROGRESS');
-                console.log(event.jPlayer.status.currentPercentRelative);
+                //console.log(event.jPlayer.status.currentPercentRelative);
                 that.$el.jPlayer().data('jPlayer').status.currentPercentAbsolute = 98;
                 that.$el.jPlayer().data('jPlayer').status.currentPercentRelative = 98;
-                console.log(that.$el.jPlayer().data('jPlayer'));
+                //console.log(that.$el.jPlayer().data('jPlayer'));
             }, that));
 
             $(that.$el.jPlayer()).bind($.jPlayer.event.durationchange, _.bind(function (event) {
-                console.log('Duration change');
+                //console.log('Duration change');
             }, that));
             
                         
@@ -177,11 +177,17 @@
                 
                 // wait for media to load
                 $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
-                    console.log('canPlay');
+                    that.$('video').attr('data-timeline-sources', "http://build.toomodernmedia.com/viddler-player/test.srt");
+
+                    // Add subtitles
+                    that.pop = Popcorn("#jp_video_0");
+                    parsed = that.pop.parseSRT("http://build.toomodernmedia.com/viddler-player/test.srt");
+                    
+                    if (DEBUG) console.log('canPlay');
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
                     that.$el.jPlayer("play", start/1000);                    
-                    console.log(timeLineComplete);
+                    //console.log(timeLineComplete);
                     if (this.timeLineStep === 0) {
                         // start timeline pause
                         that.$el.jPlayer('pause');
@@ -212,14 +218,15 @@
             function updateCurrentTime() {
                 var win = window
                 var updateIntv = setInterval(function() {
-                   console.log('hey');
                    timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + timeLineComplete, 10);// + timeLineComplete);
                     if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                         clearInterval(updateIntv);
                     };
+/*
                     console.log('current: '+timeLineCurrent);
                     console.log('total: '+timeLineLength);
                     console.log('%: '+ timeLineLength / timeLineCurrent);
+*/
                 },1000);
             };
             function runStopListener(stop) {
@@ -407,10 +414,20 @@
         
     });
     
-    MgPlayListView = PlayListView.extend({
-        loadMgPlaylist: function () {
-            
-        }
+    PopcornPlayListView = PlayListView.extend({
+        loadPopcornPlayer : function (opts) {
+            this.setElement('#jquery_jplayer_1');
+            var that = this;
+            this.$el.jPlayer({
+                ready: function () {
+                    // bind events once player is ready
+                    that.onPlayerReady();
+                },
+                swfPath: "../skin/js`",
+                supplied: "m4v, ogv",
+                errorAlerts : true
+            });
+        },
     });
     
 })(jQuery);
