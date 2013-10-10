@@ -177,11 +177,11 @@
                 
                 // wait for media to load
                 $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
-                    that.$('video').attr('data-timeline-sources', "http://build.toomodernmedia.com/viddler-player/test.srt");
+                    that.$('video').attr('data-timeline-sources', "../test.srt");
 
                     // Add subtitles
                     that.pop = Popcorn("#jp_video_0");
-                    parsed = that.pop.parseSRT("http://build.toomodernmedia.com/viddler-player/test.srt");
+                    parsed = that.pop.parseSRT("../test.srt");
                     
                     if (DEBUG) console.log('canPlay');
                     playerData = that.$el.jPlayer().data('jPlayer').status;
