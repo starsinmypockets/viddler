@@ -72,6 +72,7 @@
         onModelReady : function () {
             console.log('Model Ready Event');
             this.loadPlayerGui();
+            console.log(this.model);
             this.loadJPlayer();
             error = new ErrorMsgView({
                 errorType : "generic",
@@ -149,8 +150,9 @@
             }
             
             if (stepMedia) {
-                data = {};
+                var data = {};
                 data[stepMedia.elementType] = stepMedia.elementURL;
+                data.subtitleSrc = stepMedia['subtitle-source'];
               //  data['poster'] = stepMedia.poster;
                 if (this.timeLineStep < steps) {
                     doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
@@ -159,29 +161,22 @@
                 timeLineDone();
             }
             
-            $(that.$el.jPlayer()).bind($.jPlayer.event.suspend, _.bind(function (event) {
-                //console.log(event.jPlayer.status.currentPercentRelative);
-                that.$el.jPlayer().data('jPlayer').status.currentPercentAbsolute = 98;
-                that.$el.jPlayer().data('jPlayer').status.currentPercentRelative = 98;
-                //console.log(that.$el.jPlayer().data('jPlayer'));
-            }, that));
-
-            $(that.$el.jPlayer()).bind($.jPlayer.event.durationchange, _.bind(function (event) {
-                //console.log('Duration change');
-            }, that));
             
-                        
             function doTimeLineStep(data, start, stop) {
                 var playerData, duration;
                 that.$el.jPlayer("setMedia", data);
                 
                 // wait for media to load
                 $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
-                    that.$('video').attr('data-timeline-sources', "../test.srt");
-
-                    // Add subtitles
-                    that.pop = Popcorn("#jp_video_0");
-                    parsed = that.pop.parseSRT("../test.srt");
+                    if (data.subtitleSrc) {
+                        // clear old popcorn events
+                        if (that.pop.hasOwnProperty('destroy')) {
+                            that.pop.destroy();
+                        }
+                        // add subtitles
+                        that.pop = Popcorn("#jp_video_0");
+                        that.pop.parseSRT(data.subtitleSrc);
+                    }
                     
                     if (DEBUG) console.log('canPlay');
                     playerData = that.$el.jPlayer().data('jPlayer').status;
