@@ -70,9 +70,9 @@
         },
         
         onModelReady : function () {
-            console.log('Model Ready Event');
+            if (DEBUG) console.log('Model Ready Event');
             this.loadPlayerGui();
-            console.log(this.model);
+            if (DEBUG) console.log(this.model);
             this.loadJPlayer();
             error = new ErrorMsgView({
                 errorType : "generic",
@@ -109,9 +109,12 @@
                 ready: function () {
                     // bind events once player is ready
                     that.onPlayerReady();
+                    $('#inspector').jPlayerInspector({
+                        jPlayer : $("#jquery_jplayer_1")
+                    });                    
                 },
-                swfPath: "../skin/js",
-                supplied: "m4v",
+                swfPath: "../skin/js`",
+                supplied: "m4v, ogv",
                 errorAlerts : true
             });
         },
@@ -126,7 +129,13 @@
             });
         },
         
-        playTimeLine : function () {
+        renderMegaTimeLine : function (opts) {
+            data = {};
+            console.log(opts);
+            $('.jp-gui').after(_.template($('#tmp-mega-timeline').html(), data));
+        },
+        
+        playTimeLine : function (opts) {
             var that = this;
             var status = that.$el.jPlayer().data().jPlayer.status;
             var mediaElements = this.timeline.mediaElements;
@@ -144,8 +153,14 @@
                 timeLineLength += el.length;
             });
             
-            // bind player events on first time through
+            // initialize timeline
             if (this.timeLineStep === 0) {
+                // add some conf check here
+                this.renderMegaTimeLine({
+                    mediaElements : mediaElements,
+                    steps : steps,
+                    timeLineLength : timeLineLength
+                });
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
             }
             
@@ -217,11 +232,11 @@
                     if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                         clearInterval(updateIntv);
                     };
-/*
-                    console.log('current: '+timeLineCurrent);
-                    console.log('total: '+timeLineLength);
-                    console.log('%: '+ timeLineLength / timeLineCurrent);
-*/
+                    if (DEBUG) {
+                        console.log('current: '+timeLineCurrent);
+                        console.log('total: '+timeLineLength);
+                        console.log('%: '+ timeLineLength / timeLineCurrent);
+                    }
                 },1000);
             };
             function runStopListener(stop) {
@@ -258,17 +273,6 @@
                 return;
             };
             
-        },
-               
-        timeLineFinished : function () {
-            clearInterval(this.pollId);
-            console.log('Time Line Finished');
-        },
-        
-        // If attr is passed, return attr value, else return status obj
-        getPlayerStatus : function (attr) {
-            var status = this.$el.jPlayer.data();
-            return status;
         },
         
         loadCommentPopUp : function (data) {
