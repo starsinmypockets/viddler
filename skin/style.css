@@ -55,3 +55,11 @@ table {
 } 
 .clearfix:after { clear: both; }
 .clearfix { zoom: 1; }
+
+/* Mega timeline -pw */
+.mega-timeline .bar {width:100%}
+.mega-timeline .jp-progress {width:100%; margin:0}
+.jp-seek-bar {width:100%; clear:both; display:block;}
+#mega-track-info {clear:both; width:100%; padding-top:2em}
+#mega-track-info {clear:both; width:100%; padding-top:2em}
+.timeline-tag {display:block;float:left; font-size:.7em}

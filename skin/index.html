@@ -41,7 +41,10 @@
          <div id="map-container"></div>
          <div id="iframe-container"></div>
 
-      <div class="jp-gui"></div>
+      <div class="jp-gui">
+      </div>
+          <div id="mega-container"></div>
+
       <div id="inspector"></div>
       <div id="account-container">
           <a href="#" class="user-login">Login</a>
@@ -203,7 +206,20 @@
 </script>
 
 <script type="text/template" id="tmp-mega-timeline">
+    <div class="clearfix"></div>
     <div class="mega-timeline">
-        Mega timeline goes here
+        <div class="bar clearfix">
+            <div class="jp-progress" style="position: relative; z-index: 888;">
+                <div class="jp-seek-bar" style="position: relative; z-index: 1;">
+                    <div class="jp-play-bar"><img src="img/time.png" id="time" /></div>
+                </div>
+            </div>
+        </div>
+        <div id="mega-track-info" class="clearfix">
+            <% _.each(elems, function (elem) { %>
+                <span class="timeline-tag" style="width : <%= elem.width %>%"><%= elem.timeLineTag %></span>
+            <% }); %>
+        </div>
     </div>
+    <div class="clearfix"></div>
 </script>

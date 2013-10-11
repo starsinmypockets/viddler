@@ -129,10 +129,15 @@
             });
         },
         
-        renderMegaTimeLine : function (opts) {
+        loadMegaTimeLine : function (opts) {
             data = {};
+            data.elems = opts.mediaElements;
+            _.each(data.elems, function (elem) {
+                elem.width = ((elem.length / opts.timeLineLength)*100).toFixed(2);
+            });
             console.log(opts);
-            $('.jp-gui').after(_.template($('#tmp-mega-timeline').html(), data));
+            console.log(data);
+            $('#mega-container').html(_.template($('#tmp-mega-timeline').html(), data));
         },
         
         playTimeLine : function (opts) {
@@ -147,6 +152,7 @@
             var timeLineCurrent = 0;
             var jp = $(that.$el.jPlayer());
             var jpe = $.jPlayer.event;
+            var tDEBUG = false;
             
             _.each(mediaElements, function (el) {
                 el.length = el.playheadStop - el.playheadStart;
@@ -156,7 +162,7 @@
             // initialize timeline
             if (this.timeLineStep === 0) {
                 // add some conf check here
-                this.renderMegaTimeLine({
+                this.loadMegaTimeLine({
                     mediaElements : mediaElements,
                     steps : steps,
                     timeLineLength : timeLineLength
@@ -193,7 +199,7 @@
                         that.pop.parseSRT(data.subtitleSrc);
                     }
                     
-                    if (DEBUG) console.log('canPlay');
+                    if (tDEBUG) console.log('canPlay');
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
                     that.$el.jPlayer("play", start/1000);                    
@@ -232,7 +238,7 @@
                     if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                         clearInterval(updateIntv);
                     };
-                    if (DEBUG) {
+                    if (tDEBUG) {
                         console.log('current: '+timeLineCurrent);
                         console.log('total: '+timeLineLength);
                         console.log('%: '+ timeLineLength / timeLineCurrent);
@@ -242,7 +248,7 @@
             function runStopListener(stop) {
                 var stopIntv = setInterval(function() {
                    if (that.$el.jPlayer().data().jPlayer.status.currentTime > stop/1000) {
-                      console.log('stop listener stop');
+                      if (tDEBUG) console.log('stop listener stop');
                       clearInterval(stopIntv);
                       $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
                    }
@@ -259,7 +265,7 @@
             function runStopListener(stop) {
                 var intvId = setInterval(function() {
                    if (that.$el.jPlayer().data().jPlayer.status.currentTime > stop/1000) {
-                      console.log('stop listener stop');
+                      if (tDEBUG) console.log('stop listener stop');
                       clearInterval(intvId);
                       $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
                    }
@@ -267,7 +273,7 @@
             };
             
             function timeLineDone() {
-                console.log('finished');
+                if (tDEBUG) console.log('finished');
                 that.$el.jPlayer("pause");
                 // reclass play button to restart timeline
                 return;
@@ -306,8 +312,7 @@
         renderCommentMarkers : function () {
             var that=this;
             var playerData = this.$el.jPlayer().data('jPlayer').status;
-            console.log(playerData);
-
+            
             // [width of bar] / [ width of marker+4px ]
             var numbMarkers = Math.floor($('.jp-progress').width() / 20);
             // [ length of video ] / [ number of Markers ]
