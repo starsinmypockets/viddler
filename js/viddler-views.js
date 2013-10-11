@@ -35,25 +35,30 @@
         jPlayer : {},
         pop : {},
         
-        getMediaElementComments : function () {
+        getMediaElementComments : function (opts) {
             var that = this;
-            comments = new CommentCollection([], {media_element : this.timeline.mediaElements[this.timeLineStep].id});
-            comments.fetch({
-                success : function (collection, response) {
-                     console.log(collection);
-                     that.comments = collection;
-                     that.loadComments();
-                     that.renderCommentMarkers();
+            var comments = {}
+            commentCollection = new CommentCollection([], {media_element : opts.id});
+//            comments = new CommentCollection([], {media_element : this.timeline.mediaElements[this.timeLineStep].id});
+            commentCollection.fetch({
+                success : function (collection, response, opts) {
+                     console.log(collection.toJSON());
+                     comments = collection.toJSON();
+                     that.loadComments({comments : comments});
+                     that.renderCommentMarkers({comments : comments});
                 },
                 error : function (collection, response) {
-                    collection = {};
-                    collection.comments = [];
-                    that.loadComments();
-                    that.renderCommentMarkers();
+                    // fail silently
+                    return {};
                 }  
             });
-            return this;
-        }, 
+            return comments;
+        },
+        
+        // return all comments for playlist
+        getPlayListComments : function (id) {
+            
+        },
 
         events : {
             'click #comment-form-submit' : 'commentSubmit',
@@ -130,14 +135,15 @@
         },
         
         loadMegaTimeLine : function (opts) {
-            data = {};
+            var that = this;
+            var data = {};
+            var comments = [];
             data.elems = opts.mediaElements;
-            _.each(data.elems, function (elem) {
-                elem.width = ((elem.length / opts.timeLineLength)*100).toFixed(2);
-            });
-            console.log(opts);
+            this.getMediaElementComments({id : this.model.id});
+            console.log(comments);
             console.log(data);
             $('#mega-container').html(_.template($('#tmp-mega-timeline').html(), data));
+            
         },
         
         playTimeLine : function (opts) {
@@ -182,7 +188,6 @@
                 timeLineDone();
             }
             
-            
             function doTimeLineStep(data, start, stop) {
                 var playerData, duration;
                 that.$el.jPlayer("setMedia", data);
@@ -216,7 +221,10 @@
                     if (stop) {
                         runStopListener(stop);
                     };
-                    that.getMediaElementComments();
+                    console.log(stepMedia);
+                    stepComments = that.getMediaElementComments({id : stepMedia.id});
+                    console.log(stepComments);
+                    that.renderCommentMarkers({comments : stepComments});
                     // unbind canplay
                     $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
                 }, that));
@@ -307,6 +315,7 @@
             $('#comment-popup-container').empty();
         },
         
+        // figer out how many comment markers fit on a timeline
         calcCommentMarkers : function (opts) {
             var that=this;
             var playerData = this.$el.jPlayer().data('jPlayer').status;
@@ -340,18 +349,18 @@
         // or player values will be empty
         renderCommentMarkers : function (opts) {
             var that = this;
-            var markerArray = this.calcCommentMarkers().markerArray;
-            var numbMarkers = this.calcCommentMarkers().numbMarkers;
-            var comments = that.comments.models;
-            if (opts && opts.comments) { comments = opts.comments }
+            var markerArray = this.calcCommentMarkers(opts).markerArray;
+            var numbMarkers = this.calcCommentMarkers(opts).numbMarkers;
+            var comments = opts.comments;
+            console.log(opts);
             // now build array of populated marker positions for rendering
             markers = [];
             var j = 0;
             var pos = 1;
             
             _.each(markerArray, function(spot) {
-                _.each(that.comments.models, function (comment) {
-                    if (comment.attributes.time >= spot.start && comment.attributes.time <= spot.stop) {
+                _.each(comments, function (comment) {
+                    if (comment.time >= spot.start && comment.time <= spot.stop) {
                         markers[j] = {};
                         markers[j].start = spot.start;
                         markers[j].stop = spot.stop;
@@ -367,13 +376,14 @@
             data = {};
             data.markers = markers;
             if (DEBUG) console.log(data);
+            // render proper context here
             $('#markers-container').html(_.template($('#tmp-comment-markers').html(), data));
         },
         
         
         loadComments : function (opts) {
             data = {};
-            data.items = this.comments.toJSON();
+            data.items = opts.comments;
             // If error, just load view with no comments
             if (opts && opts.error === true) {
                 data.error = true;
