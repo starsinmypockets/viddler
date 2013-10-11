@@ -307,32 +307,48 @@
             $('#comment-popup-container').empty();
         },
         
-        // Make sure media is loaded before calling
-        // or player values will be empty
-        renderCommentMarkers : function () {
+        calcCommentMarkers : function (opts) {
             var that=this;
             var playerData = this.$el.jPlayer().data('jPlayer').status;
+            var markerArray, numbMarkers, markerSecs;
             
-            // [width of bar] / [ width of marker+4px ]
-            var numbMarkers = Math.floor($('.jp-progress').width() / 20);
-            // [ length of video ] / [ number of Markers ]
-            var markerSecs = Math.floor(playerData.duration) / numbMarkers;
+            if (opts && opts.mega === true) {
+                numbMarkers = Math.floor($('.mega-timeline .jp-progress').width() / 20); // [width of bar] / [ width of marker+4px ]
+                markerSecs = Math.floor(opts.timeLineLength) / numbMarkers; // [ length of video ] / [ number of Markers ]
+            } else {
+                numbMarkers = Math.floor($('.jp-progress').width() / 20); // [width of bar] / [ width of marker+4px ]
+                markerSecs = Math.floor(playerData.duration) / numbMarkers; // [ length of video ] / [ number of Markers ]
+            }
             
             // build array of marker-points with start / stop attrs
-            var markerArray = [];
+            markerArray = []; 
+
             function funcs(markerArray, i) {
                 markerArray[i] = {};
                 markerArray[i].start = parseInt(i*markerSecs);
                 markerArray[i].stop = parseInt(markerArray[i].start + markerSecs);
             }
+            
             for (var i = 0; i < numbMarkers; i++) {
                 funcs(markerArray, i);
             }
-            
+            console.log(markerArray);
+            return { markerArray : markerArray, numbMarkers : numbMarkers};
+        },
+        
+        // Make sure media is loaded before calling
+        // or player values will be empty
+        renderCommentMarkers : function (opts) {
+            var that = this;
+            var markerArray = this.calcCommentMarkers().markerArray;
+            var numbMarkers = this.calcCommentMarkers().numbMarkers;
+            var comments = that.comments.models;
+            if (opts && opts.comments) { comments = opts.comments }
             // now build array of populated marker positions for rendering
             markers = [];
             var j = 0;
             var pos = 1;
+            
             _.each(markerArray, function(spot) {
                 _.each(that.comments.models, function (comment) {
                     if (comment.attributes.time >= spot.start && comment.attributes.time <= spot.stop) {
@@ -350,9 +366,10 @@
             // now render this nonsense 
             data = {};
             data.markers = markers;
-            console.log(data);
+            if (DEBUG) console.log(data);
             $('#markers-container').html(_.template($('#tmp-comment-markers').html(), data));
         },
+        
         
         loadComments : function (opts) {
             data = {};
