@@ -6,12 +6,9 @@
 	<link rel="stylesheet" href="style.css">
 	<link rel="stylesheet" type="text/css" href="skin/viddler.css">
 	<script src="jquery.js"></script>
-  <script type="text/javascript">
-    $(document).ready(function(){
-        window.testInit();
-    });
-  </script>
-	<script src="js/jquery.jplayer.min.js"></script>
+  <script src="jquery.cookie.js"></script>
+  <script src="js/jquery.jplayer.min.js"></script>
+  <script src="../js/lib/jquery.jplayer.inspector.js"></script>
   <script src="../js/lib/underscore.js"></script>
   <script src="../js/lib/backbone.js"></script>
   <script src="../js/lib/rain_lib.js"></script>
@@ -20,7 +17,14 @@
   <script src="../js/viddler-models.js"></script>
   <script src="../js/viddler-collections.js"></script>
   <script src="../js/viddler-views.js"></script>
+  <script src="../js/lib/popcorn-complete.js"></script>
 
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+        window.testInit();
+    });
+  </script>
 	
 </head>
 <body>
@@ -32,9 +36,20 @@
         <span>Update Required</span>
         To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
       </div>
-    </div>
+    </div>         
+         <div id="footnote-container"></div>
+         <div id="map-container"></div>
+         <div id="iframe-container"></div>
+
       <div class="jp-gui"></div>
+      <div id="inspector"></div>
+      <div id="account-container">
+          <a href="#" class="user-login">Login</a>
+          <a href="#" class="user-signup">Sign up</a>
+          <a href="#" class="no">No!</a>
+      </div>
       <div id="errors"></div>
+      <div id="user-login-container"></div>
       <div id="comment-popup-container"></div>
       <div id="error-message-container"></div>
       <div id="comments-container"></div>
@@ -58,12 +73,14 @@
         <div class="row clearfix">
         <% _.each(items, function (item) { %>
             <div class="row clearfix">
-                <div class="avatar"><img src="<%- item.thumbnail %>" width=60px height=60px /></div>
+                <div class="avatar"><img src="<%- item.thumbnail %>" width=50px height=50px /></div>
+                <div class="commentinfo">
                 <div class="user"><%= item.userName %></div>
                 <div class="comment">
                       <div class="words"><%= item.commentText %></div>
                       <div class="datetime"><%= item.created %>
-                          <div class="date"><%= item.daysAgo %></div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time"><%= item.time %></div>
+                          <div class="date"><%= item.daysAgo %></div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time3"><%= item.time %></div>
+                          </div>
                       </div>
                 </div>
             </div>
@@ -146,5 +163,47 @@
 <script type="text/template" id="tmp-error-msg">
     <div class="vid-error-msg <%= type %>">
         <span><%= msg %></span>
+    </div>
+</script>
+
+<script type="text/template" id="tmp-user-signup-form">
+    <form id="user-signup-form">
+        <label for="username">Username</label>
+        <input type="text" id="username_input"/>
+        <label for="email">Email</label>
+        <input type="text" id="email_input"/>
+        <label for="password">Password</label>
+        <input type="password" id="password_input"/>
+        <label for="password-confirm">Confirm Password</label>
+        <input type="password" id="password_confirm_input"/>
+        <input type="submit" id="user-signup-submit" value="Sign up">
+    </form>
+</script>
+
+<script type="text/template" id="tmp-user-login-form">
+    <form id="user-login-form">
+        <label for="username">Username</label>
+        <input type="text" id="username_input"/>
+        <label for="password"> Password</label>
+        <input type="password" id="password_input"/>
+        <input type="submit" id="user-login-submit" value="Login">
+    </form>
+</script>
+
+<script type="text/template" id="tmp-no-auth-form">
+    <span>You must be signed in to view this content</span>
+    <form id="user-login-form">
+        <label for="username">Username</label>
+        <input type="text" id="username_input"/>
+        <label for="password"> Password</label>
+        <input type="password" id="password_input"/>
+        <input type="submit" id="user-login-submit" value="Login">
+    </form>
+    <a href="#" class="user-signup">Sign up</a>
+</script>
+
+<script type="text/template" id="tmp-mega-timeline">
+    <div class="mega-timeline">
+        Mega timeline goes here
     </div>
 </script>

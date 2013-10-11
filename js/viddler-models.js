@@ -55,4 +55,19 @@
         }
     });
     
+    window.UserModel = ViddlerModel.extend({
+        defaults : {
+            userName : '',
+            email : '',
+            password : ''
+        },
+        
+        login : function (username, password) {
+            // do api call to get session cookie
+            
+            // for dev:
+            return true;
+        }
+    });
+    
 })(jQuery);

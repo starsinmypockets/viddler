@@ -1,4 +1,5 @@
 (function ($) {
+    var DEBUG = true;
     /* Abstract */
     window.BaseView = Backbone.View.extend({
         id : 'content',
@@ -15,7 +16,12 @@
         
         initialize : function (opts) {
             this.__init(opts);
+        },
+        
+        render : function () {
+            this.$el.html(this.template());
         }
+        
     });
     
     // Instantiates jPlayer, handles comments etc
@@ -26,6 +32,8 @@
         timeline : {},
         timeLineStep : 0,
         currentTime : 0,
+        jPlayer : {},
+        pop : {},
         
         getMediaElementComments : function () {
             var that = this;
@@ -58,14 +66,14 @@
         onPlayerReady : function () {
 
             console.log('Player Ready Event');
-            this.playTimeLine();
-            // this.playTimeLine();
+             this.playTimeLine();
         },
         
         onModelReady : function () {
+            if (DEBUG) console.log('Model Ready Event');
             this.loadPlayerGui();
+            if (DEBUG) console.log(this.model);
             this.loadJPlayer();
-           
             error = new ErrorMsgView({
                 errorType : "generic",
                 errorMsg : "Testing error broadcasting system"
@@ -101,8 +109,11 @@
                 ready: function () {
                     // bind events once player is ready
                     that.onPlayerReady();
+                    $('#inspector').jPlayerInspector({
+                        jPlayer : $("#jquery_jplayer_1")
+                    });                    
                 },
-                swfPath: "../skin/js",
+                swfPath: "../skin/js`",
                 supplied: "m4v, ogv",
                 errorAlerts : true
             });
@@ -118,14 +129,21 @@
             });
         },
         
-        playTimeLine : function () {
+        renderMegaTimeLine : function (opts) {
+            data = {};
+            console.log(opts);
+            $('.jp-gui').after(_.template($('#tmp-mega-timeline').html(), data));
+        },
+        
+        playTimeLine : function (opts) {
             var that = this;
+            var status = that.$el.jPlayer().data().jPlayer.status;
             var mediaElements = this.timeline.mediaElements;
             var steps = mediaElements.length;
             var stepMedia = mediaElements[this.timeLineStep];
             var progressCounterIntv;
-            var timeLineLength = 0; // total length in ms
             var timeLineComplete = 0; // length in ms of completed steps
+            var timeLineLength = 0; // total length in ms of timeline
             var timeLineCurrent = 0;
             var jp = $(that.$el.jPlayer());
             var jpe = $.jPlayer.event;
@@ -136,14 +154,23 @@
                 el.length = el.playheadStop - el.playheadStart;
                 timeLineLength += el.length;
             });
-            // bind player events on first time through
+            
+            // initialize timeline
             if (this.timeLineStep === 0) {
+                // add some conf check here
+                this.renderMegaTimeLine({
+                    mediaElements : mediaElements,
+                    steps : steps,
+                    timeLineLength : timeLineLength
+                });
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
             }
             
             if (stepMedia) {
+                var data = {};
                 data[stepMedia.elementType] = stepMedia.elementURL;
-                data.poster = stepMedia.poster;
+                data.subtitleSrc = stepMedia['subtitle-source'];
+              //  data['poster'] = stepMedia.poster;
                 if (this.timeLineStep < steps) {
                     doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
                 }
@@ -151,28 +178,41 @@
                 timeLineDone();
             }
             
+            
             function doTimeLineStep(data, start, stop) {
                 var playerData, duration;
                 that.$el.jPlayer("setMedia", data);
                 
                 // wait for media to load
                 $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
+                    if (data.subtitleSrc) {
+                        // clear old popcorn events
+                        if (that.pop.hasOwnProperty('destroy')) {
+                            that.pop.destroy();
+                        }
+                        // add subtitles
+                        that.pop = Popcorn("#jp_video_0");
+                        that.pop.parseSRT(data.subtitleSrc);
+                    }
+                    
+                    if (DEBUG) console.log('canPlay');
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
                     that.$el.jPlayer("play", start/1000);                    
+                    //console.log(timeLineComplete);
                     if (this.timeLineStep === 0) {
+                        // start timeline pause
                         that.$el.jPlayer('pause');
-                        // start our own progress counter
                     }
-                    
+                    window.timeLinePercent = 75;
+
                     updateCompletedTime();
                     updateCurrentTime();
 //                    updatePlayBar();
                     
                     if (stop) {
                         runStopListener(stop);
-                    }
-                    
+                    };
                     that.getMediaElementComments();
                     // unbind canplay
                     $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
@@ -189,13 +229,17 @@
             }
             
             function updateCurrentTime() {
+                var win = window
                 var updateIntv = setInterval(function() {
-                   timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000, 10) - stepMedia.playheadStart + timeLineComplete, 10);// + timeLineComplete);
-                    // reset for each step
+                   timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + timeLineComplete, 10);// + timeLineComplete);
                     if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                         clearInterval(updateIntv);
+                    };
+                    if (DEBUG) {
+                        console.log('current: '+timeLineCurrent);
+                        console.log('total: '+timeLineLength);
+                        console.log('%: '+ timeLineLength / timeLineCurrent);
                     }
-                    seekBarWidth = timeLineLength / timeLineCurrent;
                 },1000);
             }
             
@@ -222,16 +266,6 @@
                 return;
             }
             
-        },
-               
-        timeLineFinished : function () {
-            clearInterval(this.pollId);
-        },
-        
-        // If attr is passed, return attr value, else return status obj
-        getPlayerStatus : function (attr) {
-            var status = this.$el.jPlayer.data();
-            return status;
         },
         
         loadCommentPopUp : function (data) {
@@ -331,7 +365,7 @@
         initialize : function (opts) {
             this.errorType = opts.errorType;
             this.errorMsg = opts.errorMsg;
-            this.__init;
+            this.__init(opts);
         },
         
         set : function () {
@@ -342,10 +376,47 @@
         }
     });
     
-    MgPlayListView = PlayListView.extend({
-        loadMgPlaylist: function () {
-            
+    UserLoginView = BaseView.extend({
+        el : '#user-login-container',
+        
+        events : {
+            'click #user-login-submit' : 'doLogin'
+        },
+        
+        doLogin : function () {
+            alert('login!');
+            // do api login call here
+            this.$el.empty();
         }
+    });
+    
+    UserSignupView = UserLoginView.extend({
+       events : {
+            'click #user-signup-submit' : 'doSignup'
+        },
+        
+        doSignup : function () {
+            alert('signup');
+            // do api signup here
+            this.$el.empty();
+        }
+        
+    });
+    
+    PopcornPlayListView = PlayListView.extend({
+        loadPopcornPlayer : function (opts) {
+            this.setElement('#jquery_jplayer_1');
+            var that = this;
+            this.$el.jPlayer({
+                ready: function () {
+                    // bind events once player is ready
+                    that.onPlayerReady();
+                },
+                swfPath: "../skin/js`",
+                supplied: "m4v, ogv",
+                errorAlerts : true
+            });
+        },
     });
     
 })(jQuery);

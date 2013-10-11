@@ -14,7 +14,8 @@
         "playheadStop": 20000,
         "elementType": "m4v",
         "elementURL": "http://build.toomodernmedia.com/philly.mp4",
-        "poster" : "",
+        "subtitle-source": "../test.srt",
+        "poster" : "http://placekitten.com/480/270",
         "mediaElement": {},
         "transitionIn": {},
         "transitionOut": {
@@ -44,7 +45,8 @@
         "playheadStop": 24000,
         "elementType": "m4v",
         "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
-        "poster" : "",
+        "poster" : "http://placekitten.com/480/270",
+        "subtitle-source": "../test2.srt",
         "mediaElement": {},
         "transitionIn": {},
         "transitionOut": {
