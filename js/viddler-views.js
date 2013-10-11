@@ -36,19 +36,20 @@
         pop : {},
         
         getMediaElementComments : function (opts) {
+            console.log(opts);
             var that = this;
             var comments = {}
             commentCollection = new CommentCollection([], {media_element : opts.id});
 //            comments = new CommentCollection([], {media_element : this.timeline.mediaElements[this.timeLineStep].id});
             commentCollection.fetch({
-                success : function (collection, response, opts) {
-                     console.log(collection.toJSON());
+                success : function (collection, response) {
+                    console.log("got comments success");
                      comments = collection.toJSON();
                      that.loadComments({comments : comments});
-                     that.renderCommentMarkers({comments : comments});
+                     that.renderCommentMarkers({comments : comments, jqEl : opts.jqEl});
                 },
                 error : function (collection, response) {
-                    // fail silently
+                    console.log("got comments fail");
                     return {};
                 }  
             });
@@ -139,10 +140,10 @@
             var data = {};
             var comments = [];
             data.elems = opts.mediaElements;
-            this.getMediaElementComments({id : this.model.id});
             console.log(comments);
-            console.log(data);
+            console.log(this.model.id);
             $('#mega-container').html(_.template($('#tmp-mega-timeline').html(), data));
+            this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container"});
             
         },
         
@@ -222,9 +223,8 @@
                         runStopListener(stop);
                     };
                     console.log(stepMedia);
-                    stepComments = that.getMediaElementComments({id : stepMedia.id});
+                    stepComments = that.getMediaElementComments({id : stepMedia.id, jqEl : "#markers-container"});
                     console.log(stepComments);
-                    that.renderCommentMarkers({comments : stepComments});
                     // unbind canplay
                     $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
                 }, that));
@@ -341,13 +341,13 @@
             for (var i = 0; i < numbMarkers; i++) {
                 funcs(markerArray, i);
             }
-            console.log(markerArray);
             return { markerArray : markerArray, numbMarkers : numbMarkers};
         },
         
         // Make sure media is loaded before calling
         // or player values will be empty
         renderCommentMarkers : function (opts) {
+            console.log(opts);
             var that = this;
             var markerArray = this.calcCommentMarkers(opts).markerArray;
             var numbMarkers = this.calcCommentMarkers(opts).numbMarkers;
@@ -375,9 +375,10 @@
             // now render this nonsense 
             data = {};
             data.markers = markers;
+            console.log(data);
             if (DEBUG) console.log(data);
+            $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));                
             // render proper context here
-            $('#markers-container').html(_.template($('#tmp-comment-markers').html(), data));
         },
         
         
