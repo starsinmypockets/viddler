@@ -392,7 +392,7 @@
         doLogin : function () {
             alert('login!');
             // do api login call here
-            this.$el.remove();
+            this.$el.empty();
         }
     });
     
@@ -404,7 +404,7 @@
         doSignup : function () {
             alert('signup');
             // do api signup here
-            this.$el.remove();
+            this.$el.empty();
         }
         
     });
