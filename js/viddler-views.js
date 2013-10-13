@@ -48,13 +48,13 @@
 
                      that.loadComments({comments : comments});
                      that.renderCommentMarkers({comments : comments, jqEl : opts.jqEl});
+                    return comments;
                 },
                 error : function (collection, response) {
                     if (DEBUG) console.log("Error loading comments");
                     return {};
                 }  
             });
-            return comments;
         },
         
         events : {
@@ -217,6 +217,8 @@
                         runStopListener(stop);
                     };
                     if (DEBUG) console.log(stepMedia);
+                    
+                    //async trouble
                     stepComments = that.getMediaElementComments({id : stepMedia.id, jqEl : "#markers-container"});
                     if (DEBUG) console.log(stepComments);
                     // unbind canplay
@@ -345,13 +347,13 @@
             
             for (var i = 0; i < numbMarkers; i++) {
             
-                function funcs(markerArray, i) {
+                function funcs(i) {
                     markerArray[i] = {};
                     markerArray[i].start = parseInt(i*markerSecs);
                     markerArray[i].stop = parseInt(markerArray[i].start + markerSecs);
                 }
             
-                funcs(markerArray, i);
+                funcs(i);
             }
             
             return { markerArray : markerArray, numbMarkers : numbMarkers};
@@ -371,9 +373,10 @@
             // now build array of populated marker positions for rendering
             console.log(markerArray);
             console.log(comments);
+            console.log(opts);
             _.each(markerArray, function(spot) {
                 _.each(comments, function (comment) {
-                    if (comment.time > spot.start && comment.time <= spot.stop) {
+                    if (comment.time >= spot.start && comment.time <= spot.stop) {
                         markers[j] = {};
                         markers[j].start = spot.start;
                         markers[j].stop = spot.stop;
@@ -396,14 +399,15 @@
         
         
         loadComments : function (opts) {
-            data = {};
+            var data = {};
+            
             data.items = opts.comments;
             // If error, just load view with no comments
             if (opts && opts.error === true) {
                 data.error = true;
                 data.items = [];
             }
-            $(opts.jqEl).html(_.template($('#tmp-comments').html(), data));
+            $("#comments-container").html(_.template($('#tmp-comments').html(), data));
             return this;
         },
         
