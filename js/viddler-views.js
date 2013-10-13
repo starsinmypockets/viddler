@@ -147,7 +147,7 @@
                 timeLineCurrent = 0,
                 jp = $(that.$el.jPlayer()),
                 jpe = $.jPlayer.event,
-                tDEBUG = false;
+                tDEBUG = true;
             
             _.each(mediaElements, function (el) {
                 el.length = el.playheadStop - el.playheadStart;
@@ -228,14 +228,16 @@
             function updateCompletedTime() {
                 if (that.timeLineStep > 0) {
                     for (var i = 0; i < that.timeLineStep; i++) {
-                        timeLineComplete += parseInt(mediaElements[i].length);
+                        function func (i) {
+                            timeLineComplete += parseInt(mediaElements[i].length);
+                        }
+                        func(i);
                     }
                 }
             }
             
             function updateCurrentTime() {
-                var win = window,
-                    updateIntv = setInterval(function() {
+                var updateIntv = setInterval(function() {
                         timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + timeLineComplete, 10);// + timeLineComplete);
                         if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                             clearInterval(updateIntv);
@@ -243,8 +245,9 @@
                         if (tDEBUG) {
                             console.log('current: '+timeLineCurrent);
                             console.log('total: '+timeLineLength);
-                            console.log('%: '+ timeLineLength / timeLineCurrent);
+                            console.log('%: '+ ((timeLineCurrent / timeLineLength)*100));
                         }
+                    $('.mega-timeline .jp-play-bar').width('10%');
                     },1000);
             }
             
