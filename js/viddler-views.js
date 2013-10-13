@@ -334,21 +334,28 @@
             console.log(opts);
             if (opts && opts.mega === true) {
                 numbMarkers = Math.floor($('.mega-timeline .bar').width() / 20); // [width of bar] / [ width of marker+4px ]
-                markerSecs = Math.floor(opts.timeLineLength) / numbMarkers; // [ length of video ] / [ number of Markers ]
+                markerSecs = Math.floor(opts.timeLineLength / numbMarkers); // [ length of video ] / [ number of Markers ]
             } else {
                 numbMarkers = Math.floor($('.jp-progress').width() / 20); // [width of bar] / [ width of marker+4px ]
-                markerSecs = Math.floor(playerData.duration) / numbMarkers; // [ length of video ] / [ number of Markers ]
+                markerSecs = Math.floor(playerData.duration / numbMarkers); // [ length of video ] / [ number of Markers ]
             }
             
             // build array of marker-points with start / stop attrs
             markerArray = []; 
             
-            for (var i = 0; i < numbMarkers; i++) {
+            console.log(markerSecs);
+            console.log(numbMarkers);
+            
+            for (var i = 1; i <+ numbMarkers; i++) {
+
+                markerArray[0] = {};                
+                markerArray[0].start = 0;
+                markerArray[0].stop = markerSecs;
             
                 function funcs(i) {
                     markerArray[i] = {};
-                    markerArray[i].start = parseInt(i*markerSecs);
-                    markerArray[i].stop = parseInt(markerArray[i].start + markerSecs);
+                    markerArray[i].start = markerArray[i-1].stop + 1;
+                    markerArray[i].stop = markerArray[i].start + markerSecs;
                 }
             
                 funcs(i);
