@@ -242,13 +242,17 @@
                         if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                             clearInterval(updateIntv);
                         };
+                        timeLinePercent = (timeLineCurrent / timeLineLength)*100
                         if (tDEBUG) {
                             console.log('current: '+timeLineCurrent);
                             console.log('total: '+timeLineLength);
-                            console.log('%: '+ ((timeLineCurrent / timeLineLength)*100));
+                            console.log(timeLinePercent);
+                         //   console.log('%: '+ ((timeLineCurrent / timeLineLength)*100));
                         }
-                    $('.mega-timeline .jp-play-bar').width('10%');
-                    },1000);
+                    $('.mega-timeline .jp-seek-bar').width('100%');
+                    $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
+
+                    },250);
             }
             
             function runStopListener(stop) {
@@ -258,7 +262,7 @@
                       clearInterval(stopIntv);
                       $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
                    }
-                },100);  
+                },1000);  
             }
             
             // trigger this on 'ended' event OR if we reach playheadStop
