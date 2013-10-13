@@ -47,7 +47,7 @@
                                  console.log(comments);
 
                      that.loadComments({comments : comments});
-                     that.renderCommentMarkers({comments : comments, jqEl : opts.jqEl});
+                     that.renderCommentMarkers({comments : comments, jqEl : opts.jqEl, timeLineLength : opts.timeLineLength/1000, mega : opts.mega});
                     return comments;
                 },
                 error : function (collection, response) {
@@ -158,13 +158,11 @@
             if (this.timeLineStep === 0) {
                 // add some conf check here
                 
-/*
                 this.loadMegaTimeLine({
                     mediaElements : mediaElements,
                     steps : steps,
                     timeLineLength : timeLineLength
                 });
-*/
                 
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
             }
@@ -371,9 +369,12 @@
                 pos = 1;
                 
             // now build array of populated marker positions for rendering
-            console.log(markerArray);
-            console.log(comments);
-            console.log(opts);
+            if (DEBUG) {
+                console.log(markerArray);
+                console.log(comments);
+                console.log(opts);                
+            }
+
             _.each(markerArray, function(spot) {
                 _.each(comments, function (comment) {
                     if (comment.time >= spot.start && comment.time <= spot.stop) {
@@ -391,7 +392,6 @@
             // now render this nonsense 
             data = {};
             data.markers = markers;
-            console.log(data);
             if (DEBUG) console.log(data);
             $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));                
             // render proper context here
@@ -429,6 +429,7 @@
                 data = {},
                 comments = [];
             
+            // show media segment lengths
             data.elems = opts.mediaElements;
             _.each(data.elems, function (elem) {
                 elem.width = ((elem.length / opts.timeLineLength)*100).toFixed(2);
