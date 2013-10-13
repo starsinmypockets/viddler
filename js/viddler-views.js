@@ -38,10 +38,14 @@
         getMediaElementComments : function (opts) {
             var that = this,
                 comments = {};
+                console.log(opts);
+                
             commentCollection = new CommentCollection([], {media_element : opts.id});
             commentCollection.fetch({
                 success : function (collection, response) {
                      comments = collection.toJSON();
+                                 console.log(comments);
+
                      that.loadComments({comments : comments});
                      that.renderCommentMarkers({comments : comments, jqEl : opts.jqEl});
                 },
@@ -154,11 +158,13 @@
             if (this.timeLineStep === 0) {
                 // add some conf check here
                 
+/*
                 this.loadMegaTimeLine({
                     mediaElements : mediaElements,
                     steps : steps,
                     timeLineLength : timeLineLength
                 });
+*/
                 
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
             }
@@ -319,12 +325,13 @@
             $('#comment-popup-container').empty();
         },
         
-        // figer out how many comment markers fit on a timeline
+        // how many comment markers fit on a timeline?
         calcCommentMarkers : function (opts) {
-            var that=this,
-                playerData = this.$el.jPlayer().data('jPlayer').status,
-                markerArray, numbMarkers, markerSecs;
+            var markerArray, numbMarkers, markerSecs,
+                that=this,
+                playerData = this.$el.jPlayer().data('jPlayer').status;
             
+            console.log(opts);
             if (opts && opts.mega === true) {
                 numbMarkers = Math.floor($('.mega-timeline .bar').width() / 20); // [width of bar] / [ width of marker+4px ]
                 markerSecs = Math.floor(opts.timeLineLength) / numbMarkers; // [ length of video ] / [ number of Markers ]
@@ -335,17 +342,18 @@
             
             // build array of marker-points with start / stop attrs
             markerArray = []; 
-
-            function funcs(markerArray, i) {
-                markerArray[i] = {};
-                markerArray[i].start = parseInt(i*markerSecs);
-                markerArray[i].stop = parseInt(markerArray[i].start + markerSecs);
-            }
             
             for (var i = 0; i < numbMarkers; i++) {
+            
+                function funcs(markerArray, i) {
+                    markerArray[i] = {};
+                    markerArray[i].start = parseInt(i*markerSecs);
+                    markerArray[i].stop = parseInt(markerArray[i].start + markerSecs);
+                }
+            
                 funcs(markerArray, i);
             }
-            console.log(markerArray);
+            
             return { markerArray : markerArray, numbMarkers : numbMarkers};
         },
         
@@ -360,13 +368,12 @@
                 j = 0,
                 pos = 1;
                 
-            console.log(opts);
             // now build array of populated marker positions for rendering
-
-            
+            console.log(markerArray);
+            console.log(comments);
             _.each(markerArray, function(spot) {
                 _.each(comments, function (comment) {
-                    if (comment.time >= spot.start && comment.time <= spot.stop) {
+                    if (comment.time > spot.start && comment.time <= spot.stop) {
                         markers[j] = {};
                         markers[j].start = spot.start;
                         markers[j].stop = spot.stop;
@@ -396,7 +403,7 @@
                 data.error = true;
                 data.items = [];
             }
-            $('#comments-container').html(_.template($('#tmp-comments').html(), data));
+            $(opts.jqEl).html(_.template($('#tmp-comments').html(), data));
             return this;
         },
         
