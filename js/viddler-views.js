@@ -1,5 +1,5 @@
 (function ($) {
-    var DEBUG = true;
+    var DEBUG = false;
     /* Abstract */
     window.BaseView = Backbone.View.extend({
         id : 'content',
@@ -40,13 +40,11 @@
                 comments = {};
                 
             commentCollection = new CommentCollection([], {media_element : opts.id});
-            console.log(opts.id);
             commentCollection.fetch({
                 success : function (collection, response) {
                      comments = collection.toJSON();
                      that.loadComments({comments : comments});
                      if (opts.mega===true)that.renderCommentMarkers({comments : comments, jqEl : opts.jqEl, timeLineLength : opts.timeLineLength/1000, mega : opts.mega});
-                     console.log(comments);
                     return comments;
                 },
                 error : function (collection, response) {
@@ -180,7 +178,6 @@
                 data.subtitleSrc = stepMedia['subtitle-source'];
                 data.sprites = stepMedia['sprites'];
                 // data['poster'] = stepMedia.poster;
-                if (1) console.log(data);
                 if (this.timeLineStep < steps) {
                     doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
                 }
