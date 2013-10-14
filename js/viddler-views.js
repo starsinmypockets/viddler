@@ -38,14 +38,11 @@
         getMediaElementComments : function (opts) {
             var that = this,
                 comments = {};
-                console.log(opts);
                 
             commentCollection = new CommentCollection([], {media_element : opts.id});
             commentCollection.fetch({
                 success : function (collection, response) {
                      comments = collection.toJSON();
-                                 console.log(comments);
-
                      that.loadComments({comments : comments});
                      that.renderCommentMarkers({comments : comments, jqEl : opts.jqEl, timeLineLength : opts.timeLineLength/1000, mega : opts.mega});
                     return comments;
@@ -81,7 +78,7 @@
                     errorMsg : "Testing error broadcasting system"
                 }).set();
             }
-            this.loadPlayerGui();
+           // this.loadPlayerGui();
             this.loadJPlayer();
         },
                 
@@ -218,12 +215,10 @@
                         _.each(data.sprites, function (sprite) {
                             var spriteId = Math.random().toString(36).substring(7);  // give the sprite a temp id
                             that.pop.cue(sprite.start/1000, function () {
-                                console.log('SPRITE EVENT');
                                 html = $(sprite.html).attr("data-sprite-id", spriteId);
                                 renderSprite(html);
                             });
                             that.pop.cue(sprite.stop/1000, function () {
-                                console.log('SPRITE DESTROY');
                                 destroySprite(spriteId);   
                             });
                         });
@@ -233,7 +228,6 @@
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
                     that.$el.jPlayer("play", start/1000);                    
-                    //console.log(timeLineComplete);
                     if (this.timeLineStep === 0) {
                         // start timeline pause
                         that.$el.jPlayer('pause');
@@ -278,7 +272,6 @@
                             console.log('current: '+timeLineCurrent);
                             console.log('total: '+timeLineLength);
                             console.log(timeLinePercent);
-                         //   console.log('%: '+ ((timeLineCurrent / timeLineLength)*100));
                         }
                     $('.mega-timeline .jp-seek-bar').width('100%');
                     $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
@@ -330,8 +323,6 @@
             _.each(data.elems, function (elem) {
                 elem.width = ((elem.length / opts.timeLineLength)*100).toFixed(2);
             });
-            console.log(opts);
-            console.log(this.model.id);
             $('#mega-container').html(_.template($('#tmp-mega-timeline').html(), data));
             this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
         },
@@ -359,7 +350,6 @@
             });
             data = {};
             // @@ Do save here
-            console.log(comment);
             $('#comment-popup-container').empty();
         },
         
@@ -369,7 +359,6 @@
                 that=this,
                 playerData = this.$el.jPlayer().data('jPlayer').status;
             
-            console.log(opts);
             if (opts && opts.mega === true) {
                 numbMarkers = Math.floor($('.mega-timeline .bar').width() / 20); // [width of bar] / [ width of marker+4px ]
                 markerSecs = Math.floor(opts.timeLineLength / numbMarkers); // [ length of video ] / [ number of Markers ]
@@ -380,9 +369,6 @@
             
             // build array of marker-points with start / stop attrs
             markerArray = []; 
-            
-            console.log(markerSecs);
-            console.log(numbMarkers);
             
             for (var i = 1; i <+ numbMarkers; i++) {
 
@@ -479,8 +465,6 @@
             _.each(data.elems, function (elem) {
                 elem.width = ((elem.length / opts.timeLineLength)*100).toFixed(2);
             });
-            console.log(opts);
-            console.log(this.model.id);
             $('#mega-container').html(_.template($('#tmp-mega-timeline').html(), data));
             this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
         },

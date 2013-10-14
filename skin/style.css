@@ -55,5 +55,9 @@ table {
 } 
 .clearfix:after { clear: both; }
 .clearfix { zoom: 1; }
+
+/* Paul's provisional style */
+#mega-track-info {margin:1em 0}
+#account-container {margin:2em}
 .sprite {font-weight:bold; background-color:#E2F5AB; padding:.4em; border-radius:2em; opacity:0.4;
 filter:alpha(opacity=40);}
