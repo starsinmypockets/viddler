@@ -272,7 +272,8 @@
             }
             
             function updateCurrentTime() {
-                var updateIntv = setInterval(function() {
+                if (stepMedia) {
+                    var updateIntv = setInterval(function() {
                         timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + timeLineComplete, 10);// + timeLineComplete);
                         if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                             clearInterval(updateIntv);
@@ -286,7 +287,8 @@
                     $('.mega-timeline .jp-seek-bar').width('100%');
                     $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
 
-                    },250);
+                    },250);   
+                }
             }
             
             function runStopListener(stop) {

@@ -11,8 +11,6 @@
         },
 
         url : function () {
-                console.log(this.media_element);        
-
             return '../json-examples/comments/'+this.media_element+'/comments2.json';
         }
     });
