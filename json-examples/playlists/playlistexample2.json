@@ -18,6 +18,13 @@
         "elementType": "m4v",
         "elementURL": "http://build.toomodernmedia.com/philly.mp4",
         "subtitle-source": "../test.srt",
+        "sprites" : [
+            {
+                "start" : "14400",
+                "stop" : "15400",
+                "html" : "<div class='sprite sprite-1'>Viddler supports sprites!</div>"
+            }
+        ],
         "poster" : "http://placekitten.com/480/270",
         "mediaElement": {},
         "transitionIn": {},
@@ -54,6 +61,13 @@
         "timeLineRelStop": 40,
         "elementType": "m4v",
         "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
+        "sprites" : [
+            {
+                "start" : "18400",
+                "stop" : "20400",
+                "html" : "<div class='sprite sprite-2'>More sprites!</div>"
+            }
+        ],
         "poster" : "http://placekitten.com/480/270",
         "subtitle-source": "../test2.srt",
         "mediaElement": {},
