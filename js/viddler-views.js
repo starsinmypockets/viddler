@@ -143,6 +143,7 @@
         playTimeLine : function (opts) {
             var progressCounterIntv,
                 that = this,
+                opts = opts || {},
                 status = that.$el.jPlayer().data().jPlayer.status,
                 mediaElements = this.timeline.mediaElements,
                 steps = mediaElements.length;
@@ -152,7 +153,7 @@
                 timeLineCurrent = 0,
                 jp = $(that.$el.jPlayer()),
                 jpe = $.jPlayer.event,
-                tDEBUG = false;
+                tDEBUG = true;
             
             _.each(mediaElements, function (el) {
                 el.length = el.playheadStop - el.playheadStart;
@@ -235,7 +236,7 @@
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
                     that.$el.jPlayer("play", start/1000);                    
-                    if (this.timeLineStep === 0) {
+                    if (this.timeLineStep === 0 && opts.autostart !== true) {
                         // start timeline pause
                         that.$el.jPlayer('pause');
                     }
@@ -258,6 +259,7 @@
             
             // get total ms elapsed in previous steps
             function updateCompletedTime() {
+                if (tDEBUG) console.log('update step');
                 if (that.timeLineStep > 0) {
                     for (var i = 0; i < that.timeLineStep; i++) {
                         function func (i) {
@@ -271,17 +273,17 @@
             function updateCurrentTime() {
                 if (stepMedia) {
                     var updateIntv = setInterval(function() {
-                        timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + timeLineComplete, 10);// + timeLineComplete);
+                        timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + timeLineComplete, 10);
                         if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                             clearInterval(updateIntv);
-                        };
+                        }
                         timeLinePercent = (timeLineCurrent / timeLineLength)*100
                         if (tDEBUG) {
                             console.log('current: '+timeLineCurrent);
                             console.log('total: '+timeLineLength);
                             console.log(timeLinePercent);
                         }
-                    $('.mega-timeline .jp-seek-bar').width('100%');
+//                    $('.mega-timeline .jp-seek-bar').width('100%');
                     $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
 
                     },250);   
@@ -318,7 +320,14 @@
             function timeLineDone() {
                 if (tDEBUG) console.log('finished');
                 that.$el.jPlayer("pause");
-                // reclass play button to restart timeline
+                $('.jp-play').addClass('timeline-restart');
+                $('.timeline-restart').on('click', function (e) {
+                    e.preventDefault();
+                    $('.timeline-restart').removeClass('.timeline-restart');
+                    that.timeLineStep = 0;
+                    that.playTimeLine(({autostart : true}));
+                    
+                });
                 return;
             }
         },
