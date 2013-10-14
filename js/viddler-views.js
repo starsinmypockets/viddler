@@ -1,5 +1,5 @@
 (function ($) {
-    var DEBUG = false;
+    var DEBUG = true;
     /* Abstract */
     window.BaseView = Backbone.View.extend({
         id : 'content',
@@ -40,11 +40,13 @@
                 comments = {};
                 
             commentCollection = new CommentCollection([], {media_element : opts.id});
+            console.log(opts.id);
             commentCollection.fetch({
                 success : function (collection, response) {
                      comments = collection.toJSON();
                      that.loadComments({comments : comments});
-                     that.renderCommentMarkers({comments : comments, jqEl : opts.jqEl, timeLineLength : opts.timeLineLength/1000, mega : opts.mega});
+                     if (opts.mega===true)that.renderCommentMarkers({comments : comments, jqEl : opts.jqEl, timeLineLength : opts.timeLineLength/1000, mega : opts.mega});
+                     console.log(comments);
                     return comments;
                 },
                 error : function (collection, response) {
@@ -56,11 +58,16 @@
         
         events : {
             'click #comment-form-submit' : 'commentSubmit',
+            'click .jp-seek-bar' : 'doSeek'
         },
         
         initialize : function (opts) {
             this.__init(opts);
-            _.bindAll(this, 'commentSubmit');
+            _.bindAll(this, 'commentSubmit', 'doSeek');
+        },
+        
+        doSeek : function () {
+            alert("seek");
         },
         
         onPlayerReady : function () {
@@ -125,8 +132,10 @@
         // Get the controls
         loadPlayerGui : function (opts) {
             var that = this;
-/*             this.setElement('.jp-gui'); */
-            $('.jp-gui').html(_.template($('#tmp-mega-gui').html()));
+            this.setElement('.jp-gui'); 
+            this.$el.html(_.template($('#tmp-mega-gui').html()));
+
+//            $('.jp-gui').html(_.template($('#tmp-mega-gui').html()));
             //this.$el.html(_.template($('#tmp-mega-gui').html()));
             this.$('.jp-comment').on('click', function () {
                 that.loadCommentPopUp();
@@ -324,7 +333,15 @@
             _.each(data.elems, function (elem) {
                 elem.width = ((elem.length / opts.timeLineLength)*100).toFixed(2);
             });
+            
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
+            $('.mega-timeline .bar .jp-seek-bar').on('click', function (e) {
+                var seekPerc = e.offsetX/($(e.currentTarget).width());
+                e.preventDefault();
+                console.log(e);
+                console.log(seekPerc);
+            });
+            
             this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
         },
         
@@ -496,7 +513,7 @@
         el : '#user-login-container',
         
         events : {
-            'click #user-login-submit' : 'doLogin'
+            'click #user-login-submit' : 'doLogin',
         },
         
         doLogin : function () {

@@ -57,7 +57,9 @@ table {
 .clearfix { zoom: 1; }
 
 /* Paul's provisional style */
-#mega-track-info {margin:1em 0}
+.mega-timeline .jp-progress .jp-seek-bar {width:100%;}
+#mega-track-info {margin-top:12px; width:100%}
+.timeline-tag {display:block; float:left; font-size:.6em}
 #account-container {margin:2em}
 .sprite {font-weight:bold; background-color:#E2F5AB; padding:.4em; border-radius:2em; opacity:0.4;
 filter:alpha(opacity=40);}
