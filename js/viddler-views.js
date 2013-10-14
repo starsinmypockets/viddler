@@ -78,7 +78,7 @@
                     errorMsg : "Testing error broadcasting system"
                 }).set();
             }
-           // this.loadPlayerGui();
+            this.loadPlayerGui();
             this.loadJPlayer();
         },
                 
@@ -125,8 +125,9 @@
         // Get the controls
         loadPlayerGui : function (opts) {
             var that = this;
-            this.setElement('.jp-gui');
-            this.$el.html(_.template($('#tmp-jplayer-gui').html()));
+/*             this.setElement('.jp-gui'); */
+            $('.jp-gui').html(_.template($('#tmp-mega-gui').html()));
+            //this.$el.html(_.template($('#tmp-mega-gui').html()));
             this.$('.jp-comment').on('click', function () {
                 that.loadCommentPopUp();
             });
@@ -323,7 +324,7 @@
             _.each(data.elems, function (elem) {
                 elem.width = ((elem.length / opts.timeLineLength)*100).toFixed(2);
             });
-            $('#mega-container').html(_.template($('#tmp-mega-timeline').html(), data));
+            $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
             this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
         },
         
