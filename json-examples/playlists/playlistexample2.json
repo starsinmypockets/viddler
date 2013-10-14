@@ -20,8 +20,8 @@
         "subtitle-source": "../test.srt",
         "sprites" : [
             {
-                "start" : "14400",
-                "stop" : "15400",
+                "start" : "11400",
+                "stop" : "18000",
                 "html" : "<div class='sprite sprite-1'>Viddler supports sprites!</div>"
             }
         ],

@@ -1,5 +1,5 @@
 (function ($) {
-    var DEBUG = true;
+    var DEBUG = false;
     /* Abstract */
     window.BaseView = Backbone.View.extend({
         id : 'content',
@@ -68,6 +68,7 @@
         
         onPlayerReady : function () {
             if (DEBUG) console.log('Player Ready Handler');
+            this.pop = Popcorn("#jp_video_0");
             this.playTimeLine();
         },
         
@@ -93,7 +94,6 @@
                     that.onModelReady();
                     that.render();
                 },
-                // @@ TODO proper error rendering
                 error : function (model, response) {
                     that.loadPlayerGui();
                     that.loadJPlayer();
@@ -147,7 +147,7 @@
                 timeLineCurrent = 0,
                 jp = $(that.$el.jPlayer()),
                 jpe = $.jPlayer.event,
-                tDEBUG = true;
+                tDEBUG = false;
             
             _.each(mediaElements, function (el) {
                 el.length = el.playheadStop - el.playheadStart;
@@ -171,12 +171,26 @@
                 var data = {};
                 data[stepMedia.elementType] = stepMedia.elementURL;
                 data.subtitleSrc = stepMedia['subtitle-source'];
+                data.sprites = stepMedia['sprites'];
                 // data['poster'] = stepMedia.poster;
+                if (1) console.log(data);
                 if (this.timeLineStep < steps) {
                     doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
                 }
             } else {
                 timeLineDone();
+            }
+            
+            function renderSprite(html) {
+                that.$el.append(html).find('.sprite').css({
+                    position : "absolute",
+                    top : 10,
+                    left : 10
+                });
+            }
+            
+            function destroySprite(id) {
+                $('*[data-sprite-id="'+id+'"]').remove();
             }
             
             function doTimeLineStep(data, start, stop) {
@@ -188,16 +202,33 @@
                 
                 // wait for media to load
                 $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
+                    
+                    // Subtitles
                     if (data.subtitleSrc && subtitles === true) {
-                        // clear old popcorn events
+                        // clear popcorn events from previous step
                         if (that.pop.hasOwnProperty('destroy')) {
                             that.pop.destroy();
                         }
                         // add subtitles
-                        that.pop = Popcorn("#jp_video_0");
                         that.pop.parseSRT(data.subtitleSrc);
                     }
                     
+                    // Sprites
+                    if (data.sprites) {
+                        _.each(data.sprites, function (sprite) {
+                            var spriteId = Math.random().toString(36).substring(7);  // give the sprite a temp id
+                            that.pop.cue(sprite.start/1000, function () {
+                                console.log('SPRITE EVENT');
+                                html = $(sprite.html).attr("data-sprite-id", spriteId);
+                                renderSprite(html);
+                            });
+                            that.pop.cue(sprite.stop/1000, function () {
+                                console.log('SPRITE DESTROY');
+                                destroySprite(spriteId);   
+                            });
+                        });
+                    }
+                                    
                     if (tDEBUG) console.log('canPlay');
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
