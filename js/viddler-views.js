@@ -320,15 +320,13 @@
             function timeLineDone() {
                 if (tDEBUG) console.log('finished');
                 that.$el.jPlayer("pause");
-                $('.jp-play').addClass('timeline-restart');
-                $('.timeline-restart').on('click', function (e) {
+                
+                $('.jp-play').bind('click.restart', function (e) {
                     e.preventDefault();
-                    $('.timeline-restart').removeClass('.timeline-restart');
                     that.timeLineStep = 0;
-                    that.playTimeLine(({autostart : true}));
-                    
+                    that.playTimeLine(({autostart : true}));                                        
+                    $('.jp-play').unbind('click.restart');
                 });
-                return;
             }
         },
         
