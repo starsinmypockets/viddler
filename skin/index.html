@@ -29,33 +29,35 @@
 </head>
 <body>
 <div class="wrap">
-  <div id="jp_container_1" class="jp-video">
-    <div class="jp-type-single">
-      <div id="jquery_jplayer_1" class="jp-jplayer"></div>
-      <div class="jp-no-solution">
-        <span>Update Required</span>
-        To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
-      </div>
+    <div id="jp_container_1" class="jp-video">
+        <div class="jp-type-single">
+            <div id="jquery_jplayer_1" class="jp-jplayer"></div>
+            <div class="jp-no-solution">
+                <span>Update Required</span>
+                    To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+            </div>
     </div>         
-         <div id="footnote-container"></div>
-         <div id="map-container"></div>
-         <div id="iframe-container"></div>
+            <!-- backbone containers -->
+            <div id="footnote-container"></div>
+            <div id="map-container"></div>
+            <div id="iframe-container"></div>
+            <div class="jp-gui"></div>
+            <div id="inspector"></div>
+            <div id="account-container">
+                <a href="#" class="user-login">Login</a>
+                <a href="#" class="user-signup">Sign up</a>
+                <a href="#" class="no">No!</a>
+            </div>
+            <div id="errors"></div>
+            <!-- end backbone containers -->
+        </div>
+            <div id="user-login-container"></div>
+            <div id="comment-popup-container"></div>
+            <div id="error-message-container"></div>
+            <div id="comments-container"></div>
 
-      <div class="jp-gui"></div>
-      <div id="inspector"></div>
-      <div id="account-container">
-          <a href="#" class="user-login">Login</a>
-          <a href="#" class="user-signup">Sign up</a>
-          <a href="#" class="no">No!</a>
-      </div>
-      <div id="errors"></div>
-      <div id="user-login-container"></div>
-      <div id="comment-popup-container"></div>
-      <div id="error-message-container"></div>
-      <div id="comments-container"></div>
-  </div>
-  </div>
-  </div>
+    </div>
+</div>
 </body>
 </html>
 
@@ -107,9 +109,9 @@
           </div>
           <a href="javascript:;"><img src="img/mobile/search.png" alt="Search" class="searchimg"></a>
           <div class="time">
-          <div class="jp-current-time"></div>
-          <span class="slash">/</span>
-          <div class="jp-duration"></div>
+              <div class="jp-current-time"></div>
+              <span class="slash">/</span>
+              <div class="jp-duration"></div>
           </div>
         </div>
             <ul class="jp-toggles">
@@ -202,8 +204,60 @@
     <a href="#" class="user-signup">Sign up</a>
 </script>
 
+<script type="text/template" id="tmp-mega-gui">
+    <div class="mega-timeline clearfix">
+        <div class="jp-interface clearfix">
+            <div class="jp-controls-holder">
+                <ul class="jp-controls">
+                    <li><a href="javascript:;" class="jp-play " tabindex="1">play</a></li>
+                    <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+                </ul>
+                <div id="jp-mega-playbar-container"></div>
+            </div>
+            <a href="javascript:;"><img src="img/mobile/search.png" alt="Search" class="searchimg"></a>
+            <div class="time">
+                <div class="jp-current-time"></div>
+                <span class="slash">/</span>
+                <div class="jp-duration"></div>
+            </div>
+        </div>
+        
+<ul class="jp-toggles">
+    <li><a href="javascript:;" title="comments" class="jp-comment" tabindex="1">Comments</a></li> 
+    <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+    <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+    <div class="jp-volume-bar">
+        <div class="jp-volume-bar-value"></div>
+    </div>
+    <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+    <li><a href="javascript:;" class="jp-doohickey" tabindex="1" title="doohickey">Doohickey</a></li>
+    <li><a href="javascript:;" title="hd" class="jp-hd" tabindex="1" title="hd">HD</a></li>
+    <li><a href="javascript:;" class="jp-full-screen" tabindex="1" title="full screen">full screen</a></li>
+    <div class="time2">
+        <div class="jp-current-time"></div>
+        <span class="slash">/</span>
+        <div class="jp-duration"></div>
+        <a href="javascript:;"><img src="img/mobile/video.png" class="videoimg" alt="Video"></a>
+    </div>
+</ul>
+        
+        
+    </div>
+</script>
+
 <script type="text/template" id="tmp-mega-timeline">
-    <div class="mega-timeline">
-        Mega timeline goes here
+    <div class="bar">
+        <div id="mega-markers-container"></div>
+        <div class="jp-progress" style="position: relative; z-index: 888;">
+            <div class="jp-seek-bar clearfix" style="position: relative; z-index: 1;">
+                <div class="jp-play-bar"><img src="img/time.png" id="time" /></div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div id="mega-track-info" class="">
+    </div>
+        <% _.each(elems, function (elem) { %>
+            <span class="timeline-tag" style="width : <%= elem.width %>%"><%= elem.timeLineTag %></span>
+        <% }); %>
     </div>
 </script>

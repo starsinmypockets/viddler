@@ -1,5 +1,5 @@
 (function ($) {
-    var DEBUG = true;
+    var DEBUG = false;
     /* Abstract */
     window.BaseView = Backbone.View.extend({
         id : 'content',
@@ -35,49 +35,56 @@
         jPlayer : {},
         pop : {},
         
-        getMediaElementComments : function () {
-            var that = this;
-            var comments = new CommentCollection([], {media_element : this.timeline.mediaElements[this.timeLineStep].id});
-            comments.fetch({
+        getMediaElementComments : function (opts) {
+            var that = this,
+                comments = {};
+                
+            commentCollection = new CommentCollection([], {media_element : opts.id});
+            commentCollection.fetch({
                 success : function (collection, response) {
-                     that.comments = collection;
-                     that.loadComments();
-                     that.renderCommentMarkers();
+                     comments = collection.toJSON();
+                     that.loadComments({comments : comments});
+                     if (opts.mega===true)that.renderCommentMarkers({comments : comments, jqEl : opts.jqEl, timeLineLength : opts.timeLineLength/1000, mega : opts.mega});
+                    return comments;
                 },
                 error : function (collection, response) {
-                    collection = {};
-                    collection.comments = [];
-                    that.loadComments();
-                    that.renderCommentMarkers();
+                    if (DEBUG) console.log("Error loading comments");
+                    return {};
                 }  
             });
-            return this;
-        }, 
-
+        },
+        
         events : {
-            'click #comment-form-submit' : 'commentSubmit'
+            'click #comment-form-submit' : 'commentSubmit',
+            'click .jp-seek-bar' : 'doSeek'
         },
         
         initialize : function (opts) {
             this.__init(opts);
-            _.bindAll(this, 'commentSubmit');
+            _.bindAll(this, 'commentSubmit', 'doSeek');
+        },
+        
+        doSeek : function () {
+            alert("seek");
         },
         
         onPlayerReady : function () {
-
-            console.log('Player Ready Event');
-             this.playTimeLine();
+            if (DEBUG) console.log('Player Ready Handler');
+            this.pop = Popcorn("#jp_video_0");
+            this.playTimeLine();
         },
         
         onModelReady : function () {
-            if (DEBUG) console.log('Model Ready Event');
+            if (DEBUG) {
+                console.log('Model Ready Handler');
+                console.log(this.model);
+                error = new ErrorMsgView({
+                    errorType : "generic",
+                    errorMsg : "Testing error broadcasting system"
+                }).set();
+            }
             this.loadPlayerGui();
-            if (DEBUG) console.log(this.model);
             this.loadJPlayer();
-            error = new ErrorMsgView({
-                errorType : "generic",
-                errorMsg : "Testing error broadcasting system"
-            }).set();
         },
                 
         loadPlayList : function (opts) {
@@ -89,7 +96,6 @@
                     that.onModelReady();
                     that.render();
                 },
-                // @@ TODO proper error rendering
                 error : function (model, response) {
                     that.loadPlayerGui();
                     that.loadJPlayer();
@@ -103,15 +109,17 @@
         
         // instantiate jPlayer
         loadJPlayer : function (opts) {
-            this.setElement('#jquery_jplayer_1');
             var that = this;
+            this.setElement('#jquery_jplayer_1');
             this.$el.jPlayer({
                 ready: function () {
                     // bind events once player is ready
                     that.onPlayerReady();
-                    $('#inspector').jPlayerInspector({
-                        jPlayer : $("#jquery_jplayer_1")
-                    });                    
+                    if (DEBUG) {
+                        $('#inspector').jPlayerInspector({
+                            jPlayer : $("#jquery_jplayer_1")
+                        });
+                    }
                 },
                 swfPath: "../skin/js`",
                 supplied: "m4v, ogv",
@@ -122,34 +130,31 @@
         // Get the controls
         loadPlayerGui : function (opts) {
             var that = this;
-            this.setElement('.jp-gui');
-            this.$el.html(_.template($('#tmp-jplayer-gui').html()));
+            this.setElement('.jp-gui'); 
+            this.$el.html(_.template($('#tmp-mega-gui').html()));
+
+//            $('.jp-gui').html(_.template($('#tmp-mega-gui').html()));
+            //this.$el.html(_.template($('#tmp-mega-gui').html()));
             this.$('.jp-comment').on('click', function () {
                 that.loadCommentPopUp();
             });
         },
         
-        renderMegaTimeLine : function (opts) {
-            data = {};
-            console.log(opts);
-            $('.jp-gui').after(_.template($('#tmp-mega-timeline').html(), data));
-        },
-        
         playTimeLine : function (opts) {
-            var that = this;
-            var status = that.$el.jPlayer().data().jPlayer.status;
-            var mediaElements = this.timeline.mediaElements;
-            var steps = mediaElements.length;
-            var stepMedia = mediaElements[this.timeLineStep];
-            var progressCounterIntv;
-            var timeLineComplete = 0; // length in ms of completed steps
-            var timeLineLength = 0; // total length in ms of timeline
-            var timeLineCurrent = 0;
-            var jp = $(that.$el.jPlayer());
-            var jpe = $.jPlayer.event;
-
-            var data = {};
-                        
+            var progressCounterIntv,
+                that = this,
+                opts = opts || {},
+                status = that.$el.jPlayer().data().jPlayer.status,
+                mediaElements = this.timeline.mediaElements,
+                steps = mediaElements.length;
+                stepMedia = mediaElements[this.timeLineStep],
+                timeLineComplete = 0, // length in ms of completed steps
+                timeLineLength = 0, // total length in ms of timeline
+                timeLineCurrent = 0,
+                jp = $(that.$el.jPlayer()),
+                jpe = $.jPlayer.event,
+                tDEBUG = true;
+            
             _.each(mediaElements, function (el) {
                 el.length = el.playheadStop - el.playheadStart;
                 timeLineLength += el.length;
@@ -158,11 +163,13 @@
             // initialize timeline
             if (this.timeLineStep === 0) {
                 // add some conf check here
-                this.renderMegaTimeLine({
+                
+                this.loadMegaTimeLine({
                     mediaElements : mediaElements,
                     steps : steps,
                     timeLineLength : timeLineLength
                 });
+                
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
             }
             
@@ -170,7 +177,8 @@
                 var data = {};
                 data[stepMedia.elementType] = stepMedia.elementURL;
                 data.subtitleSrc = stepMedia['subtitle-source'];
-              //  data['poster'] = stepMedia.poster;
+                data.sprites = stepMedia['sprites'];
+                // data['poster'] = stepMedia.poster;
                 if (this.timeLineStep < steps) {
                     doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
                 }
@@ -178,34 +186,61 @@
                 timeLineDone();
             }
             
+            function renderSprite(html) {
+                that.$el.append(html).find('.sprite').css({
+                    position : "absolute",
+                    top : 10,
+                    left : 10
+                });
+            }
+            
+            function destroySprite(id) {
+                $('*[data-sprite-id="'+id+'"]').remove();
+            }
             
             function doTimeLineStep(data, start, stop) {
-                var playerData, duration;
+                var playerData, 
+                    duration,
+                    subtitles = true; 
+                    
                 that.$el.jPlayer("setMedia", data);
                 
                 // wait for media to load
                 $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
-                    if (data.subtitleSrc) {
-                        // clear old popcorn events
+                    
+                    // Subtitles
+                    if (data.subtitleSrc && subtitles === true) {
+                        // clear popcorn events from previous step
                         if (that.pop.hasOwnProperty('destroy')) {
                             that.pop.destroy();
                         }
                         // add subtitles
-                        that.pop = Popcorn("#jp_video_0");
                         that.pop.parseSRT(data.subtitleSrc);
                     }
                     
-                    if (DEBUG) console.log('canPlay');
+                    // Sprites
+                    if (data.sprites) {
+                        _.each(data.sprites, function (sprite) {
+                            var spriteId = Math.random().toString(36).substring(7);  // give the sprite a temp id
+                            that.pop.cue(sprite.start/1000, function () {
+                                html = $(sprite.html).attr("data-sprite-id", spriteId);
+                                renderSprite(html);
+                            });
+                            that.pop.cue(sprite.stop/1000, function () {
+                                destroySprite(spriteId);   
+                            });
+                        });
+                    }
+                                    
+                    if (tDEBUG) console.log('canPlay');
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
                     that.$el.jPlayer("play", start/1000);                    
-                    //console.log(timeLineComplete);
-                    if (this.timeLineStep === 0) {
+                    if (this.timeLineStep === 0 && opts.autostart !== true) {
                         // start timeline pause
                         that.$el.jPlayer('pause');
                     }
-                    window.timeLinePercent = 75;
-
+                    
                     updateCompletedTime();
                     updateCurrentTime();
 //                    updatePlayBar();
@@ -213,7 +248,11 @@
                     if (stop) {
                         runStopListener(stop);
                     };
-                    that.getMediaElementComments();
+                    if (DEBUG) console.log(stepMedia);
+                    
+                    //async trouble
+                    stepComments = that.getMediaElementComments({id : stepMedia.id, jqEl : "#markers-container"});
+                    if (DEBUG) console.log(stepComments);
                     // unbind canplay
                     $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
                 }, that));
@@ -221,38 +260,46 @@
             
             // get total ms elapsed in previous steps
             function updateCompletedTime() {
+                if (tDEBUG) console.log('update step');
                 if (that.timeLineStep > 0) {
                     for (var i = 0; i < that.timeLineStep; i++) {
-                        timeLineComplete += parseInt(mediaElements[i].length, 10);
+                        function func (i) {
+                            timeLineComplete += parseInt(mediaElements[i].length);
+                        }
+                        func(i);
                     }
                 }
             }
             
             function updateCurrentTime() {
-                var win = window
-                var updateIntv = setInterval(function() {
-                   timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + timeLineComplete, 10);// + timeLineComplete);
-                    if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
-                        clearInterval(updateIntv);
-                    };
-                    if (DEBUG) {
-                        console.log('current: '+timeLineCurrent);
-                        console.log('total: '+timeLineLength);
-                        console.log('%: '+ timeLineLength / timeLineCurrent);
-                    }
-                },1000);
+                if (stepMedia) {
+                    var updateIntv = setInterval(function() {
+                        timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + timeLineComplete, 10);
+                        if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
+                            clearInterval(updateIntv);
+                        }
+                        timeLinePercent = (timeLineCurrent / timeLineLength)*100
+                        if (tDEBUG) {
+                            console.log('current: '+timeLineCurrent);
+                            console.log('total: '+timeLineLength);
+                            console.log(timeLinePercent);
+                        }
+//                    $('.mega-timeline .jp-seek-bar').width('100%');
+                    $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
+
+                    },250);   
+                }
             }
             
-            // run stop listener
             function runStopListener(stop) {
                 var stopIntv = setInterval(function() {
                    if (that.$el.jPlayer().data().jPlayer.status.currentTime > stop/1000) {
+                      if (tDEBUG) console.log('stop listener stop');
                       clearInterval(stopIntv);
                       $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
                    }
-                },100);  
+                },1000);  
             }
-            
             
             // trigger this on 'ended' event OR if we reach playheadStop
             function doNext() {
@@ -260,17 +307,55 @@
                 that.playTimeLine();
             }
             
-            function timeLineDone() {
-                that.$el.jPlayer("pause");
-                // reclass play button to restart timeline
-                return;
+            // listen for stop
+            function runStopListener(stop) {
+                var intvId = setInterval(function() {
+                   if (that.$el.jPlayer().data().jPlayer.status.currentTime > stop/1000) {
+                      if (tDEBUG) console.log('stop listener stop');
+                      clearInterval(intvId);
+                      $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
+                   }
+                },100);  
             }
             
+            function timeLineDone() {
+                if (tDEBUG) console.log('finished');
+                that.$el.jPlayer("pause");
+                
+                $('.jp-play').bind('click.restart', function (e) {
+                    e.preventDefault();
+                    that.timeLineStep = 0;
+                    that.playTimeLine(({autostart : true}));                                        
+                    $('.jp-play').unbind('click.restart');
+                });
+            }
+        },
+        
+        loadMegaTimeLine : function (opts) {
+            var that = this,
+                data = {},
+                comments = [];
+                
+            data.elems = opts.mediaElements;
+            _.each(data.elems, function (elem) {
+                elem.width = ((elem.length / opts.timeLineLength)*100).toFixed(2);
+            });
+            
+            $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
+            $('.mega-timeline .bar .jp-seek-bar').on('click', function (e) {
+                var seekPerc = e.offsetX/($(e.currentTarget).width());
+                e.preventDefault();
+                console.log(e);
+                console.log(seekPerc);
+            });
+            
+            this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
         },
         
         loadCommentPopUp : function (data) {
-            data = {};
-            playerData = this.$el.jPlayer().data().jPlayer.status;
+            var data = {},
+                playerData = this.$el.jPlayer().data().jPlayer.status;
+                
             data.time = Math.floor(playerData.currentTime);
             data.avatar = "http://placekitten.com/75/75";
             $('#comment-popup-container').html(_.template($('#tmp-comment-popup').html(), data));
@@ -293,35 +378,62 @@
             $('#comment-popup-container').empty();
         },
         
-        // Make sure media is loaded before calling
-        // or player values will be empty
-        renderCommentMarkers : function () {
-            var that=this;
-            var playerData = this.$el.jPlayer().data('jPlayer').status;
-
-            // [width of bar] / [ width of marker+4px ]
-            var numbMarkers = Math.floor($('.jp-progress').width() / 20);
-            // [ length of video ] / [ number of Markers ]
-            var markerSecs = Math.floor(playerData.duration) / numbMarkers;
+        // how many comment markers fit on a timeline?
+        calcCommentMarkers : function (opts) {
+            var markerArray, numbMarkers, markerSecs,
+                that=this,
+                playerData = this.$el.jPlayer().data('jPlayer').status;
+            
+            if (opts && opts.mega === true) {
+                numbMarkers = Math.floor($('.mega-timeline .bar').width() / 20); // [width of bar] / [ width of marker+4px ]
+                markerSecs = Math.floor(opts.timeLineLength / numbMarkers); // [ length of video ] / [ number of Markers ]
+            } else {
+                numbMarkers = Math.floor($('.jp-progress').width() / 20); // [width of bar] / [ width of marker+4px ]
+                markerSecs = Math.floor(playerData.duration / numbMarkers); // [ length of video ] / [ number of Markers ]
+            }
             
             // build array of marker-points with start / stop attrs
-            var markerArray = [];
-            function funcs(markerArray, i) {
-                markerArray[i] = {};
-                markerArray[i].start = parseInt(i*markerSecs, 10);
-                markerArray[i].stop = parseInt(markerArray[i].start + markerSecs, 10);
-            }
-            for (var i = 0; i < numbMarkers; i++) {
-                funcs(markerArray, i);
+            markerArray = []; 
+            
+            for (var i = 1; i <+ numbMarkers; i++) {
+
+                markerArray[0] = {};                
+                markerArray[0].start = 0;
+                markerArray[0].stop = markerSecs;
+            
+                function funcs(i) {
+                    markerArray[i] = {};
+                    markerArray[i].start = markerArray[i-1].stop + 1;
+                    markerArray[i].stop = markerArray[i].start + markerSecs;
+                }
+            
+                funcs(i);
             }
             
+            return { markerArray : markerArray, numbMarkers : numbMarkers};
+        },
+        
+        // Make sure media is loaded before calling
+        // or player values will be empty
+        renderCommentMarkers : function (opts) {
+            var that = this,
+                markerArray = this.calcCommentMarkers(opts).markerArray;
+                numbMarkers = this.calcCommentMarkers(opts).numbMarkers;
+                comments = opts.comments;
+                markers = [],
+                j = 0,
+                pos = 1;
+                
             // now build array of populated marker positions for rendering
-            markers = [];
-            var j = 0;
-            var pos = 1;
+            if (DEBUG) {
+                console.log(markerArray);
+                console.log(comments);
+                console.log(opts);                
+            }
+
             _.each(markerArray, function(spot) {
-                _.each(that.comments.models, function (comment) {
-                    if (comment.attributes.time >= spot.start && comment.attributes.time <= spot.stop) {
+                _.each(comments, function (comment) {
+                    if (comment.time >= spot.start && comment.time <= spot.stop) {
                         markers[j] = {};
                         markers[j].start = spot.start;
                         markers[j].stop = spot.stop;
@@ -336,24 +448,52 @@
             // now render this nonsense 
             data = {};
             data.markers = markers;
-            $('#markers-container').html(_.template($('#tmp-comment-markers').html(), data));
+            if (DEBUG) console.log(data);
+            $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));                
+            // render proper context here
         },
         
+        
         loadComments : function (opts) {
-            data = {};
-            data.items = this.comments.toJSON();
+            var data = {};
+            
+            data.items = opts.comments;
             // If error, just load view with no comments
             if (opts && opts.error === true) {
                 data.error = true;
                 data.items = [];
             }
-            $('#comments-container').html(_.template($('#tmp-comments').html(), data));
+            $("#comments-container").html(_.template($('#tmp-comments').html(), data));
             return this;
         },
         
         render : function () {
             this.delegateEvents();
         }
+    });
+    
+    // Initialize with medi
+    MegaTimeLineView = PlayListView.extend({
+        // return all comments for playlist
+        getPlayListComments : function (id) {
+            
+        },
+        
+        // initialize with timeline data
+        loadMegaTimeLine : function (opts) {
+            var that = this,
+                data = {},
+                comments = [];
+            
+            // show media segment lengths
+            data.elems = opts.mediaElements;
+            _.each(data.elems, function (elem) {
+                elem.width = ((elem.length / opts.timeLineLength)*100).toFixed(2);
+            });
+            $('#mega-container').html(_.template($('#tmp-mega-timeline').html(), data));
+            this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
+        },
+        
     });
     
     // Render Errors    
@@ -369,7 +509,7 @@
         },
         
         set : function () {
-            data = {};
+            var data = {};
             data.type = this.errorType;
             data.msg = this.errorMsg;
             this.$el.html(_.template($('#tmp-error-msg').html(), data));
@@ -380,7 +520,7 @@
         el : '#user-login-container',
         
         events : {
-            'click #user-login-submit' : 'doLogin'
+            'click #user-login-submit' : 'doLogin',
         },
         
         doLogin : function () {
