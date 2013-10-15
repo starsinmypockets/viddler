@@ -51,7 +51,7 @@
             <div id="errors"></div>
             <!-- end backbone containers -->
         </div>
-            <div id="modal-outer"><span class="modal-close cursor">X</span>
+            <div id="modal-outer" style="display : none"><span class="modal-close cursor">X</span>
                 <div id="modal-container"></div>
             </div>
             <div id="comment-popup-container"></div>
@@ -146,14 +146,13 @@
     <div class="comment-popup">
         <form class="comment-form">
             <h3>Add comment</h3>
-            <img src="<%= avatar %>"/>
-            <label for="title">Title</label>
-            <input name="title" type="text"/>
-            <label for="comment">Comment</label>
-            <input name="commentText" type="text"/>
-            <label for="time">Time</label>
-            <input name="time" id = "comment-play-head-pos"type="text" value="<%= time %>"/>
-            <input type="submit" value="ok" id="comment-form-submit"/>
+            <ul class="modal-form">
+                <li><img src="<%= avatar %>"/></li>
+                <li><label for="title">Title</label><input name="title" type="text"/></li>
+                <li><label for="comment">Comment</label><input name="commentText" type="text"/></li>
+                <li><label for="time">Time</label><input name="time" id = "comment-play-head-pos"type="text" value="<%= time %>"/></li>
+                <li><input type="submit" value="ok" id="comment-form-submit"/></li>
+            </ul>
         </form>
     </div>
 </script>
@@ -172,15 +171,13 @@
 
 <script type="text/template" id="tmp-user-signup-form">
     <form id="user-signup-form">
-        <label for="username">Username</label>
-        <input type="text" id="username_input"/>
-        <label for="email">Email</label>
-        <input type="text" id="email_input"/>
-        <label for="password">Password</label>
-        <input type="password" id="password_input"/>
-        <label for="password-confirm">Confirm Password</label>
-        <input type="password" id="password_confirm_input"/>
-        <input type="submit" id="user-signup-submit" value="Sign up">
+        <ul class="modal-form">
+            <li><label for="username">Username</label><input type="text" id="username_input"/></li>
+            <li><label for="email">Email</label><input type="text" id="email_input"/></li>
+            <li><label for="password">Password</label><input type="password" id="password_input"/></li>
+            <li><label for="password-confirm">Confirm Password</label><input type="password" id="password_confirm_input"/></li>
+            <li><input type="submit" id="user-signup-submit" value="Sign up">
+        </ul>
     </form>
 </script>
 

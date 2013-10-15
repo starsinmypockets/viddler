@@ -1,5 +1,5 @@
 (function ($) {
-    var DEBUG = true;
+    var DEBUG = false;
     /* Abstract */
     window.BaseView = Backbone.View.extend({
         id : 'content',
@@ -24,6 +24,7 @@
         },
         
         checkAuth : function (opts) {
+            
             return opts.isAuth;
         },
         
@@ -172,7 +173,7 @@
                 return;
             }
             
-            if (!this.checkSub({isSub : false})) {
+            if (!this.checkSub({isSub : true})) {
                 if (DEBUG) console.log('No Sub');
                 subscribe = new ModalView({tmp : "#tmp-subscribe"});
                 subscribe.render();
@@ -369,8 +370,6 @@
             $('.mega-timeline .bar .jp-seek-bar').on('click', function (e) {
                 var seekPerc = e.offsetX/($(e.currentTarget).width());
                 e.preventDefault();
-                console.log(e);
-                console.log(seekPerc);
             });
             
             this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
@@ -378,12 +377,16 @@
         
         loadCommentPopUp : function (data) {
             var data = {},
-                playerData = this.$el.jPlayer().data().jPlayer.status;
-                
+            playerData = this.$el.jPlayer().data().jPlayer.status;    
             data.time = Math.floor(playerData.currentTime);
             data.avatar = "http://placekitten.com/75/75";
-            $('#comment-popup-container').html(_.template($('#tmp-comment-popup').html(), data));
-            $('#comment-form-submit').on('click', this.commentSubmit);
+            commentModal = new CreateCommentView({
+                data : data,
+                tmp : "#tmp-comment-popup"
+            });
+            commentModal.render();
+//            $('#comment-popup-container').html(_.template($('#tmp-comment-popup').html(), data));
+//            $('#comment-form-submit').on('click', this.commentSubmit);
         },
         
         // create comment popup form and submit it
@@ -550,17 +553,11 @@
     ModalView = BaseView.extend({
         el : '#modal-outer',
         
-        events : {
-            'click .modal-close' : 'modalClose'
-        },
-        
         initialize : function (opts) {
             this.__init(opts);
-            _.bindAll(this, 'modalClose');
         },
         
         modalClose : function () {
-            console.log('close modal');
             $('#modal-outer').hide();
             $('#modal-container').html('');
         },
@@ -597,6 +594,31 @@
         
     });
     
+    CreateCommentView = ModalView.extend({
+        initialize : function (opts) {
+            this.__init(opts);
+            this.data = opts.data;
+        },
+        
+        // create comment popup form and submit it
+        commentSubmit : function (e) {
+            e.preventDefault();
+            comment = new CommentModel({
+                avatar : 'http://placekitten.com',
+                mediaElement : '###',
+                created : Date(),
+                title : $('.comment-form input[name=title]').val(),
+                commentText : $('.comment-form input[name=commentText]').val(),
+                playHeadPos : $('#comment-play-head-pos').val()
+            });
+        },
+        
+        render : function (opts) {
+            this.setElement('#modal-container');
+            this.$el.html(this.template(this.data));
+            $('#modal-outer').show();
+        }
+    });
     SubscribeView = ModalView.extend({ });
     
 })(jQuery);
