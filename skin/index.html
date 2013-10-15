@@ -51,7 +51,9 @@
             <div id="errors"></div>
             <!-- end backbone containers -->
         </div>
-            <div id="user-login-container"></div>
+            <div id="modal-outer"><span class="modal-close cursor">X</span>
+                <div id="modal-container"></div>
+            </div>
             <div id="comment-popup-container"></div>
             <div id="error-message-container"></div>
             <div id="comments-container"></div>
@@ -184,24 +186,28 @@
 
 <script type="text/template" id="tmp-user-login-form">
     <form id="user-login-form">
-        <label for="username">Username</label>
-        <input type="text" id="username_input"/>
-        <label for="password"> Password</label>
-        <input type="password" id="password_input"/>
-        <input type="submit" id="user-login-submit" value="Login">
+        <ul class="modal-form">
+            <li><label for="username">Username</label><input type="text" id="username_input"/></li>
+            <li><label for="password"> Password</label><input type="password" id="password_input"/></li>
+            <li><input type="submit" id="user-login-submit" value="Login"></li>
+        </ul>
     </form>
 </script>
 
 <script type="text/template" id="tmp-no-auth-form">
     <span>You must be signed in to view this content</span>
     <form id="user-login-form">
-        <label for="username">Username</label>
-        <input type="text" id="username_input"/>
-        <label for="password"> Password</label>
-        <input type="password" id="password_input"/>
-        <input type="submit" id="user-login-submit" value="Login">
+        <ul class="modal-form">
+            <li><label for="username">Username</label><input type="text" id="username_input"/></li>
+            <li><label for="password"> Password</label><input type="password" id="password_input"/></li>
+            <li><input type="submit" id="user-login-submit" value="Login"></li>
+        </ul>
     </form>
     <a href="#" class="user-signup">Sign up</a>
+</script>
+
+<script type="text/template" id="tmp-subscribe">
+    <span>Please subscribe to view this content</span>
 </script>
 
 <script type="text/template" id="tmp-mega-gui">

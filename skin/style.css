@@ -63,3 +63,6 @@ table {
 #account-container {margin:2em}
 .sprite {font-weight:bold; background-color:#E2F5AB; padding:.4em; border-radius:2em; opacity:0.4;
 filter:alpha(opacity=40);}
+#modal-outer {background-color:gray; width:40%; padding:2em; position:absolute; top:15%; left: 15%; border:4px groove}
+.modal-close {width:10px; float:right;}
+.cursor { cursor: pointer; }

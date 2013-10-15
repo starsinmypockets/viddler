@@ -1,5 +1,5 @@
 (function ($) {
-    var DEBUG = false;
+    var DEBUG = true;
     /* Abstract */
     window.BaseView = Backbone.View.extend({
         id : 'content',
@@ -8,7 +8,8 @@
         vent : {},
         
         __init : function (opts) {
-            this.vent = opts.vent; 
+            opts = opts || {};
+            if (opts.vent) this.vent = opts.vent; 
             if (opts.tmp) {
                 this.template = _.template($(opts.tmp).html());            
             };
@@ -20,7 +21,15 @@
         
         render : function () {
             this.$el.html(this.template());
-        }
+        },
+        
+        checkAuth : function (opts) {
+            return opts.isAuth;
+        },
+        
+        checkSub : function (opts) {
+            return opts.isSub;
+        } 
         
     });
     
@@ -153,7 +162,23 @@
                 timeLineCurrent = 0,
                 jp = $(that.$el.jPlayer()),
                 jpe = $.jPlayer.event,
-                tDEBUG = true;
+                tDEBUG = false;
+            
+            /* Check Gates */
+            if (!this.checkAuth({isAuth : true })) {
+                if (DEBUG) console.log('Unauthorized');
+                login = new UserSignupView({tmp : "#tmp-no-auth-form"});
+                login.render();
+                return;
+            }
+            
+            if (!this.checkSub({isSub : false})) {
+                if (DEBUG) console.log('No Sub');
+                subscribe = new ModalView({tmp : "#tmp-subscribe"});
+                subscribe.render();
+                subscribe.delegateEvents();
+                return;
+            }
             
             _.each(mediaElements, function (el) {
                 el.length = el.playheadStop - el.playheadStart;
@@ -495,7 +520,10 @@
         
     });
     
-    // Render Errors    
+    /**
+     * Errors
+     *
+     **/
     ErrorMsgView = BaseView.extend({
         errorType : '',
         errorMsg : '',
@@ -515,9 +543,36 @@
         }
     });
     
-    UserLoginView = BaseView.extend({
-        el : '#user-login-container',
+    /***
+     * Modals
+     *
+     ***/
+    ModalView = BaseView.extend({
+        el : '#modal-outer',
         
+        events : {
+            'click .modal-close' : 'modalClose'
+        },
+        
+        initialize : function (opts) {
+            this.__init(opts);
+            _.bindAll(this, 'modalClose');
+        },
+        
+        modalClose : function () {
+            console.log('close modal');
+            $('#modal-outer').hide();
+            $('#modal-container').html('');
+        },
+        
+        render : function() {
+            this.setElement('#modal-container');
+            this.$el.html(this.template());
+            $('#modal-outer').show();
+        }
+    });
+    
+    UserLoginView = ModalView.extend({        
         events : {
             'click #user-login-submit' : 'doLogin',
         },
@@ -525,7 +580,7 @@
         doLogin : function () {
             alert('login!');
             // do api login call here
-            this.$el.empty();
+            this.modalClose();
         }
     });
     
@@ -537,25 +592,11 @@
         doSignup : function () {
             alert('signup');
             // do api signup here
-            this.$el.empty();
+            this.modalClose();
         }
         
     });
     
-    PopcornPlayListView = PlayListView.extend({
-        loadPopcornPlayer : function (opts) {
-            this.setElement('#jquery_jplayer_1');
-            var that = this;
-            this.$el.jPlayer({
-                ready: function () {
-                    // bind events once player is ready
-                    that.onPlayerReady();
-                },
-                swfPath: "../skin/js`",
-                supplied: "m4v, ogv",
-                errorAlerts : true
-            });
-        },
-    });
+    SubscribeView = ModalView.extend({ });
     
 })(jQuery);
