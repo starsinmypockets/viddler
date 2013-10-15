@@ -595,6 +595,10 @@
     });
     
     CreateCommentView = ModalView.extend({
+        events : {
+            'click #comment-form-submit' : 'commentSubmit'
+        },
+        
         initialize : function (opts) {
             this.__init(opts);
             this.data = opts.data;
@@ -611,6 +615,10 @@
                 commentText : $('.comment-form input[name=commentText]').val(),
                 playHeadPos : $('#comment-play-head-pos').val()
             });
+            alert("Submit comment");
+            this.modalClose();
+            
+            // comment.save(comment.toJSON())
         },
         
         render : function (opts) {
