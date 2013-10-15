@@ -1,4 +1,27 @@
 [{
+        "id" : 678,
+        "media_element" : 123,
+        "playListId" : 2342213,
+        "title": "Comment Title 2",
+        "commentText": "Comment 1",
+        "thumbnail": "http://placekitten.com/75/75",
+        "replyUrl": "http://api.viddler.com/comment/reply/someid",
+        "userName" : "JP Slim",
+        "daysAgo" : "Today",
+        "time" : "2"
+},{
+        "id" : 679,
+        "media_element" : 123,
+        "playListId" : 2342213,
+        "title": "Comment Title 2",
+        "commentText": "Comment 2",
+        "thumbnail": "http://placekitten.com/75/75",
+        "replyUrl": "http://api.viddler.com/comment/reply/someid",
+        "userName" : "JP Slim",
+        "daysAgo" : "Today",
+        "time" : "12"
+},
+{
         "id" : 789,
         "media_element" : 124,
         "playListId" : 2342213,

@@ -25,7 +25,7 @@
             avatar : '',
             mediaElement : '',
             created : '',
-            playHeadPos : '',
+            playHeadPos : ''
         },
         
         validate : function () {
@@ -35,8 +35,7 @@
     
     window.PlayListModel = ViddlerModel.extend({
         defauls : {
-            id : '',
-            
+            id : ''
         },
 
         url : function () {
@@ -47,6 +46,7 @@
             comment = new CommentModel({
                 userId : '',
                 mediaElement : '', 
+                playListId : this.id,
                 playHeadPos : '',
                 title : '',
                 created : Date()
