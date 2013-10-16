@@ -41,6 +41,7 @@ div.jp-video {
 	width: 98%;
 	max-width: 980px;
 	margin: 0 auto;
+	position: relative;
 }
 
 div.jp-audio {

@@ -79,16 +79,51 @@ video#jp_video_0, img#jp_poster_0, #jquery_jplayer_1{
 filter:alpha(opacity=40);}
 
 /* Modals */
-#modal-outer {background-color:white; width:40%; padding:2em; position:absolute; top:15%; left: 15%; border:none; z-index:10000000; opacity: .7;	border-radius: 10px;}
-#modal-outer ul {width :100%}
-.modal-close {
-	width:50px;
-	height: 50px;
-	position: relative;
-	top: -42px;
-	left: 42px;
+
+#modal-outer {
+	background-color:rgba(255,255,255,.9); 
+	width:300px;
+	padding: .5em; 
+	position:absolute; 
+	top: 37%;
+	left: 49px;
+	border:none; 
+	z-index:10000000;	
+	border-radius: 10px;
+	font-family: helvetica; 
+	font-weight:bold;
+	color: #585f68; 
+	font-size: 16px;
+}
+#modal-outer img#modaltriangle{
+	position: absolute;
+	bottom: -12px;
+	width: 20px;
+	margin-left: -20px;
+	left: 50%;
+}
+#modal-outer img#okbutton{
 	float:right;
-	background: url(img/modalclose.png) top left no-repeat;
+	margin-top: 5px;
+	width: 50px;
+}
+#modal-outer ul {width :100%}
+
+#modal-container{
+	background: #FFFFFF;
+	opacity: 1;
+	font-size: 12px;
+	padding: 10px 0px 5px 10px;
+	margin-top: 10px;
+	height: 100px;
+}
+.modal-close {
+	width:30px;
+	height: 30px;
+	position: absolute;
+	top: -10px;
+	right: -10px;
+	float:right;
 }
 
 
