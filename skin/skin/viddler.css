@@ -870,6 +870,7 @@ a.also{
 	float:right;
 }
 @media only screen and (max-width: 981px){
+	
 .comment{
 	display:block;
 	margin-top: 5px;
