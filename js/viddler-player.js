@@ -10,6 +10,22 @@
          console.log = function() {};
      }
    }
+   
+// Returns the version of Internet Explorer or a -1
+// (indicating the use of another browser).
+function getInternetExplorerVersion() {
+    var rv = -1; // Return value assumes failure.
+    if (navigator.appName == 'Microsoft Internet Explorer')
+    {
+        var ua = navigator.userAgent;
+        var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+    if (re.exec(ua) != null)
+        rv = parseFloat( RegExp.$1 );
+    }
+    return rv;
+}
+ie8 = (getInternetExplorerVersion() === 8);
+console.log(ie8);
 
 ( function ($) {
 var ViddlerPlayer = ViddlerPlayer || {};
@@ -45,7 +61,14 @@ window.testInit = function () {
         vent : ViddlerPlayer.vent
     });
     playlist.loadPlayList();
-};
+}
+
+window.testPlayer = function () {
+    test = new TestPlayerView({
+        tmp : "<br />"
+    });
+    test.render();
+}
 
 window.testInitPopcorn = function () {
     playlist = new PopcornPlayListView({
