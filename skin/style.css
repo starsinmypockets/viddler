@@ -79,4 +79,4 @@ filter:alpha(opacity=40);}
 
 .cursor { cursor: pointer; }
 
-#play-overlay-button {position:absolute; top:40%; left:330px; height:70px; z-ndex:10000; display:none}
+#play-overlay-button {position:absolute; top:10%; left:330px; height:70px; z-ndex:10000; display:none}
