@@ -99,6 +99,13 @@ rainReady(function(){
             if (xhr.status == 401)
                 ViddlerPlayer.vent.trigger('noAuth');
         });
+        
+        /* Some app-wide event handling */
+        $('.modal-close').on('click', function () {
+            console.log('close modal');
+            $('#modal-outer').hide();
+            $('#modal-container').html('');
+        });
     });
 
 });    

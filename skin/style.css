@@ -57,9 +57,26 @@ table {
 .clearfix { zoom: 1; }
 
 /* Paul's provisional style */
+
+/* timeline */
 .mega-timeline .jp-progress .jp-seek-bar {width:100%;}
 #mega-track-info {margin-top:12px; width:100%}
 .timeline-tag {display:block; float:left; font-size:.6em}
+
+/* account */
 #account-container {margin:2em}
+
+
+/* Sprites */
 .sprite {font-weight:bold; background-color:#E2F5AB; padding:.4em; border-radius:2em; opacity:0.4;
 filter:alpha(opacity=40);}
+
+/* Modals */
+#modal-outer {background-color:gray; width:40%; padding:2em; position:absolute; top:15%; left: 15%; border:4px groove; z-index:10000000}
+#modal-outer ul {width :100%}
+.modal-close {width:10px; float:right;}
+
+
+.cursor { cursor: pointer; }
+
+#play-overlay-button {position:absolute; top:40%; left:330px; height:70px; z-ndex:10000; display:none}

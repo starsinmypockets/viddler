@@ -13,7 +13,7 @@
         "playheadStart": 10000,
         "playheadStop": 20000,
         "elementType": "m4v",
-        "elementURL": "http://build.toomodernmedia.com/philly.mp4",
+        "elementURL": "http://raineverywhere.com/client/viddler_r/big_buck_bunny.mp4",
         "subtitle-source": "../test.srt",
         "poster" : "http://placekitten.com/480/270",
         "mediaElement": {},
