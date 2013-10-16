@@ -120,7 +120,7 @@ div.jp-controls-holder {
 	width:100%;
 	margin:0 auto;
 	position: relative;
-	overflow: visible;
+	overflow: visible;	
  /* This negative value depends on the size of the text in jp-currentTime and jp-duration */
 }
 
@@ -237,7 +237,8 @@ div.jp-audio div.jp-progress {
 }
 .time{
 	position: relative;
-	left: 5px;
+	left: 20px;
+	top: 11px;
 	display:inline-block;
 }
 div.jp-audio div.jp-type-single div.jp-progress {
@@ -250,7 +251,7 @@ div.jp-audio div.jp-type-playlist div.jp-progress {
 }
 div.jp-video div.jp-progress {
 	min-width:39%;	
-	width: 80%;
+	width: 100%;
 	height:11px;
 	position: relative;
 	z-index: 1;
@@ -745,7 +746,7 @@ a.jp-shuffle-off:hover {
 }
 .bar{
 	display:block;
-	width: 64%;
+	width: 50%;
 	position: relative;
 	top: 12px;
 	float:left;
@@ -871,7 +872,7 @@ a.also{
 }
 	div.jp-video div.jp-progress {
 	min-width:20%;	
-	width: 73%;
+	width: 100%;
 	height:11px;
 	position: relative;
 	z-index: 1;
@@ -881,14 +882,14 @@ a.also{
 }
 .bar{
 	display:block;
-	width: 58%;
+	width: 43%;
 	float:left;
 }
 }
 @media only screen and (max-width: 850px){
-div.jp-video div.jp-progress {
+	div.jp-video div.jp-progress {
 	min-width:20%;	
-	width: 70%;
+	width: 100%;
 	height:11px;
 	position: relative;
 	z-index: 1;
@@ -898,8 +899,8 @@ div.jp-video div.jp-progress {
 }
 .bar{
 	display:block;
-	width: 50%;
-	float:left;	
+	width: 40%;
+	float:left;
 }
 a.also{
 	background: #4aa9de;
@@ -1124,7 +1125,7 @@ border-radius: 10px 0px 0px 10px;
 }
 a img.searchimg{
 	top: 2px;
-	float:right;
+	margin-top: -20px;
 	width: 23px;
 	display:block;
 	position: relative;
