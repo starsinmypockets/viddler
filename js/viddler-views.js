@@ -81,6 +81,13 @@
         onPlayerReady : function () {
             if (DEBUG) console.log('Player Ready Handler');
             this.pop = Popcorn("#jp_video_0");
+            $('#jp_video_0').attr('webkit-playsinline','');
+            $('#jp_video_0').attr('webkitSupportsFullscreen', 'false');
+
+            $(this.$el.jPlayer()).bind($.jPlayer.event.resize, _.bind(function (e) {
+                if (DEBUG) console.log('Resize event');
+            }, this));
+            
             this.playTimeLine();
         },
         
@@ -164,7 +171,7 @@
                 jp = $(that.$el.jPlayer()),
                 jpe = $.jPlayer.event,
                 tDEBUG = false;
-            
+
             /* Check Gates */
             if (!this.checkAuth({isAuth : true })) {
                 if (DEBUG) console.log('Unauthorized');
@@ -188,8 +195,12 @@
             
             // initialize timeline
             if (this.timeLineStep === 0) {
-                // add some conf check here
-                
+                $('#play-overlay-button').show();
+                $('#play-overlay-button').on('click', function (e) {
+                    $(this).hide();
+                    that.$el.jPlayer("play");
+                });
+
                 this.loadMegaTimeLine({
                     mediaElements : mediaElements,
                     steps : steps,
@@ -353,6 +364,7 @@
                     that.playTimeLine(({autostart : true}));                                        
                     $('.jp-play').unbind('click.restart');
                 });
+                $('#play-overlay-button').show();
             }
         },
         
