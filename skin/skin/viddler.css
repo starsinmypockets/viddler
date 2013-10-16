@@ -575,7 +575,12 @@ div.jp-video-play:hover a.jp-video-play-icon {
 
 
 
-
+#markers-container{
+	position: relative;
+	left: -100px;
+	display: block;
+	top:0px;
+}
 
 div.jp-jplayer audio,
 div.jp-jplayer {
