@@ -266,6 +266,7 @@
                     $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
                         e.preventDefault();
                         that.$el.jPlayer("play", start/1000);
+                        $('#play-overlay-button').hide();
                         $('.jp-play').unbind('click.init');
                         return false;
                     });
@@ -648,7 +649,6 @@
         
         // create comment popup form and submit it
         commentSubmit : function (e) {
-            console.log("comment submit");
             e.preventDefault();
             comment = new CommentModel({
                 avatar : 'http://placekitten.com',
