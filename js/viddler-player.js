@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 //ie console for dev
  var alertFallback = true;
    if (typeof console === "undefined" || typeof console.log === "undefined") {
@@ -29,7 +27,6 @@ function getInternetExplorerVersion() {
 ie8 = (getInternetExplorerVersion() === 8);
 console.log(ie8);
 
->>>>>>> playerjs
 ( function ($) {
 var ViddlerPlayer = ViddlerPlayer || {};
 

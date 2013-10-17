@@ -12,7 +12,7 @@
             if (opts.vent) this.vent = opts.vent; 
             if (opts.tmp) {
                 this.template = _.template($(opts.tmp).html());            
-            }
+            };
         },
         
         initialize : function (opts) {
@@ -168,7 +168,7 @@
                 jp = $(that.$el.jPlayer()),
                 jpe = $.jPlayer.event,
                 tDEBUG = false;
-
+            
             /* Check Gates */
             if (!this.checkAuth({isAuth : true })) {
                 if (DEBUG) console.log('Unauthorized');
@@ -282,7 +282,6 @@
                     
                     updateCompletedTime();
                     updateCurrentTime();
-//                    updatePlayBar();
                     
                     if (stop) {
                         runStopListener(stop);
