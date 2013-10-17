@@ -637,16 +637,18 @@
     
     CreateCommentView = ModalView.extend({
         events : {
-            'click #comment-form-submit' : 'commentSubmit'
+            'click #comment-form-submit' : 'commentSubmit',
         },
         
         initialize : function (opts) {
             this.__init(opts);
+            _.bindAll(this, 'commentSubmit');
             this.data = opts.data;
         },
         
         // create comment popup form and submit it
         commentSubmit : function (e) {
+            console.log("comment submit");
             e.preventDefault();
             comment = new CommentModel({
                 avatar : 'http://placekitten.com',
@@ -656,15 +658,24 @@
                 commentText : $('.comment-form input[name=commentText]').val(),
                 playHeadPos : $('#comment-play-head-pos').val()
             });
+            // do model save here
             alert("Submit comment");
-            this.modalClose();
-            
+            this.hide();
             // comment.save(comment.toJSON())
+        },
+        
+        hide : function () {
+            $('#modal-outer').hide();
         },
         
         render : function (opts) {
             this.setElement('#modal-container');
             this.$el.html(this.template(this.data));
+            $('.comment-close').on('click', function (e) {
+                e.preventDefault();
+                $('#modal-outer').hide();
+                return false;
+            });
             $('#modal-outer').show();
         }
     });
