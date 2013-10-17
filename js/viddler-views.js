@@ -564,21 +564,21 @@
      *
      ***/
     ModalView = BaseView.extend({
-        el : '#modal-outer',
-        
+        el : ".wrap",
+                
         initialize : function (opts) {
             this.__init(opts);
         },
         
         modalClose : function () {
-            $('#modal-outer').hide();
-            $('#modal-container').html('');
+            $('.modalbg').hide();
+            $('.modalbg').html('');
         },
         
-        render : function() {
-            this.setElement('#modal-container');
-            this.$el.html(this.template());
-            $('#modal-outer').show();
+        render : function(data) {
+            this.setElement('.loginmodal');
+            this.$el.html(this.template(data));
+            $('.modalbg').show();
         }
     });
     
@@ -591,10 +591,18 @@
             alert('login!');
             // do api login call here
             this.modalClose();
+        },
+        
+        render : function() {
+            var data = {};
+            data.modalHeader = "Log in"
+            this.setElement('.loginmodal');
+            this.$el.html(this.template(data));
+            $('.modalbg').show();
         }
     });
     
-    UserSignupView = UserLoginView.extend({
+    UserSignupView = ModalView.extend({
        events : {
             'click #user-signup-submit' : 'doSignup'
         },
@@ -603,8 +611,15 @@
             alert('signup');
             // do api signup here
             this.modalClose();
-        }
+        },
         
+        render : function() {
+            var data = {};
+            data.modalHeader = "Sign up!"
+            this.setElement('.loginmodal');
+            this.$el.html(this.template(data));
+            $('.modalbg').show();
+        }
     });
     
     CreateCommentView = ModalView.extend({

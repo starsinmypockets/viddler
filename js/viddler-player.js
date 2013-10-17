@@ -42,6 +42,7 @@ ViddlerPlayer.vent.bind('doLogin', function () {
 
 // get signup view
 ViddlerPlayer.vent.bind('doSignup', function () {
+    console.log('triggered signup');
     login = new UserSignupView({
         tmp : '#tmp-user-signup-form'
     }).render();
@@ -88,7 +89,7 @@ window.testMPInit = function () {
     $('.bar').on('click ', function (e) {
         console.log('bar click');
         playlist.loadCommentPopUp();
-    });    console.log('tesg MP');
+    });   
 };
 
 rainReady(function(){
@@ -98,16 +99,6 @@ rainReady(function(){
         $('.user-signup').on('click', function () {ViddlerPlayer.vent.trigger('doSignup')});
         $('.no').on('click', function () {ViddlerPlayer.vent.trigger('noAuth')});
        
-        /* Popcorn Jawn */
-/*
-         var pop = Popcorn( $("#jquery_player_1"), {
-             defaults: {
-             subtitle: {
-             target: "subtitle-div"
-         }
-       }
-       });
-*/
        /* Session Authentication */
         var $doc = $(document);
         
@@ -124,10 +115,12 @@ rainReady(function(){
         });
         
         /* Some app-wide event handling */
-        $('.modal-close').on('click', function () {
+        $('.modal-close').on('click', function (e) {
+            e.preventDefault();
             console.log('close modal');
-            $('#modal-outer').hide();
-            $('#modal-container').html('');
+            $('.modalbg').hide();
+            $('.loginmodal').html('');
+            return false;
         });
     });
 
