@@ -103,7 +103,6 @@ rainReady(function(){
         $('.user-login').on('click', function () {ViddlerPlayer.vent.trigger('doLogin')});
         $('.user-signup').on('click', function () {ViddlerPlayer.vent.trigger('doSignup')});
         $('.no').on('click', function () {ViddlerPlayer.vent.trigger('noAuth')});
-        $('.mega-timeline .jp-seek-bar').bind('click', function (e) {console.log('my seek')});
        /* Session Authentication */
         var $doc = $(document);
         

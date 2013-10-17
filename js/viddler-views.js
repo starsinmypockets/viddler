@@ -76,19 +76,45 @@
         },
         
         // Get timeline position and cue appropriate segment / start pos
-        cueToPercent : function (data) {
+        cueToPercent : function (opts) {
             var timeLine = this.model.get("timeline"),
-                seekTo = data.percent,
-                i;
-            
-            // figure out which media element we need
-            for (i = 0; i < timeline.mediaElements.length; i++) {
-                funcs = function () {
-                    
-                }
+                i=0,
+                relSecs,
+                relIndex,
+                seeks = {},
+                data = {},
+                relIndex = 0,
+                that = this;
                 
+            var els = timeLine.mediaElements;
+            relSecs = (this.timeLineLength * (opts.percent/100))/1000; // from ms to sec
+            console.log(opts);
+            console.log(relSecs);
+            //figure out what to cue
+            console.log(els);
+            
+            function getSeeks (i) {
+                if (els[i]) {
+                    relIndex += (els[i].playheadStop - els[i].playheadStart)/1000; // convert from ms
+                    if (relSecs <= relIndex) {
+                        console.log('foo');
+                        seeks.start = relIndex - relSecs;
+                        seeks.elem = i;
+                        seeks.loadData = {};
+                        seeks.loadData[els[i].elementType] = els[i].elementURL;
+                    } else {
+                        console.log('bar');
+                        i++;
+                        getSeeks(i);
+                    }
+                }
             }
             
+            getSeeks(i);
+            console.log(seeks);
+            that.$el.jPlayer("setElement", seeks.start);
+            that.$el.jPlayer("play", seeks.loadData);
+
             console.log(this.model);
             console.log(data);
         },
@@ -230,12 +256,12 @@
                 });
                 
                 // bind seekbar click event
-                $('.mega-timeline .jp-seek-bar').bind('click', function (e) {
+                $('.mega-timeline .jp-progress').bind('click', function (e) {
                     var data = {};
                     console.log(e);
-                    console.log('my seek')
                     e.preventDefault();
-                    data.percent = (e.offsetX / e.currentTarget.offsetWidth) * 100;
+                    data.percent = (e.offsetX / e.target.offsetWidth) * 100;
+                    console.log(data);
                     that.cueToPercent(data);
                     return false;
                 });
