@@ -115,13 +115,13 @@ rainReady(function(){
         });
         
         /* Some app-wide event handling */
-        $('.modal-close').on('click', function (e) {
+        $('.modal-close').on('click', _.bind(function (e) {
             e.preventDefault();
             console.log('close modal');
             $('.modalbg').hide();
             $('.loginmodal').html('');
             return false;
-        });
+        }, this));
     });
 
 });    

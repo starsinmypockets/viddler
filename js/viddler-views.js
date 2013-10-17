@@ -207,7 +207,7 @@
                 data[stepMedia.elementType] = stepMedia.elementURL;
                 data.subtitleSrc = stepMedia['subtitle-source'];
                 data.sprites = stepMedia['sprites'];
-                data['poster'] = stepMedia.poster;
+              //  data['poster'] = stepMedia.poster;
                 if (this.timeLineStep < steps) {
                     doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
                 }
@@ -578,7 +578,15 @@
         __render : function(data) {
             var data = data || {};
             this.setElement('.loginmodal');
+            this.delegateEvents();
             this.$el.html(this.template(data));
+            $('.modal-close').on('click', function (e) {
+                e.preventDefault();
+                console.log('close modal');
+                $('.modalbg').hide();
+                $('.loginmodal').html('');
+                return false;
+            });
             $('.modalbg').show();
         }
     });
