@@ -8,23 +8,13 @@
       {
         "id" : 123,
         "title": "h264 video of week",
-        "timeLineTag" : "VIDEO 1",
         "position": 0,
         "zLayer": 0,
         "playheadStart": 10000,
         "playheadStop": 20000,
-        "timeLineRelStart": 0,
-        "timeLineRelStop": 20,
         "elementType": "m4v",
         "elementURL": "http://raineverywhere.com/client/viddler_r/big_buck_bunny.mp4",
         "subtitle-source": "../test.srt",
-        "sprites" : [
-            {
-                "start" : "11400",
-                "stop" : "18000",
-                "html" : "<div class='sprite sprite-1'>Viddler supports sprites!</div>"
-            }
-        ],
         "poster" : "http://placekitten.com/480/270",
         "mediaElement": {},
         "transitionIn": {},
@@ -34,13 +24,10 @@
       {
         "id" : 124,
         "title": "h264 video of week",
-        "timeLineTag" : "VIDEO 2",
-        "position": 1,
+        "position": 0,
         "zLayer": 0,
         "playheadStart": 0,
         "playheadStop": 10000,
-        "timeLineRelStart": 20,
-        "timeLineRelStop": 30,
         "elementType": "m4v",
         "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
         "poster" : "",
@@ -52,22 +39,12 @@
       {
         "id" : 125,
         "title": "h264 video of week",
-        "timeLineTag" : "VIDEO 3",
-        "position": 2,
+        "position": 0,
         "zLayer": 0,
         "playheadStart": 16000,
-        "playheadStop": 26000,
-        "timeLineRelStart": 30,
-        "timeLineRelStop": 40,
+        "playheadStop": 24000,
         "elementType": "m4v",
         "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
-        "sprites" : [
-            {
-                "start" : "18400",
-                "stop" : "20400",
-                "html" : "<div class='sprite sprite-2'>More sprites!</div>"
-            }
-        ],
         "poster" : "http://placekitten.com/480/270",
         "subtitle-source": "../test2.srt",
         "mediaElement": {},

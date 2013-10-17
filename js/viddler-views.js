@@ -8,7 +8,8 @@
         vent : {},
         
         __init : function (opts) {
-            this.vent = opts.vent; 
+            opts = opts || {};
+            if (opts.vent) this.vent = opts.vent; 
             if (opts.tmp) {
                 this.template = _.template($(opts.tmp).html());            
             }
@@ -20,7 +21,16 @@
         
         render : function () {
             this.$el.html(this.template());
-        }
+        },
+        
+        checkAuth : function (opts) {
+            
+            return opts.isAuth;
+        },
+        
+        checkSub : function (opts) {
+            return opts.isSub;
+        } 
         
     });
     
@@ -61,6 +71,7 @@
         
         initialize : function (opts) {
             this.__init(opts);
+            console.log("IE8: "+ie8);
             _.bindAll(this, 'commentSubmit', 'doSeek');
         },
         
@@ -70,7 +81,10 @@
         
         onPlayerReady : function () {
             if (DEBUG) console.log('Player Ready Handler');
-            this.pop = Popcorn("#jp_video_0");
+            if (!ie8) this.pop = Popcorn("#jp_video_0");
+            $('#jp_video_0').attr('webkit-playsinline','');
+            $('#jp_video_0').attr('webkitSupportsFullscreen', 'false');
+            
             this.playTimeLine();
         },
         
@@ -121,7 +135,7 @@
                         });
                     }
                 },
-                swfPath: "../skin/js`",
+                swfPath: "../js/vendor",
                 supplied: "m4v, ogv",
                 errorAlerts : true
             });
@@ -153,7 +167,23 @@
                 timeLineCurrent = 0,
                 jp = $(that.$el.jPlayer()),
                 jpe = $.jPlayer.event,
-                tDEBUG = true;
+                tDEBUG = false;
+
+            /* Check Gates */
+            if (!this.checkAuth({isAuth : true })) {
+                if (DEBUG) console.log('Unauthorized');
+                login = new UserSignupView({tmp : "#tmp-no-auth-form"});
+                login.render();
+                return;
+            }
+            
+            if (!this.checkSub({isSub : true})) {
+                if (DEBUG) console.log('No Sub');
+                subscribe = new ModalView({tmp : "#tmp-subscribe"});
+                subscribe.render();
+                subscribe.delegateEvents();
+                return;
+            }
             
             _.each(mediaElements, function (el) {
                 el.length = el.playheadStop - el.playheadStart;
@@ -162,8 +192,7 @@
             
             // initialize timeline
             if (this.timeLineStep === 0) {
-                // add some conf check here
-                
+                $('#play-overlay-button').show();
                 this.loadMegaTimeLine({
                     mediaElements : mediaElements,
                     steps : steps,
@@ -178,7 +207,7 @@
                 data[stepMedia.elementType] = stepMedia.elementURL;
                 data.subtitleSrc = stepMedia['subtitle-source'];
                 data.sprites = stepMedia['sprites'];
-                // data['poster'] = stepMedia.poster;
+              //  data['poster'] = stepMedia.poster;
                 if (this.timeLineStep < steps) {
                     doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
                 }
@@ -206,10 +235,10 @@
                 that.$el.jPlayer("setMedia", data);
                 
                 // wait for media to load
-                $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
+//                $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
                     
                     // Subtitles
-                    if (data.subtitleSrc && subtitles === true) {
+                    if (data.subtitleSrc && subtitles === true && !ie8) {
                         // clear popcorn events from previous step
                         if (that.pop.hasOwnProperty('destroy')) {
                             that.pop.destroy();
@@ -219,7 +248,7 @@
                     }
                     
                     // Sprites
-                    if (data.sprites) {
+                    if (data.sprites && !ie8) {
                         _.each(data.sprites, function (sprite) {
                             var spriteId = Math.random().toString(36).substring(7);  // give the sprite a temp id
                             that.pop.cue(sprite.start/1000, function () {
@@ -231,15 +260,25 @@
                             });
                         });
                     }
-                                    
+                    
+                    // Initial Play
+                    // iOS needs initial media play to be contained in user-initiated call stack
+                    $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
+                        e.preventDefault();
+                        that.$el.jPlayer("play", start/1000);
+                        $('#play-overlay-button').hide();
+                        $('.jp-play').unbind('click.init');
+                        return false;
+                    });
+                    
+                    // Subsequent plays autostart
+                    if (that.timeLineStep > 0) {
+                        that.$el.jPlayer("play", start/1000);
+                    }
+                    
                     if (tDEBUG) console.log('canPlay');
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
-                    that.$el.jPlayer("play", start/1000);                    
-                    if (this.timeLineStep === 0 && opts.autostart !== true) {
-                        // start timeline pause
-                        that.$el.jPlayer('pause');
-                    }
                     
                     updateCompletedTime();
                     updateCurrentTime();
@@ -255,7 +294,7 @@
                     if (DEBUG) console.log(stepComments);
                     // unbind canplay
                     $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
-                }, that));
+ //               }, that));
             }
             
             // get total ms elapsed in previous steps
@@ -328,6 +367,7 @@
                     that.playTimeLine(({autostart : true}));                                        
                     $('.jp-play').unbind('click.restart');
                 });
+                $('#play-overlay-button').show();
             }
         },
         
@@ -345,8 +385,6 @@
             $('.mega-timeline .bar .jp-seek-bar').on('click', function (e) {
                 var seekPerc = e.offsetX/($(e.currentTarget).width());
                 e.preventDefault();
-                console.log(e);
-                console.log(seekPerc);
             });
             
             this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
@@ -354,12 +392,16 @@
         
         loadCommentPopUp : function (data) {
             var data = {},
-                playerData = this.$el.jPlayer().data().jPlayer.status;
-                
+            playerData = this.$el.jPlayer().data().jPlayer.status;    
             data.time = Math.floor(playerData.currentTime);
             data.avatar = "http://placekitten.com/75/75";
-            $('#comment-popup-container').html(_.template($('#tmp-comment-popup').html(), data));
-            $('#comment-form-submit').on('click', this.commentSubmit);
+            commentModal = new CreateCommentView({
+                data : data,
+                tmp : "#tmp-comment-popup"
+            });
+            commentModal.render();
+//            $('#comment-popup-container').html(_.template($('#tmp-comment-popup').html(), data));
+//            $('#comment-form-submit').on('click', this.commentSubmit);
         },
         
         // create comment popup form and submit it
@@ -496,7 +538,10 @@
         
     });
     
-    // Render Errors    
+    /**
+     * Errors
+     *
+     **/
     ErrorMsgView = BaseView.extend({
         errorType : '',
         errorMsg : '',
@@ -516,9 +561,39 @@
         }
     });
     
-    UserLoginView = BaseView.extend({
-        el : '#user-login-container',
+    /***
+     * Modals
+     *
+     ***/
+    ModalView = BaseView.extend({
+        el : ".wrap",
+                
+        initialize : function (opts) {
+            this.__init(opts);
+        },
         
+        modalClose : function () {
+            $('.modalbg').hide();
+            $('.loginmodal').html('');
+        },
+        
+        __render : function(data) {
+            var data = data || {};
+            this.setElement('.loginmodal');
+            this.delegateEvents();
+            this.$el.html(this.template(data));
+            $('.modal-close').on('click', function (e) {
+                e.preventDefault();
+                console.log('close modal');
+                $('.modalbg').hide();
+                $('.loginmodal').html('');
+                return false;
+            });
+            $('.modalbg').show();
+        }
+    });
+    
+    UserLoginView = ModalView.extend({        
         events : {
             'click #user-login-submit' : 'doLogin',
         },
@@ -526,11 +601,25 @@
         doLogin : function () {
             alert('login!');
             // do api login call here
-            this.$el.empty();
+            this.modalClose();
+        },
+        
+        render : function() {
+            data = {};
+            data.modalHeader = "Log in";
+            this.__render(data);
         }
     });
     
-    UserSignupView = UserLoginView.extend({
+    UserNoAuthView = UserLoginView.extend({
+        render : function () {
+            data = {};
+            data.modalHeader = "Please sign in to view this content."
+            this.__render(data);
+        }
+    }),
+    
+    UserSignupView = ModalView.extend({
        events : {
             'click #user-signup-submit' : 'doSignup'
         },
@@ -538,21 +627,97 @@
         doSignup : function () {
             alert('signup');
             // do api signup here
-            this.$el.empty();
-        }
+            this.modalClose();
+        },
         
+        render : function() {
+            var data = {};
+            data.modalHeader = "Sign up!"
+            this.__render(data);
+        }
     });
     
-    PopcornPlayListView = PlayListView.extend({
-        loadPopcornPlayer : function (opts) {
-            this.setElement('#jquery_jplayer_1');
+    CreateCommentView = ModalView.extend({
+        events : {
+            'click #comment-form-submit' : 'commentSubmit',
+        },
+        
+        initialize : function (opts) {
+            this.__init(opts);
+            _.bindAll(this, 'commentSubmit');
+            this.data = opts.data;
+        },
+        
+        // create comment popup form and submit it
+        commentSubmit : function (e) {
+            e.preventDefault();
+            comment = new CommentModel({
+                avatar : 'http://placekitten.com',
+                mediaElement : '###',
+                created : Date(),
+                title : $('.comment-form input[name=title]').val(),
+                commentText : $('.comment-form input[name=commentText]').val(),
+                playHeadPos : $('#comment-play-head-pos').val()
+            });
+            // do model save here
+            alert("Submit comment");
+            this.hide();
+            // comment.save(comment.toJSON())
+        },
+        
+        hide : function () {
+            $('#modal-outer').hide();
+        },
+        
+        render : function (opts) {
+            this.setElement('#modal-container');
+            this.$el.html(this.template(this.data));
+            $('.comment-close').on('click', function (e) {
+                e.preventDefault();
+                $('#modal-outer').hide();
+                return false;
+            });
+            $('#modal-outer').show();
+        }
+    });
+    
+    SubscribeView = ModalView.extend({ });
+    
+    /**
+     * Simple player to test events etc
+     *
+     **/
+    TestPlayerView = Backbone.View.extend({
+        el : "#jp_container_1",
+
+        initialize : function (opts) {
             var that = this;
+            this.setElement('.jp-gui'); 
+            this.$el.html(_.template($('#tmp-jplayer-gui').html()));
+            this.loadJPlayer();
+        },
+        
+        onPlayerReady : function () {
+            var that = this;
+            
+            that.$el.jPlayer('setMedia', {m4v : "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v"})
+            $('.jp-play').on('click.init', function (e) {
+                e.preventDefault();
+                that.$el.jPlayer("play", 7);
+                $('.jp-play').unbind('click.init');
+            });
+        },
+        
+        loadJPlayer : function (opts) {
+            var that = this;
+            this.setElement('#jquery_jplayer_1');
             this.$el.jPlayer({
                 ready: function () {
                     // bind events once player is ready
+          
                     that.onPlayerReady();
                 },
-                swfPath: "../skin/js`",
+                swfPath: "../js/vendor",
                 supplied: "m4v, ogv",
                 errorAlerts : true
             });

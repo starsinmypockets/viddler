@@ -1,3 +1,35 @@
+<<<<<<< HEAD
+=======
+//ie console for dev
+ var alertFallback = true;
+   if (typeof console === "undefined" || typeof console.log === "undefined") {
+     console = {};
+     if (alertFallback) {
+         console.log = function(msg) {
+              // alert(msg);
+         };
+     } else {
+         console.log = function() {};
+     }
+   }
+   
+// Returns the version of Internet Explorer or a -1
+// (indicating the use of another browser).
+function getInternetExplorerVersion() {
+    var rv = -1; // Return value assumes failure.
+    if (navigator.appName == 'Microsoft Internet Explorer')
+    {
+        var ua = navigator.userAgent;
+        var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+    if (re.exec(ua) != null)
+        rv = parseFloat( RegExp.$1 );
+    }
+    return rv;
+}
+ie8 = (getInternetExplorerVersion() === 8);
+console.log(ie8);
+
+>>>>>>> playerjs
 ( function ($) {
 var ViddlerPlayer = ViddlerPlayer || {};
 
@@ -13,6 +45,7 @@ ViddlerPlayer.vent.bind('doLogin', function () {
 
 // get signup view
 ViddlerPlayer.vent.bind('doSignup', function () {
+    console.log('triggered signup');
     login = new UserSignupView({
         tmp : '#tmp-user-signup-form'
     }).render();
@@ -20,7 +53,7 @@ ViddlerPlayer.vent.bind('doSignup', function () {
 
 // Unauthorized view
 ViddlerPlayer.vent.bind('noAuth', function () {
-    login = new UserLoginView({
+    login = new UserNoAuthView({
         tmp : "#tmp-no-auth-form"
     }).render();
 });
@@ -32,7 +65,14 @@ window.testInit = function () {
         vent : ViddlerPlayer.vent
     });
     playlist.loadPlayList();
-};
+}
+
+window.testPlayer = function () {
+    test = new TestPlayerView({
+        tmp : "<br />"
+    });
+    test.render();
+}
 
 window.testInitPopcorn = function () {
     playlist = new PopcornPlayListView({
@@ -52,7 +92,7 @@ window.testMPInit = function () {
     $('.bar').on('click ', function (e) {
         console.log('bar click');
         playlist.loadCommentPopUp();
-    });    console.log('tesg MP');
+    });   
 };
 
 rainReady(function(){
@@ -62,16 +102,6 @@ rainReady(function(){
         $('.user-signup').on('click', function () {ViddlerPlayer.vent.trigger('doSignup')});
         $('.no').on('click', function () {ViddlerPlayer.vent.trigger('noAuth')});
        
-        /* Popcorn Jawn */
-/*
-         var pop = Popcorn( $("#jquery_player_1"), {
-             defaults: {
-             subtitle: {
-             target: "subtitle-div"
-         }
-       }
-       });
-*/
        /* Session Authentication */
         var $doc = $(document);
         
@@ -87,6 +117,6 @@ rainReady(function(){
                 ViddlerPlayer.vent.trigger('noAuth');
         });
     });
-
 });    
+
 })(jQuery);
