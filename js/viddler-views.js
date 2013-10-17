@@ -44,6 +44,7 @@
         currentTime : 0,
         jPlayer : {},
         pop : {},
+        timeLineLength : 0,
         
         getMediaElementComments : function (opts) {
             var that = this,
@@ -66,17 +67,30 @@
         
         events : {
             'click #comment-form-submit' : 'commentSubmit',
-            'click .jp-seek-bar' : 'doSeek'
         },
         
         initialize : function (opts) {
             this.__init(opts);
             console.log("IE8: "+ie8);
-            _.bindAll(this, 'commentSubmit', 'doSeek');
+            _.bindAll(this, 'commentSubmit');
         },
         
-        doSeek : function () {
-            alert("seek");
+        // Get timeline position and cue appropriate segment / start pos
+        cueToPercent : function (data) {
+            var timeLine = this.model.get("timeline"),
+                seekTo = data.percent,
+                i;
+            
+            // figure out which media element we need
+            for (i = 0; i < timeline.mediaElements.length; i++) {
+                funcs = function () {
+                    
+                }
+                
+            }
+            
+            console.log(this.model);
+            console.log(data);
         },
         
         onPlayerReady : function () {
@@ -89,6 +103,9 @@
         },
         
         onModelReady : function () {
+            var that = this,
+                i;
+                
             if (DEBUG) {
                 console.log('Model Ready Handler');
                 console.log(this.model);
@@ -97,6 +114,19 @@
                     errorMsg : "Testing error broadcasting system"
                 }).set();
             }
+            // set timeLineLength on the view
+            mediaEls = this.model.get("timeline").mediaElements;
+            console.log(mediaEls);
+            
+            for (i = 0; i < mediaEls.length; i++) {
+                funcs = function (i) {
+                    that.timeLineLength += (mediaEls[i].playheadStop - mediaEls[i].playheadStart);
+                }
+                
+                funcs(i);
+            }
+            console.log(that.timeLineLength);
+            
             this.loadPlayerGui();
             this.loadJPlayer();
         },
@@ -197,6 +227,17 @@
                     mediaElements : mediaElements,
                     steps : steps,
                     timeLineLength : timeLineLength
+                });
+                
+                // bind seekbar click event
+                $('.mega-timeline .jp-seek-bar').bind('click', function (e) {
+                    var data = {};
+                    console.log(e);
+                    console.log('my seek')
+                    e.preventDefault();
+                    data.percent = (e.offsetX / e.currentTarget.offsetWidth) * 100;
+                    that.cueToPercent(data);
+                    return false;
                 });
                 
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));

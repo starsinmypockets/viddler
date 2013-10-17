@@ -8,7 +8,6 @@
       {
         "id" : 123,
         "title": "h264 video of week",
-        "position": 0,
         "zLayer": 0,
         "playheadStart": 10000,
         "playheadStop": 20000,
@@ -24,7 +23,6 @@
       {
         "id" : 124,
         "title": "h264 video of week",
-        "position": 0,
         "zLayer": 0,
         "playheadStart": 0,
         "playheadStop": 10000,
@@ -39,7 +37,6 @@
       {
         "id" : 125,
         "title": "h264 video of week",
-        "position": 0,
         "zLayer": 0,
         "playheadStart": 16000,
         "playheadStop": 24000,

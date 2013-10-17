@@ -40,6 +40,11 @@ ViddlerPlayer.vent.bind('doLogin', function () {
     }).render();
 });
 
+// do mega timeline seek
+ViddlerPlayer.vent.bind('click .jp-seek-bar', function (e) {
+    console.log('my seek');
+});
+
 // get signup view
 ViddlerPlayer.vent.bind('doSignup', function () {
     console.log('triggered signup');
@@ -98,7 +103,7 @@ rainReady(function(){
         $('.user-login').on('click', function () {ViddlerPlayer.vent.trigger('doLogin')});
         $('.user-signup').on('click', function () {ViddlerPlayer.vent.trigger('doSignup')});
         $('.no').on('click', function () {ViddlerPlayer.vent.trigger('noAuth')});
-       
+        $('.mega-timeline .jp-seek-bar').bind('click', function (e) {console.log('my seek')});
        /* Session Authentication */
         var $doc = $(document);
         
@@ -114,6 +119,5 @@ rainReady(function(){
                 ViddlerPlayer.vent.trigger('noAuth');
         });
     });
-});    
-
+});
 })(jQuery);
