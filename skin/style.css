@@ -129,4 +129,5 @@ filter:alpha(opacity=40);}
 
 .cursor { cursor: pointer; }
 
-#play-overlay-button {position:absolute; cursor:pointer; top:40%; width: 50px; margin-left: -25px; left: 50%;height:70px; z-ndex:10000; display:none;}
+#play-overlay-button {position:absolute; cursor:pointer; top:35%; margin-left: -25px; left: 50%;height:70px; z-ndex:10000; display:none;}
+img#play-overlay-button {width:100px; height:100px}
