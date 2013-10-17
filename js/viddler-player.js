@@ -113,16 +113,7 @@ rainReady(function(){
             if (xhr.status == 401)
                 ViddlerPlayer.vent.trigger('noAuth');
         });
-        
-        /* Some app-wide event handling */
-        $('.modal-close').on('click', _.bind(function (e) {
-            e.preventDefault();
-            console.log('close modal');
-            $('.modalbg').hide();
-            $('.loginmodal').html('');
-            return false;
-        }, this));
     });
-
 });    
+
 })(jQuery);
