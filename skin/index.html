@@ -211,16 +211,18 @@
 </script>
 
 <script type="text/template" id="tmp-no-auth-form">
-    <div class="modalbg">
-        <span>You must be signed in to view this content</span>
+    <span class="closetwo modal-close cursor"><img src="img/orangex.png" id="orangex" alt="close modal"></span>
+    <header><%= modalHeader %></header>
+    <section id="modalbody">
         <form id="user-login-form">
             <ul class="modal-form">
                 <li><label for="username">Username</label><input type="text" id="username_input"/></li>
                 <li><label for="password"> Password</label><input type="password" id="password_input"/></li>
-                <li><input type="submit" id="user-login-submit" value="Login"></li>
+                <a href="#" id="user-login-submit"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>                
             </ul>
         </form>
-        <a href="#" class="user-signup">Sign up</a>
+    </section>
+    <a href="#" class="user-signup">Sign up</a>
     </div>
 </script>
 

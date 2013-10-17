@@ -572,10 +572,11 @@
         
         modalClose : function () {
             $('.modalbg').hide();
-            $('.modalbg').html('');
+            $('.loginmodal').html('');
         },
         
-        render : function(data) {
+        __render : function(data) {
+            var data = data || {};
             this.setElement('.loginmodal');
             this.$el.html(this.template(data));
             $('.modalbg').show();
@@ -594,13 +595,19 @@
         },
         
         render : function() {
-            var data = {};
-            data.modalHeader = "Log in"
-            this.setElement('.loginmodal');
-            this.$el.html(this.template(data));
-            $('.modalbg').show();
+            data = {};
+            data.modalHeader = "Log in";
+            this.__render(data);
         }
     });
+    
+    UserNoAuthView = UserLoginView.extend({
+        render : function () {
+            data = {};
+            data.modalHeader = "Please sign in to view this content."
+            this.__render(data);
+        }
+    }),
     
     UserSignupView = ModalView.extend({
        events : {
@@ -616,9 +623,7 @@
         render : function() {
             var data = {};
             data.modalHeader = "Sign up!"
-            this.setElement('.loginmodal');
-            this.$el.html(this.template(data));
-            $('.modalbg').show();
+            this.__render(data);
         }
     });
     
@@ -655,6 +660,7 @@
             $('#modal-outer').show();
         }
     });
+    
     SubscribeView = ModalView.extend({ });
     
     /**

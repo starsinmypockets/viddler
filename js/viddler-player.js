@@ -50,7 +50,7 @@ ViddlerPlayer.vent.bind('doSignup', function () {
 
 // Unauthorized view
 ViddlerPlayer.vent.bind('noAuth', function () {
-    login = new UserLoginView({
+    login = new UserNoAuthView({
         tmp : "#tmp-no-auth-form"
     }).render();
 });
