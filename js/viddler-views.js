@@ -277,14 +277,16 @@
                 data.sprites = stepMedia['sprites'];
                 data.start = opts.start || stepMedia.playheadStart;
                 data.stop = opts.stop || stepMedia.playheadStop;
-              //  data['poster'] = stepMedia.poster;
-               console.log(data);
-            // @@ make sure this works for all cases
-            if (this.data.tlStep < steps) {
+                
+                //  data['poster'] = stepMedia.poster;
+                console.log(data);
+                
+                // @@ make sure this works for all cases
+                if (this.data.tlStep > 0 ) {
                     doTimeLineStep(data);
+                } else {
+                    timeLineDone();
                 }
-            } else {
-                timeLineDone();
             }
             
             function renderSprite(html) {
@@ -448,7 +450,7 @@
                 $('.jp-play').bind('click.restart', function (e) {
                     e.preventDefault();
                     that.data.tlStep = 0;
-                    that.playTimeLine(({autostart : true}));                                        
+                    that.playTimeLine(({init : true}));                                        
                     $('.jp-play').unbind('click.restart');
                 });
                 
