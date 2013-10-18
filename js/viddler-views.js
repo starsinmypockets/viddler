@@ -41,11 +41,12 @@
         comments : {},
         timeline : {},
         timeLineStep : 0,
-        currentTime : 0,
         jPlayer : {},
         pop : {},
         timeLineLength : 0,
-        
+        timeLineElapsed : 0,
+        currentTime : 0,
+
         getMediaElementComments : function (opts) {
             var that = this,
                 comments = {};
@@ -74,13 +75,39 @@
             console.log("IE8: "+ie8);
             _.bindAll(this, 'commentSubmit');
         },
+        cueToPercent : function (opts) {
+            var that = this,
+                elems = this.timeline.mediaElements,
+                relElapse = 0,
+                relSecs = (this.timeLineLength * (opts.percent/100)),
+                data = {};
+                
+            console.log(elems);
+            
+            _.each(elems, function (elem) {
+                elem.relStart = relElapse;
+                elem.relEnd = relElapse + elem.playheadStop - elem.playheadStart;
+                relElapse += elem.playheadStop - elem.playheadStart;
+                if (relSecs >= elem.relStart && relSecs < elem.relEnd) {
+                    data.loads = {};
+                    data.loads[elem.elementType] = elem.elementURL;
+                    data.start = elem.playheadStart;
+                }
+            });
+
+            console.log(elems);            
+            console.log(data);
+            
+            that.$el.jPlayer("setMedia", data.loads);
+            that.$el.jPlayer("playHead", data.start);
+        },
         
         // Get timeline position and cue appropriate segment / start pos
-        cueToPercent : function (opts) {
+        cueToPercent2 : function (opts) {
             var timeLine = this.model.get("timeline"),
                 i=0,
                 relSecs,
-                relIndex,
+                elapsed,
                 seeks = {},
                 data = {},
                 relIndex = 0,
@@ -95,25 +122,26 @@
             
             function getSeeks (i) {
                 if (els[i]) {
-                    relIndex += (els[i].playheadStop - els[i].playheadStart)/1000; // convert from ms
-                    if (relSecs <= relIndex) {
+                    if (i === 0 || relSecs <= elapsed) {
+                        (i === 0) ? relStart = relSecs : relStart = elapsed - relSecs;
                         console.log('foo');
-                        seeks.start = relIndex - relSecs;
+                        console.log(elapsed, relSecs);
+                        seeks.start = relStart + els[i].playheadStart/1000;
                         seeks.elem = i;
                         seeks.loadData = {};
                         seeks.loadData[els[i].elementType] = els[i].elementURL;
-                    } else {
-                        console.log('bar');
+                     }
+                        elapsed += (els[i].playheadStop - els[i].playheadStart)/1000; // convert from ms
                         i++;
                         getSeeks(i);
-                    }
                 }
             }
             
             getSeeks(i);
             console.log(seeks);
-            that.$el.jPlayer("setElement", seeks.start);
-            that.$el.jPlayer("play", seeks.loadData);
+            that.$el.jPlayer("pause");
+           // that.$el.jPlayer("setElement", seeks.start);
+           // that.$el.jPlayer("play", seeks.loadData);
 
             console.log(this.model);
             console.log(data);
@@ -218,12 +246,12 @@
                 mediaElements = this.timeline.mediaElements,
                 steps = mediaElements.length;
                 stepMedia = mediaElements[this.timeLineStep],
-                timeLineComplete = 0, // length in ms of completed steps
+               // timeLineComplete = 0, // length in ms of completed steps
                 timeLineLength = 0, // total length in ms of timeline
-                timeLineCurrent = 0,
+                //timeLineCurrent = 0,
                 jp = $(that.$el.jPlayer()),
                 jpe = $.jPlayer.event,
-                tDEBUG = false;
+                tDEBUG = true;
 
             /* Check Gates */
             if (!this.checkAuth({isAuth : true })) {
@@ -301,6 +329,7 @@
                     
                 that.$el.jPlayer("setMedia", data);
                 
+                // @@ trouble in ie8
                 // wait for media to load
 //                $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
                     
@@ -340,6 +369,7 @@
                     
                     // Subsequent plays autostart
                     if (that.timeLineStep > 0) {
+                        that.timeLineElapsed += stepMedia.length;
                         that.$el.jPlayer("play", start/1000);
                     }
                     
@@ -347,7 +377,7 @@
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
                     
-                    updateCompletedTime();
+                    //updateCompletedTime();
                     updateCurrentTime();
                     
                     if (stop) {
@@ -359,11 +389,15 @@
                     stepComments = that.getMediaElementComments({id : stepMedia.id, jqEl : "#markers-container"});
                     if (DEBUG) console.log(stepComments);
                     // unbind canplay
-                    $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
+                    
+ // @@ canPlay event doesn't pla well cross platform
+ //                   $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
  //               }, that));
             }
             
             // get total ms elapsed in previous steps
+            // @@ DEPRECATE
+            // @@ just add the last step's time to complete on done
             function updateCompletedTime() {
                 if (tDEBUG) console.log('update step');
                 if (that.timeLineStep > 0) {
@@ -379,19 +413,19 @@
             function updateCurrentTime() {
                 if (stepMedia) {
                     var updateIntv = setInterval(function() {
-                        timeLineCurrent = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + timeLineComplete, 10);
+                        that.currentTime = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + that.timeLineElapsed, 10);
                         if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                             clearInterval(updateIntv);
                         }
-                        timeLinePercent = (timeLineCurrent / timeLineLength)*100
+                        timeLinePercent = (that.currentTime / timeLineLength)*100
                         if (tDEBUG) {
-                            console.log('current: '+timeLineCurrent);
-                            console.log('total: '+timeLineLength);
+                            console.log('current: '+that.currentTime);
+                            console.log('elapsed: '+that.timeLineElapsed);
+                            console.log('total: '+that.timeLineLength);
                             console.log(timeLinePercent);
                         }
 //                    $('.mega-timeline .jp-seek-bar').width('100%');
-                    $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
-
+                        $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
                     },250);   
                 }
             }
