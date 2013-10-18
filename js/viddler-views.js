@@ -1,5 +1,7 @@
 (function ($) {
-    var DEBUG = false;
+    var DEBUG = false,
+        tDEBUG = false;//true;
+
     /* Abstract */
     window.BaseView = Backbone.View.extend({
         id : 'content',
@@ -127,7 +129,7 @@
             $('#jp_video_0').attr('webkit-playsinline','');
             $('#jp_video_0').attr('webkitSupportsFullscreen', 'false');
           
-            this.playTimeLine();
+            this.playTimeLine({init : true});
         },
         
         onModelReady : function () {
@@ -212,20 +214,24 @@
             });
         },
         
+        doAuth : function (opts) {
+            // check gates here
+            // render appropriate view on fail
+            // return false
+        },
+        
         playTimeLine : function (opts) {
             var progressCounterIntv,
                 that = this,
+                data = {},
                 opts = opts || {},
                 status = that.$el.jPlayer().data().jPlayer.status,
                 mediaElements = this.timeline.mediaElements,
                 steps = mediaElements.length;
                 stepMedia = mediaElements[this.data.tlStep],
-                timeLineLength = 0, // total length in ms of timeline
-             //   jp = $(that.$el.jPlayer()),
-                jpe = $.jPlayer.event,
-                tDEBUG = false;//true;
-                
-
+                timeLineLength = 0; // total length in ms of timeline
+            
+            console.log(opts);
             /* Check Gates */
             if (!this.checkAuth({isAuth : true })) {
                 if (DEBUG) console.log('Unauthorized');
@@ -248,7 +254,7 @@
             });
             
             // initialize timeline
-            if (this.data.tlStep === 0) {
+            if (opts.init === true) {
                 $('#play-overlay-button').show();
                 this.loadMegaTimeLine({
                     mediaElements : mediaElements,
@@ -271,13 +277,15 @@
             }
             
             if (stepMedia) {
-                var data = {};
                 data[stepMedia.elementType] = stepMedia.elementURL;
                 data.subtitleSrc = stepMedia['subtitle-source'];
                 data.sprites = stepMedia['sprites'];
+                data.start = opts.start || stepMedia.playheadStart;
+                data.stop = opts.stop || stepMedia.playheadStop;
               //  data['poster'] = stepMedia.poster;
+            
                 if (this.data.tlStep < steps) {
-                    doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
+                    doTimeLineStep(data);                                
                 }
             } else {
                 timeLineDone();
@@ -295,7 +303,7 @@
                 $('*[data-sprite-id="'+id+'"]').remove();
             }
             
-            function doTimeLineStep(data, start, stop) {
+            function doTimeLineStep(data) {
                 var playerData, 
                     duration,
                     subtitles = true; 
@@ -330,7 +338,7 @@
                     // iOS needs initial media play to be contained in user-initiated call stack
                     $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
                         e.preventDefault();
-                        that.$el.jPlayer("play", start/1000);
+                        that.$el.jPlayer("play", data.start/1000);
                         $('#play-overlay-button').hide();
                         $('.jp-play').unbind('click.init');
                         return false;
@@ -339,7 +347,7 @@
                     // Subsequent plays autostart
                     if (that.data.tlStep > 0) {
 //                        t += stepMedia.length;
-                        that.$el.jPlayer("play", start/1000);
+                        that.$el.jPlayer("play", data.start/1000);
                     }
                     
                     if (tDEBUG) console.log('canPlay');
@@ -350,7 +358,7 @@
                     updateCurrentTime();
 
                     if (stop) {
-                        runStopListener(stop);
+                        runStopListener(data.stop);
                     };
                     
                     if (DEBUG) console.log(stepMedia);
@@ -415,7 +423,7 @@
             function doNext() {
                 that.data.tlElapsed += stepMedia.length;
                 that.data.tlStep++;
-                that.playTimeLine();
+                that.playTimeLine({init : true});
             }
             
             // listen for stop
