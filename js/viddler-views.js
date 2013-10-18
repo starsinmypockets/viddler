@@ -101,30 +101,17 @@
                     start = Math.floor(clicked - relElapsed + elem.playheadStart);
                     elemIndex = i;
                     that.data.tlStep = i;
+                } else {
+                    i++;
+                    relElapsed += elem.playheadStop - elem.playheadStart;                    
                 }
-                i++;
-                relElapsed += elem.playheadStop - elem.playheadStart;
             });
 
-            console.log(elemIndex, start);
-            
-            
-            // need the duration of the delivered video element
-            // and convert playhead pos to 
-            // canPlay
-            
+            if (DEBUG)console.log("Seek to", elemIndex, start);
+
             this.playTimeLine({
                 start : start
             });
-/*
-            this.$el.jPlayer("setMedia", data.loads);
-            
-            //need is playing flag
-            this.canPlay(function () {
-                console.log('canPlay wraps');
-                that.$el.jPlayer("playHead", data.seek);
-            });
-*/
         },
         
         canPlay : function(func) {
@@ -222,12 +209,6 @@
             });
         },
         
-        doAuth : function (opts) {
-            // check gates here
-            // render appropriate view on fail
-            // return false
-        },
-        
         playTimeLine : function (opts) {
             var progressCounterIntv,
                 that = this,
@@ -242,6 +223,7 @@
             console.log(opts);
             console.log(this.data.tlStep);
             /* Check Gates */
+            
             if (!this.checkAuth({isAuth : true })) {
                 if (DEBUG) console.log('Unauthorized');
                 login = new UserSignupView({tmp : "#tmp-no-auth-form"});
@@ -261,10 +243,12 @@
                 el.length = el.playheadStop - el.playheadStart;
                 timeLineLength += el.length;
             });
-            
+
             // initialize timeline
             if (opts.init === true) {
+                if (DEBUG) console.log("Init timeline");
                 $('#play-overlay-button').show();
+
                 this.loadMegaTimeLine({
                     mediaElements : mediaElements,
                     steps : steps,
@@ -277,7 +261,6 @@
                     console.log(e);
                     e.preventDefault();
                     data.percent = (e.offsetX / e.currentTarget.clientWidth) * 100;
-                    console.log(data);
                     that.cueToPercent(data);
                     return false;
                 });
@@ -295,7 +278,7 @@
                 data.start = opts.start || stepMedia.playheadStart;
                 data.stop = opts.stop || stepMedia.playheadStop;
               //  data['poster'] = stepMedia.poster;
-            
+               console.log(data);
             // @@ make sure this works for all cases
             if (this.data.tlStep < steps) {
                     doTimeLineStep(data);
@@ -323,69 +306,50 @@
                     
                 // @@ delegate to this.canPlay
                 that.$el.jPlayer("setMedia", data);
+                updateCurrentTime();
+
+                if (data.subtitleSrc && subtitles === true && !ie8) {
+                    // clear popcorn events from previous step
+                    if (that.pop.hasOwnProperty('destroy')) {
+                        that.pop.destroy();
+                    }
+                    // add subtitles
+                    that.pop.parseSRT(data.subtitleSrc);
+                }
                 
-                    if (data.subtitleSrc && subtitles === true && !ie8) {
-                        // clear popcorn events from previous step
-                        if (that.pop.hasOwnProperty('destroy')) {
-                            that.pop.destroy();
-                        }
-                        // add subtitles
-                        that.pop.parseSRT(data.subtitleSrc);
-                    }
-                    
-                    // Sprites
-                    if (data.sprites && !ie8) {
-                        _.each(data.sprites, function (sprite) {
-                            var spriteId = Math.random().toString(36).substring(7);  // give the sprite a temp id
-                            that.pop.cue(sprite.start/1000, function () {
-                                html = $(sprite.html).attr("data-sprite-id", spriteId);
-                                renderSprite(html);
-                            });
-                            that.pop.cue(sprite.stop/1000, function () {
-                                destroySprite(spriteId);   
-                            });
+                // Sprites
+                if (data.sprites && !ie8) {
+                    _.each(data.sprites, function (sprite) {
+                        var spriteId = Math.random().toString(36).substring(7);  // give the sprite a temp id
+                        that.pop.cue(sprite.start/1000, function () {
+                            html = $(sprite.html).attr("data-sprite-id", spriteId);
+                            renderSprite(html);
                         });
-                    }
-                    
-                    // @@ put this in init handler above??
-                    // Initial Play
-                    // iOS needs initial media play to be contained in user-initiated call stack
-                    $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
-                        e.preventDefault();
-                        updateCurrentTime();
-                        that.$el.jPlayer("play", data.start/1000);
-                        $('#play-overlay-button').hide();
-                        $('.jp-play').unbind('click.init');
-                        return false;
+                        that.pop.cue(sprite.stop/1000, function () {
+                            destroySprite(spriteId);   
+                        });
                     });
-                    
-                    // Subsequent plays autostart
-                    if (that.data.tlStep > 0) {
-//                        t += stepMedia.length;
-                        updateCurrentTime();
-                        that.$el.jPlayer("play", data.start/1000);
-                    }
-                    
-                    if (tDEBUG) console.log('canPlay');
-                    playerData = that.$el.jPlayer().data('jPlayer').status;
-                    duration = Math.floor(playerData.duration*1000); // convert to ms
-                    
-                    // @@ don't run this until play
-                    $('.viddler-duration').html(secs2time(that.data.tlLength/1000));
-                    if (stop) {
-                        runStopListener(data.stop);
-                    };
-                    
-                    if (DEBUG) console.log(stepMedia);
-                    
-                    //async trouble
-                    stepComments = that.getMediaElementComments({id : stepMedia.id, jqEl : "#markers-container"});
-                    if (DEBUG) console.log(stepComments);
-                    // unbind canplay
-                    
- // @@ canPlay event doesn't pla well cross platform
- //                   $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
- //               }, that));
+                }
+                
+                // Subsequent plays autostart
+                if (that.data.tlStep > 0) {
+                    that.$el.jPlayer("play", data.start/1000);
+                }
+                
+                playerData = that.$el.jPlayer().data('jPlayer').status;
+                duration = Math.floor(playerData.duration*1000); // convert to ms
+                
+                // @@ don't run this until play
+                $('.viddler-duration').html(secs2time(that.data.tlLength/1000));
+                if (stop) {
+                    runStopListener(data.stop);
+                };
+                
+                if (DEBUG) console.log(stepMedia);
+                
+                //async trouble
+                stepComments = that.getMediaElementComments({id : stepMedia.id, jqEl : "#markers-container"});
+                if (DEBUG) console.log(stepComments);
             }
             
             // get total ms elapsed in previous steps
@@ -499,13 +463,16 @@
                 
             data.elems = opts.mediaElements;
             _.each(data.elems, function (elem) {
-                elem.width = ((elem.length / opts.timeLineLength)*100).toFixed(2);
+                elem.width = ((elem.length / that.data.tlLength)*100).toFixed(2);
             });
-            
+            console.log(data);
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
+//            $('#jp-mega-playbar-container').html("foo");
+
             $('.mega-timeline .bar .jp-seek-bar').on('click', function (e) {
-                var seekPerc = e.offsetX/($(e.currentTarget).width());
                 e.preventDefault();
+                var seekPerc = e.offsetX/($(e.currentTarget).width());
+                return false;
             });
             
             this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
@@ -521,8 +488,6 @@
                 tmp : "#tmp-comment-popup"
             });
             commentModal.render();
-//            $('#comment-popup-container').html(_.template($('#tmp-comment-popup').html(), data));
-//            $('#comment-form-submit').on('click', this.commentSubmit);
         },
         
         // create comment popup form and submit it
