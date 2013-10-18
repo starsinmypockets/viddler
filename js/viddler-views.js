@@ -46,7 +46,8 @@
         timeLineLength : 0,
         timeLineElapsed : 0,
         currentTime : 0,
-
+        jpTime : 0,
+        
         getMediaElementComments : function (opts) {
             var that = this,
                 comments = {};
@@ -152,7 +153,6 @@
             if (!ie8) this.pop = Popcorn("#jp_video_0");
             $('#jp_video_0').attr('webkit-playsinline','');
             $('#jp_video_0').attr('webkitSupportsFullscreen', 'false');
-            
             this.playTimeLine();
         },
         
@@ -252,6 +252,7 @@
                 jp = $(that.$el.jPlayer()),
                 jpe = $.jPlayer.event,
                 tDEBUG = true;
+                
 
             /* Check Gates */
             if (!this.checkAuth({isAuth : true })) {
@@ -369,7 +370,7 @@
                     
                     // Subsequent plays autostart
                     if (that.timeLineStep > 0) {
-                        that.timeLineElapsed += stepMedia.length;
+//                        that.timeLineElapsed += stepMedia.length;
                         that.$el.jPlayer("play", start/1000);
                     }
                     
@@ -379,10 +380,11 @@
                     
                     //updateCompletedTime();
                     updateCurrentTime();
-                    
+
                     if (stop) {
                         runStopListener(stop);
                     };
+                    
                     if (DEBUG) console.log(stepMedia);
                     
                     //async trouble
@@ -423,6 +425,7 @@
                             console.log('elapsed: '+that.timeLineElapsed);
                             console.log('total: '+that.timeLineLength);
                             console.log(timeLinePercent);
+                            console.log('playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
                         }
 //                    $('.mega-timeline .jp-seek-bar').width('100%');
                         $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
@@ -442,6 +445,7 @@
             
             // trigger this on 'ended' event OR if we reach playheadStop
             function doNext() {
+                that.timeLineElapsed += stepMedia.length;
                 that.timeLineStep++;
                 that.playTimeLine();
             }
@@ -460,13 +464,16 @@
             function timeLineDone() {
                 if (tDEBUG) console.log('finished');
                 that.$el.jPlayer("pause");
-                
+                // clear timers
+                that.timeLineElapsed=0;
+               // clearInterval(updateIntv);
                 $('.jp-play').bind('click.restart', function (e) {
                     e.preventDefault();
                     that.timeLineStep = 0;
                     that.playTimeLine(({autostart : true}));                                        
                     $('.jp-play').unbind('click.restart');
                 });
+                
                 $('#play-overlay-button').show();
             }
         },
