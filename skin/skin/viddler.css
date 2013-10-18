@@ -436,14 +436,16 @@ span.slash{
 	font-size:.64em;
 }
 div.jp-current-time,
-div.jp-duration {
+div.jp-duration,
+div.viddler-current-time,
+div.viddler-duration {
 	width:60px;
 	font-size:.64em;
 }
-div.jp-current-time {
+div.jp-current-time, div.viddler-current-time {
 	display:inline;
 }
-div.jp-duration {
+div.jp-duration, div.viddler-duration {
 	display:inline;
 	color: #ffffff;
 }

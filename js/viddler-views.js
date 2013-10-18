@@ -1,6 +1,6 @@
 (function ($) {
     var DEBUG = false,
-        tDEBUG = false;//true;
+        tDEBUG = true;//true;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -96,9 +96,11 @@
                 if (relCurrent >= elem.relStart && relCurrent < elem.relEnd) {
                     data.loads = {};
                     data.loads[elem.elementType] = elem.elementURL;
-                    startSec = relCurrent - relElapsed + elem.playheadStart;
-                    data.seek = (relCurrent / elem.duration)*100;
+                    start = relCurrent - relElapsed + elem.playheadStart;
+                    //data.seek = (relCurrent / elem.duration)*100;
+                    that.data.tlStep = i;
                 }
+                i++;
                 relElapsed += elem.playheadStop - elem.playheadStart;
             });
 
@@ -110,6 +112,10 @@
             // and convert playhead pos to 
             // canPlay
             
+            this.playTimeLine({
+                start : start
+            });
+/*
             this.$el.jPlayer("setMedia", data.loads);
             
             //need is playing flag
@@ -117,6 +123,7 @@
                 console.log('canPlay wraps');
                 that.$el.jPlayer("playHead", data.seek);
             });
+*/
         },
         
         canPlay : function(func) {
@@ -273,6 +280,9 @@
                     return false;
                 });
                 
+                // set ui clock to 0
+                $('.viddler-current-time').html(secs2time(Math.floor(0)));
+
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
             }
             
@@ -284,8 +294,9 @@
                 data.stop = opts.stop || stepMedia.playheadStop;
               //  data['poster'] = stepMedia.poster;
             
-                if (this.data.tlStep < steps) {
-                    doTimeLineStep(data);                                
+            // @@ make sure this works for all cases
+            if (this.data.tlStep < steps) {
+                    doTimeLineStep(data);
                 }
             } else {
                 timeLineDone();
@@ -334,10 +345,12 @@
                         });
                     }
                     
+                    // @@ put this in init handler above??
                     // Initial Play
                     // iOS needs initial media play to be contained in user-initiated call stack
                     $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
                         e.preventDefault();
+                        updateCurrentTime();
                         that.$el.jPlayer("play", data.start/1000);
                         $('#play-overlay-button').hide();
                         $('.jp-play').unbind('click.init');
@@ -354,9 +367,8 @@
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
                     
-                    //updateCompletedTime();
-                    updateCurrentTime();
-
+                    // @@ don't run this until play
+                    $('.viddler-duration').html(secs2time(that.data.tlLength/1000));
                     if (stop) {
                         runStopListener(data.stop);
                     };
@@ -395,7 +407,7 @@
                         if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                             clearInterval(updateIntv);
                         }
-                        timeLinePercent = (that.data.tlNow / timeLineLength)*100
+                        timeLinePercent = (that.data.tlNow / that.data.tlLength)*100
                         if (tDEBUG) {
                             console.log('current: '+that.data.tlNow);
                             console.log('elapsed: '+that.data.tlElapsed);
@@ -405,8 +417,31 @@
                         }
 //                    $('.mega-timeline .jp-seek-bar').width('100%');
                         $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
+                        $('.viddler-current-time').html(secs2time(Math.floor(that.data.tlNow/1000)));
                     },250);   
                 }
+            }
+            
+            // utility - return 01:55:10 format time
+            function secs2time (seconds) {
+                var hours   = Math.floor(seconds / 3600);
+                var minutes = Math.floor((seconds - (hours * 3600)) / 60);
+                var seconds = seconds - (hours * 3600) - (minutes * 60);
+                var time = "";
+            
+                (hours != 0) ? time = hours+":" : time = hours+":";
+                if (minutes != 0 || time !== "") {
+                  minutes = (minutes < 10 && time !== "") ? "0"+minutes : String(minutes);
+                } else {
+                    minutes = "00:"
+                }  
+                time += minutes+":";
+                if (seconds === 0) { 
+                    time+="00" 
+                } else {
+                    time += (seconds < 10) ? "0"+seconds : String(seconds);
+                }
+                return time;
             }
             
             function runStopListener(stop) {
@@ -423,7 +458,7 @@
             function doNext() {
                 that.data.tlElapsed += stepMedia.length;
                 that.data.tlStep++;
-                that.playTimeLine({init : true});
+                that.playTimeLine();
             }
             
             // listen for stop
