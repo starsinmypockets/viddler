@@ -1,6 +1,6 @@
 (function ($) {
     var DEBUG = false,
-        tDEBUG = true;//true;
+        tDEBUG = false;//true;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -86,26 +86,27 @@
             var that = this,
                 elems = this.timeline.mediaElements,
                 relElapsed = 0,
-                relCurrent = (this.data.tlLength * (opts.percent/100)),
+                clicked = (this.data.tlLength * (opts.percent/100)),
                 data = {}
                 i = 0;;
+                
+                console.log(relElapsed);
+                console.log(clicked);
                 
             _.each(elems, function (elem) {
                 elem.relStart = relElapsed;
                 elem.relEnd = relElapsed + elem.playheadStop - elem.playheadStart;
-                if (relCurrent >= elem.relStart && relCurrent < elem.relEnd) {
-                    data.loads = {};
-                    data.loads[elem.elementType] = elem.elementURL;
-                    start = relCurrent - relElapsed + elem.playheadStart;
-                    //data.seek = (relCurrent / elem.duration)*100;
+                console.log(i, elem.relStart, elem.relEnd);
+                if (clicked >= elem.relStart && clicked < elem.relEnd) {
+                    start = Math.floor(clicked - relElapsed + elem.playheadStart);
+                    elemIndex = i;
                     that.data.tlStep = i;
                 }
                 i++;
                 relElapsed += elem.playheadStop - elem.playheadStart;
             });
 
-            console.log(elems);            
-            console.log(data);
+            console.log(elemIndex, start);
             
             
             // need the duration of the delivered video element
@@ -239,6 +240,7 @@
                 timeLineLength = 0; // total length in ms of timeline
             
             console.log(opts);
+            console.log(this.data.tlStep);
             /* Check Gates */
             if (!this.checkAuth({isAuth : true })) {
                 if (DEBUG) console.log('Unauthorized');
@@ -360,6 +362,7 @@
                     // Subsequent plays autostart
                     if (that.data.tlStep > 0) {
 //                        t += stepMedia.length;
+                        updateCurrentTime();
                         that.$el.jPlayer("play", data.start/1000);
                     }
                     
