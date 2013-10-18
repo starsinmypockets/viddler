@@ -76,31 +76,45 @@
             console.log("IE8: "+ie8);
             _.bindAll(this, 'commentSubmit');
         },
+        
         cueToPercent : function (opts) {
             var that = this,
                 elems = this.timeline.mediaElements,
-                relElapse = 0,
-                relSecs = (this.timeLineLength * (opts.percent/100)),
+                relElapsed = 0,
+                relCurrent = (this.timeLineLength * (opts.percent/100)),
                 data = {};
                 
-            console.log(elems);
-            
             _.each(elems, function (elem) {
-                elem.relStart = relElapse;
-                elem.relEnd = relElapse + elem.playheadStop - elem.playheadStart;
-                relElapse += elem.playheadStop - elem.playheadStart;
-                if (relSecs >= elem.relStart && relSecs < elem.relEnd) {
+                elem.relStart = relElapsed;
+                elem.relEnd = relElapsed + elem.playheadStop - elem.playheadStart;
+                if (relCurrent >= elem.relStart && relCurrent < elem.relEnd) {
                     data.loads = {};
                     data.loads[elem.elementType] = elem.elementURL;
-                    data.start = elem.playheadStart;
+                    startSec = relCurrent - relElapsed + elem.playheadStart;
+                    data.seek = (startSec / elem.duration)*100;
                 }
+                relElapsed += elem.playheadStop - elem.playheadStart;
             });
 
             console.log(elems);            
             console.log(data);
             
-            that.$el.jPlayer("setMedia", data.loads);
-            that.$el.jPlayer("playHead", data.start);
+            
+            // need the duration of the delivered video element
+            // and convert playhead pos to 
+            // canPlay
+            
+            this.$el.jPlayer("setMedia", data.loads);
+            
+            //need is playing flag
+            this.canPlay(function () {
+                console.log('canPlay wraps');
+                that.$el.jPlayer("playHead", data.seek);
+            });
+        },
+        
+        canPlay : function(func) {
+            $(this.$el.jPlayer()).on($.jPlayer.event.canplay, func()); //...
         },
         
         // Get timeline position and cue appropriate segment / start pos
@@ -153,6 +167,7 @@
             if (!ie8) this.pop = Popcorn("#jp_video_0");
             $('#jp_video_0').attr('webkit-playsinline','');
             $('#jp_video_0').attr('webkitSupportsFullscreen', 'false');
+          
             this.playTimeLine();
         },
         
@@ -251,7 +266,7 @@
                 //timeLineCurrent = 0,
                 jp = $(that.$el.jPlayer()),
                 jpe = $.jPlayer.event,
-                tDEBUG = true;
+                tDEBUG = false;//true;
                 
 
             /* Check Gates */
@@ -328,13 +343,9 @@
                     duration,
                     subtitles = true; 
                     
+                // @@ delegate to this.canPlay
                 that.$el.jPlayer("setMedia", data);
                 
-                // @@ trouble in ie8
-                // wait for media to load
-//                $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
-                    
-                    // Subtitles
                     if (data.subtitleSrc && subtitles === true && !ie8) {
                         // clear popcorn events from previous step
                         if (that.pop.hasOwnProperty('destroy')) {
