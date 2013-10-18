@@ -38,14 +38,17 @@
     // use this.$el.jPlayer() to manipulate player instance
     window.PlayListView = BaseView.extend({
         el : '#jp_container_1',
-        comments : {},
-        timeline : {},
-        timeLineStep : 0,
         jPlayer : {},
-        pop : {},
-        timeLineLength : 0,
-        timeLineElapsed : 0,
-        currentTime : 0,
+        pop : {}, //Popcorn.js
+        timeline : {},
+        data : {
+            comments : {},        
+            tlStep : 0,
+            tlSteps :0,
+            tlLength : 0,
+            tlElapsed : 0,
+            tlNow : 0,
+        },
         jpTime : 0,
         
         getMediaElementComments : function (opts) {
@@ -81,8 +84,9 @@
             var that = this,
                 elems = this.timeline.mediaElements,
                 relElapsed = 0,
-                relCurrent = (this.timeLineLength * (opts.percent/100)),
-                data = {};
+                relCurrent = (this.data.tlLength * (opts.percent/100)),
+                data = {}
+                i = 0;;
                 
             _.each(elems, function (elem) {
                 elem.relStart = relElapsed;
@@ -91,7 +95,7 @@
                     data.loads = {};
                     data.loads[elem.elementType] = elem.elementURL;
                     startSec = relCurrent - relElapsed + elem.playheadStart;
-                    data.seek = (startSec / elem.duration)*100;
+                    data.seek = (relCurrent / elem.duration)*100;
                 }
                 relElapsed += elem.playheadStop - elem.playheadStart;
             });
@@ -115,51 +119,6 @@
         
         canPlay : function(func) {
             $(this.$el.jPlayer()).on($.jPlayer.event.canplay, func()); //...
-        },
-        
-        // Get timeline position and cue appropriate segment / start pos
-        cueToPercent2 : function (opts) {
-            var timeLine = this.model.get("timeline"),
-                i=0,
-                relSecs,
-                elapsed,
-                seeks = {},
-                data = {},
-                relIndex = 0,
-                that = this;
-                
-            var els = timeLine.mediaElements;
-            relSecs = (this.timeLineLength * (opts.percent/100))/1000; // from ms to sec
-            console.log(opts);
-            console.log(relSecs);
-            //figure out what to cue
-            console.log(els);
-            
-            function getSeeks (i) {
-                if (els[i]) {
-                    if (i === 0 || relSecs <= elapsed) {
-                        (i === 0) ? relStart = relSecs : relStart = elapsed - relSecs;
-                        console.log('foo');
-                        console.log(elapsed, relSecs);
-                        seeks.start = relStart + els[i].playheadStart/1000;
-                        seeks.elem = i;
-                        seeks.loadData = {};
-                        seeks.loadData[els[i].elementType] = els[i].elementURL;
-                     }
-                        elapsed += (els[i].playheadStop - els[i].playheadStart)/1000; // convert from ms
-                        i++;
-                        getSeeks(i);
-                }
-            }
-            
-            getSeeks(i);
-            console.log(seeks);
-            that.$el.jPlayer("pause");
-           // that.$el.jPlayer("setElement", seeks.start);
-           // that.$el.jPlayer("play", seeks.loadData);
-
-            console.log(this.model);
-            console.log(data);
         },
         
         onPlayerReady : function () {
@@ -189,12 +148,12 @@
             
             for (i = 0; i < mediaEls.length; i++) {
                 funcs = function (i) {
-                    that.timeLineLength += (mediaEls[i].playheadStop - mediaEls[i].playheadStart);
+                    that.data.tlLength += (mediaEls[i].playheadStop - mediaEls[i].playheadStart);
                 }
                 
                 funcs(i);
             }
-            console.log(that.timeLineLength);
+            console.log(that.data.tlLength);
             
             this.loadPlayerGui();
             this.loadJPlayer();
@@ -205,7 +164,7 @@
             this.model.fetch({
                 success : function (model, response, opts) {
                     that.timeline = model.get('timeline');
-                    that.timeLineSteps = that.timeline.mediaElements.length;
+                    that.data.tlSteps = that.timeline.mediaElements.length;
                     that.onModelReady();
                     that.render();
                 },
@@ -260,11 +219,9 @@
                 status = that.$el.jPlayer().data().jPlayer.status,
                 mediaElements = this.timeline.mediaElements,
                 steps = mediaElements.length;
-                stepMedia = mediaElements[this.timeLineStep],
-               // timeLineComplete = 0, // length in ms of completed steps
+                stepMedia = mediaElements[this.data.tlStep],
                 timeLineLength = 0, // total length in ms of timeline
-                //timeLineCurrent = 0,
-                jp = $(that.$el.jPlayer()),
+             //   jp = $(that.$el.jPlayer()),
                 jpe = $.jPlayer.event,
                 tDEBUG = false;//true;
                 
@@ -291,7 +248,7 @@
             });
             
             // initialize timeline
-            if (this.timeLineStep === 0) {
+            if (this.data.tlStep === 0) {
                 $('#play-overlay-button').show();
                 this.loadMegaTimeLine({
                     mediaElements : mediaElements,
@@ -300,11 +257,11 @@
                 });
                 
                 // bind seekbar click event
-                $('.mega-timeline .jp-progress').bind('click', function (e) {
+                $('.mega-timeline .jp-seek-bar').bind('click', function (e) {
                     var data = {};
                     console.log(e);
                     e.preventDefault();
-                    data.percent = (e.offsetX / e.target.offsetWidth) * 100;
+                    data.percent = (e.offsetX / e.currentTarget.clientWidth) * 100;
                     console.log(data);
                     that.cueToPercent(data);
                     return false;
@@ -319,7 +276,7 @@
                 data.subtitleSrc = stepMedia['subtitle-source'];
                 data.sprites = stepMedia['sprites'];
               //  data['poster'] = stepMedia.poster;
-                if (this.timeLineStep < steps) {
+                if (this.data.tlStep < steps) {
                     doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
                 }
             } else {
@@ -380,8 +337,8 @@
                     });
                     
                     // Subsequent plays autostart
-                    if (that.timeLineStep > 0) {
-//                        that.timeLineElapsed += stepMedia.length;
+                    if (that.data.tlStep > 0) {
+//                        t += stepMedia.length;
                         that.$el.jPlayer("play", start/1000);
                     }
                     
@@ -413,8 +370,8 @@
             // @@ just add the last step's time to complete on done
             function updateCompletedTime() {
                 if (tDEBUG) console.log('update step');
-                if (that.timeLineStep > 0) {
-                    for (var i = 0; i < that.timeLineStep; i++) {
+                if (that.data.tlStep > 0) {
+                    for (var i = 0; i < that.data.tlStep; i++) {
                         function func (i) {
                             timeLineComplete += parseInt(mediaElements[i].length);
                         }
@@ -426,15 +383,15 @@
             function updateCurrentTime() {
                 if (stepMedia) {
                     var updateIntv = setInterval(function() {
-                        that.currentTime = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + that.timeLineElapsed, 10);
+                        that.data.tlNow = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + that.data.tlElapsed, 10);
                         if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                             clearInterval(updateIntv);
                         }
-                        timeLinePercent = (that.currentTime / timeLineLength)*100
+                        timeLinePercent = (that.data.tlNow / timeLineLength)*100
                         if (tDEBUG) {
-                            console.log('current: '+that.currentTime);
-                            console.log('elapsed: '+that.timeLineElapsed);
-                            console.log('total: '+that.timeLineLength);
+                            console.log('current: '+that.data.tlNow);
+                            console.log('elapsed: '+that.data.tlElapsed);
+                            console.log('total: '+that.data.tlLength);
                             console.log(timeLinePercent);
                             console.log('playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
                         }
@@ -456,8 +413,8 @@
             
             // trigger this on 'ended' event OR if we reach playheadStop
             function doNext() {
-                that.timeLineElapsed += stepMedia.length;
-                that.timeLineStep++;
+                that.data.tlElapsed += stepMedia.length;
+                that.data.tlStep++;
                 that.playTimeLine();
             }
             
@@ -476,11 +433,11 @@
                 if (tDEBUG) console.log('finished');
                 that.$el.jPlayer("pause");
                 // clear timers
-                that.timeLineElapsed=0;
+                that.data.tlElapsed=0;
                // clearInterval(updateIntv);
                 $('.jp-play').bind('click.restart', function (e) {
                     e.preventDefault();
-                    that.timeLineStep = 0;
+                    that.data.tlStep = 0;
                     that.playTimeLine(({autostart : true}));                                        
                     $('.jp-play').unbind('click.restart');
                 });
