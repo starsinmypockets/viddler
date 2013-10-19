@@ -114,7 +114,7 @@ position: relative;
 	width: 97%;
 	padding: 0px 15px 0px 15px;
 	height: 54px;
-	margin-top: 20px;
+	margin-top: 10px;
 	-webkit-box-shadow: inset 1px 1px 2px 2px rgba(1, 1, 1, .4);
 box-shadow: inset 1px 1px 2px rgba(1, 1, 1, .4); 
 }
@@ -596,7 +596,7 @@ div.jp-jplayer {
 }
 
 div.jp-jplayer {
-	background-color: #000000;
+	background-color: none;
 }
 
 
@@ -876,6 +876,7 @@ a.also{
 	width: 100%;
 	position: absolute;
 	height: 100%;
+	display:none; /* display:block to enable modal */
 }
 .loginmodal{
 	width: 90%;
@@ -919,6 +920,7 @@ img#orangex{
 	font-size: 30px;
 	display:block;
 	margin-top: 10px;
+	border-radius: 0px;
 }
 .loginmodal form input:focus{
 	outline:#ff4d4d solid thick;
@@ -953,11 +955,12 @@ box-shadow: 1px 1px 1px 1px rgba(1, 1, 1, .2);
 	left: -35px;
 }
 input.loginsubmit{
-	margin-top: 150px!important;
+	margin-top: 30px!important;
 	font-family: helvetica;
 	color: #ffffff;
 	font-weight:bold;
 	display:block;
+	border-radius: 5px!important;
 	background: #66a3d9; /* Old browsers */
 background: -moz-linear-gradient(top,  #66a3d9 0%, #4b8ece 100%); /* FF3.6+ */
 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#66a3d9), color-stop(100%,#4b8ece)); /* Chrome,Safari4+ */
@@ -1380,6 +1383,15 @@ span.number{
 	z-index: 99999999;
 	border-radius: 15px;
 	border: #fb9600 solid thick;
+}
+.loginmodal header{
+	padding: 10px;
+}
+.loginmodal section#modalbody{
+	padding: 15px;
+}
+.loginmodal section#modalbody form input{
+	max-width: 85%;
 }
 }
 /* @end */

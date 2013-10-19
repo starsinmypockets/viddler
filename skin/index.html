@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Viddler Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<link rel="stylesheet" href="style.css">
 	<link rel="stylesheet" type="text/css" href="skin/viddler.css">
 	<script src="../js/vendor/jquery.js"></script>
@@ -30,6 +31,8 @@
 </head>
 <body>
 <div class="wrap">
+
+<!-- login modal -->
 <div class="modalbg">
   <div class="loginmodal">
     <a href="#" class="closetwo"><img src="img/orangex.png" id="orangex" alt="close modal"></a>
@@ -51,6 +54,7 @@
   </section>
 </div>
 </div>
+<!--end login modal-->
     <div id="jp_container_1" class="jp-video">
         <div class="jp-type-single">
             <div id="jquery_jplayer_1" class="jp-jplayer">
@@ -75,11 +79,13 @@
             <div id="errors"></div>
             <!-- end backbone containers -->
         </div>
+        <!--comment bubble-->
             <div id="modal-outer">Add Comment<img src="img/modalclose.png" alt="" class="modal-close cursor">
                 <div id="modal-container" class="clearfix">1000 Characters Limit</div>
                 <img src="img/commenttriangle.png" alt="comment triangle" id="modaltriangle">
                 <a href="#"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>
             </div>
+      <!--end comment bubble-->
             <div id="comment-popup-container"></div>
             <div id="error-message-container"></div>
             <div id="comments-container"></div>
