@@ -71,6 +71,7 @@
         
         initialize : function (opts) {
             this.__init(opts);
+            console.log("IE8: "+ie8);
             _.bindAll(this, 'commentSubmit', 'doSeek');
         },
         
@@ -80,13 +81,9 @@
         
         onPlayerReady : function () {
             if (DEBUG) console.log('Player Ready Handler');
-            this.pop = Popcorn("#jp_video_0");
+            if (!ie8) this.pop = Popcorn("#jp_video_0");
             $('#jp_video_0').attr('webkit-playsinline','');
             $('#jp_video_0').attr('webkitSupportsFullscreen', 'false');
-
-            $(this.$el.jPlayer()).bind($.jPlayer.event.resize, _.bind(function (e) {
-                if (DEBUG) console.log('Resize event');
-            }, this));
             
             this.playTimeLine();
         },
@@ -138,7 +135,7 @@
                         });
                     }
                 },
-                swfPath: "../skin/js`",
+                swfPath: "../js/vendor",
                 supplied: "m4v, ogv",
                 errorAlerts : true
             });
@@ -196,11 +193,6 @@
             // initialize timeline
             if (this.timeLineStep === 0) {
                 $('#play-overlay-button').show();
-                $('#play-overlay-button').on('click', function (e) {
-                    $(this).hide();
-                    that.$el.jPlayer("play");
-                });
-
                 this.loadMegaTimeLine({
                     mediaElements : mediaElements,
                     steps : steps,
@@ -215,7 +207,7 @@
                 data[stepMedia.elementType] = stepMedia.elementURL;
                 data.subtitleSrc = stepMedia['subtitle-source'];
                 data.sprites = stepMedia['sprites'];
-                // data['poster'] = stepMedia.poster;
+              //  data['poster'] = stepMedia.poster;
                 if (this.timeLineStep < steps) {
                     doTimeLineStep(data, stepMedia.playheadStart, stepMedia.playheadStop);                                
                 }
@@ -243,10 +235,10 @@
                 that.$el.jPlayer("setMedia", data);
                 
                 // wait for media to load
-                $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
+//                $(that.$el.jPlayer()).bind($.jPlayer.event.canplay, _.bind(function (event) {
                     
                     // Subtitles
-                    if (data.subtitleSrc && subtitles === true) {
+                    if (data.subtitleSrc && subtitles === true && !ie8) {
                         // clear popcorn events from previous step
                         if (that.pop.hasOwnProperty('destroy')) {
                             that.pop.destroy();
@@ -256,7 +248,7 @@
                     }
                     
                     // Sprites
-                    if (data.sprites) {
+                    if (data.sprites && !ie8) {
                         _.each(data.sprites, function (sprite) {
                             var spriteId = Math.random().toString(36).substring(7);  // give the sprite a temp id
                             that.pop.cue(sprite.start/1000, function () {
@@ -268,15 +260,25 @@
                             });
                         });
                     }
-                                    
+                    
+                    // Initial Play
+                    // iOS needs initial media play to be contained in user-initiated call stack
+                    $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
+                        e.preventDefault();
+                        that.$el.jPlayer("play", start/1000);
+                        $('#play-overlay-button').hide();
+                        $('.jp-play').unbind('click.init');
+                        return false;
+                    });
+                    
+                    // Subsequent plays autostart
+                    if (that.timeLineStep > 0) {
+                        that.$el.jPlayer("play", start/1000);
+                    }
+                    
                     if (tDEBUG) console.log('canPlay');
                     playerData = that.$el.jPlayer().data('jPlayer').status;
                     duration = Math.floor(playerData.duration*1000); // convert to ms
-                    that.$el.jPlayer("play", start/1000);                    
-                    if (this.timeLineStep === 0 && opts.autostart !== true) {
-                        // start timeline pause
-                        that.$el.jPlayer('pause');
-                    }
                     
                     updateCompletedTime();
                     updateCurrentTime();
@@ -291,7 +293,7 @@
                     if (DEBUG) console.log(stepComments);
                     // unbind canplay
                     $(that.$el.jPlayer()).unbind($.jPlayer.event.canplay);
-                }, that));
+ //               }, that));
             }
             
             // get total ms elapsed in previous steps
@@ -563,21 +565,30 @@
      *
      ***/
     ModalView = BaseView.extend({
-        el : '#modal-outer',
-        
+        el : ".wrap",
+                
         initialize : function (opts) {
             this.__init(opts);
         },
         
         modalClose : function () {
-            $('#modal-outer').hide();
-            $('#modal-container').html('');
+            $('.modalbg').hide();
+            $('.loginmodal').html('');
         },
         
-        render : function() {
-            this.setElement('#modal-container');
-            this.$el.html(this.template());
-            $('#modal-outer').show();
+        __render : function(data) {
+            var data = data || {};
+            this.setElement('.loginmodal');
+            this.delegateEvents();
+            this.$el.html(this.template(data));
+            $('.modal-close').on('click', function (e) {
+                e.preventDefault();
+                console.log('close modal');
+                $('.modalbg').hide();
+                $('.loginmodal').html('');
+                return false;
+            });
+            $('.modalbg').show();
         }
     });
     
@@ -590,10 +601,24 @@
             alert('login!');
             // do api login call here
             this.modalClose();
+        },
+        
+        render : function() {
+            data = {};
+            data.modalHeader = "Log in";
+            this.__render(data);
         }
     });
     
-    UserSignupView = UserLoginView.extend({
+    UserNoAuthView = UserLoginView.extend({
+        render : function () {
+            data = {};
+            data.modalHeader = "Please sign in to view this content."
+            this.__render(data);
+        }
+    }),
+    
+    UserSignupView = ModalView.extend({
        events : {
             'click #user-signup-submit' : 'doSignup'
         },
@@ -602,17 +627,23 @@
             alert('signup');
             // do api signup here
             this.modalClose();
-        }
+        },
         
+        render : function() {
+            var data = {};
+            data.modalHeader = "Sign up!"
+            this.__render(data);
+        }
     });
     
     CreateCommentView = ModalView.extend({
         events : {
-            'click #comment-form-submit' : 'commentSubmit'
+            'click #comment-form-submit' : 'commentSubmit',
         },
         
         initialize : function (opts) {
             this.__init(opts);
+            _.bindAll(this, 'commentSubmit');
             this.data = opts.data;
         },
         
@@ -627,18 +658,69 @@
                 commentText : $('.comment-form input[name=commentText]').val(),
                 playHeadPos : $('#comment-play-head-pos').val()
             });
+            // do model save here
             alert("Submit comment");
-            this.modalClose();
-            
+            this.hide();
             // comment.save(comment.toJSON())
+        },
+        
+        hide : function () {
+            $('#modal-outer').hide();
         },
         
         render : function (opts) {
             this.setElement('#modal-container');
             this.$el.html(this.template(this.data));
+            $('.comment-close').on('click', function (e) {
+                e.preventDefault();
+                $('#modal-outer').hide();
+                return false;
+            });
             $('#modal-outer').show();
         }
     });
+    
     SubscribeView = ModalView.extend({ });
+    
+    /**
+     * Simple player to test events etc
+     *
+     **/
+    TestPlayerView = Backbone.View.extend({
+        el : "#jp_container_1",
+
+        initialize : function (opts) {
+            var that = this;
+            this.setElement('.jp-gui'); 
+            this.$el.html(_.template($('#tmp-jplayer-gui').html()));
+            this.loadJPlayer();
+        },
+        
+        onPlayerReady : function () {
+            var that = this;
+            
+            that.$el.jPlayer('setMedia', {m4v : "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v"})
+            $('.jp-play').on('click.init', function (e) {
+                e.preventDefault();
+                that.$el.jPlayer("play", 7);
+                $('.jp-play').unbind('click.init');
+            });
+        },
+        
+        loadJPlayer : function (opts) {
+            var that = this;
+            this.setElement('#jquery_jplayer_1');
+            this.$el.jPlayer({
+                ready: function () {
+                    // bind events once player is ready
+          
+                    that.onPlayerReady();
+                },
+                swfPath: "../js/vendor",
+                supplied: "m4v, ogv",
+                errorAlerts : true
+            });
+        },
+    });
     
 })(jQuery);
