@@ -14,3 +14,33 @@ ga('create', 'UA-XXXX-Y', {
 ga('send','pageview');
 
 /* End Google Analytics */
+
+//
+
+/* SiteCatalyst code version: H.22.1. */
+/* Commented out until we get an s_code
+s.pageName="Product List Page"
+s.server=""
+s.channel="Women's Dept"
+s.pageType=""
+s.prop1="Activewear"
+s.prop2=""
+s.prop3=""
+s.prop4=""
+s.prop5=""
+// Conversion Variables
+s.campaign=""
+s.state=""
+s.zip=""
+s.events=""
+s.products=""
+s.purchaseID=""
+s.eVar1=""
+s.eVar2=""
+s.eVar3=""
+s.eVar4=""
+s.eVar5=""
+
+var s_code=s.t();if(s_code)document.write(s_code);
+*/
+/* End SiteCatalyst */
