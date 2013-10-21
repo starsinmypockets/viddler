@@ -291,7 +291,7 @@
                 
                 //  data['poster'] = stepMedia.poster;
                 console.log(data);
-                                    doTimeLineStep(data);
+                doTimeLineStep(data);
                 
             }
             
@@ -320,7 +320,7 @@
                     that.$el.jPlayer("play", start/1000);
                     $('.jp-play').unbind('click.init');
                     return false;
-                });    
+                });
 
                 // @@ delegate to this.canPlay
                 updateCurrentTime();
@@ -402,7 +402,7 @@
 //                    $('.mega-timeline .jp-seek-bar').width('100%');
                         $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
                         $('.viddler-current-time').html(secs2time(Math.floor(that.data.tlNow/1000)));
-                    },250);   
+                    },250);
                 }
             }
             
@@ -684,10 +684,21 @@
          **/
          
          setMedia : function (opts) {
-             this.$el.jPlayer("setMedia", {
-                 //opts.type : opts.url
-             });
+             console.log(opts);
+             data = {};
+             data[opts.type] = opts.url;
+             this.$el.jPlayer("setMedia", data);
+         },
+         
+         play : function (opts) {
+         
+         (opts && opts.start) ? start = opts.start : start = '';
+             this.$el.jPlayer("play", start)
          }, 
+         
+         pause : function (e, opts) {
+             this.$el.jPlayer("pause");
+         },
          
         /**
          * Event listener wrappers
@@ -713,10 +724,6 @@
     VPlayerGui = Backbone.View.extend({
         el : ".jp-gui",
         
-        events : {
-            'click .jp-comment' : 'commentModal'
-        },
-        
         // load comment modal
         commentModal : function () {
             data = {};
@@ -729,8 +736,48 @@
             commentModal.render();
         },
         
-        updateCurrentTime : function () {
+        loadMegaTimeLine : function (opts) {
+            var that = this,
+                data = {},
+                comments = [];
+                
+            data.elems = opts.mediaElements;
+            _.each(data.elems, function (elem) {
+                elem.width = ((elem.length / that.data.tlLength)*100).toFixed(2);
+            });
+            console.log(data);
+            $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
+//            $('#jp-mega-playbar-container').html("foo");
+
+            $('.mega-timeline .bar .jp-seek-bar').on('click', function (e) {
+                e.preventDefault();
+                var seekPerc = e.offsetX/($(e.currentTarget).width());
+                return false;
+            });
             
+            this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
+        },
+        
+        updateCurrentTime : function (stepMedia) {
+            if (stepMedia) {
+                var updateIntv = setInterval(function() {
+                    that.data.tlNow = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + that.data.tlElapsed, 10);
+                    if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
+                        clearInterval(updateIntv);
+                    }
+                    timeLinePercent = (that.data.tlNow / that.data.tlLength)*100
+                    if (tDEBUG) {
+                        console.log('current: '+that.data.tlNow);
+                        console.log('elapsed: '+that.data.tlElapsed);
+                        console.log('total: '+that.data.tlLength);
+                        console.log(timeLinePercent);
+                        console.log('playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
+                    }
+    //                    $('.mega-timeline .jp-seek-bar').width('100%');
+                    $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
+                    $('.viddler-current-time').html(secs2time(Math.floor(that.data.tlNow/1000)));
+                },250);
+            }
         },
         
         seekToPercent : function () {
@@ -741,11 +788,107 @@
             
         },
         
+        
+        // utility = conver seconds to 00:00:00 format
+        secs2time : function(seconds) {
+            var hours   = Math.floor(seconds / 3600);
+            var minutes = Math.floor((seconds - (hours * 3600)) / 60);
+            var seconds = seconds - (hours * 3600) - (minutes * 60);
+            var time = "";
+        
+            (hours != 0) ? time = hours+":" : time = hours+":";
+            if (minutes != 0 || time !== "") {
+              minutes = (minutes < 10 && time !== "") ? "0"+minutes : String(minutes);
+            } else {
+                minutes = "00:"
+            }  
+            time += minutes+":";
+            if (seconds === 0) { 
+                time+="00" 
+            } else {
+                time += (seconds < 10) ? "0"+seconds : String(seconds);
+            }
+            return time;
+        },
+
         render : function(opts) {
             //this.$el.html("GUI here");
             this.$el.html(_.template($('#tmp-mega-gui').html()));
         }
     });
+
+    // bind events in outer view
+    TestPlayer2View = Backbone.View.extend({
+        el : "#jp_container_1",
+        
+        events : {
+            'click .jp-comment' : 'commentModal',
+            'click #viddler-play' : "vPlay",
+            'click #viddler-pause' : "vPause"
+        },
+        timeline : {},
+        
+        // initialize playlist data - update from model
+        data : {
+            comments : {},        
+            tlStep : 0,
+            tlSteps :0,
+            tlLength : 0,
+            tlElapsed : 0,
+            tlNow : 0,
+        },
+        
+        // delegate player events to vP view
+        vPlay : function (e) {
+            console.log(e);
+            e.preventDefault();
+            this.vP.play();
+            return false;
+        },
+        
+        vPause : function (e) {
+            e.preventDefault();
+            console.log(e);
+            this.vP.pause();  
+            return false;
+        },
+        
+        loadPlayList : function (opts) {
+            var that = this;
+            this.model.fetch({
+                success : function (model, response, opts) {
+                    console.log(model);
+                },
+                error : function (model, response) {
+                    that.loadPlayerGui();
+                    that.loadJPlayer();
+                    error = new ErrorMsgView({
+                        errorType : "server",
+                        errorMsg : "Error retrieving playlist data from server"
+                    }).set();
+                }
+            });
+        },
+        
+        initialize : function (opts) {
+            _.bindAll(this, "vPlay");
+            this.vPG = new VPlayerGui();
+            this.vPG.render();
+            
+            this.vP = new VPlayerView();
+            this.vP.loadVPlayer();
+            this.vP.setMedia({
+                type : "m4v",
+                url : "http://raineverywhere.com/client/viddler_r/big_buck_bunny.mp4"
+            });
+            
+            this.loadPlayList();
+            this.vP.play({start : 7});
+        },
+        
+        render : function () {}
+    });
+    
     /**
      * Errors
      *
@@ -895,6 +1038,10 @@
      * Simple player to test events etc
      *
      **/
+
+    
+    // @@ so outer view needs to coordinate between the subviewsa...
+
     TestPlayerView = Backbone.View.extend({
         el : "#jp_container_1",
 
@@ -907,7 +1054,6 @@
         },
         
         render : function () {}
-
     });
     
 })(jQuery);

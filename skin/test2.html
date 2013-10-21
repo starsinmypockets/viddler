@@ -20,7 +20,7 @@
     
     <script type="text/javascript">
     $(document).ready(function(){
-        window.testPlayer();
+        window.testPlayer2();
         //window.testInit();
     });
   </script>
@@ -63,59 +63,13 @@
 </body>
 </html>
 
-<script type="text/template" id="tmp-jplayer-gui">
-        <div class="jp-video-play">
-          <a href="javascript:;" class="jp-video-play-icon" tabindex="1">play</a>
-        </div>
-        <div class="jp-interface clearfix">
-          <div class="jp-controls-holder">
-            <ul class="jp-controls">
-              <li><a href="javascript:;" class="jp-play init-timeline" tabindex="1">play</a></li>
-              <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
-            </ul>
-            <div class="bar clearfix">
-                <div id="markers-container"></div>
-            <div class="jp-progress" style="position: relative; z-index: 888;">
-            <div class="jp-seek-bar" style="position: relative; z-index: 1;">
-              <div class="jp-play-bar"><img src="img/time.png" id="time" /></div>
-            </div>
-          </div>
-          <a href="javascript:;"><img src="img/mobile/search.png" alt="Search" class="searchimg"></a>
-          <div class="time">
-              <div class="jp-current-time"></div>
-              <span class="slash">/</span>
-              <div class="jp-duration"></div>
-          </div>
-        </div>
-            <ul class="jp-toggles">
-              <li><a href="javascript:;" title="comments" class="jp-comment" tabindex="1">Comments</a></li> 
-              <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
-              <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
-               <div class="jp-volume-bar">
-              <div class="jp-volume-bar-value"></div>
-            </div>
-              <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
-                <li><a href="javascript:;" class="jp-doohickey" tabindex="1" title="doohickey">Doohickey</a></li>
-              <li><a href="javascript:;" title="hd" class="jp-hd" tabindex="1" title="hd">HD</a></li>
-            <li><a href="javascript:;" class="jp-full-screen" tabindex="1" title="full screen">full screen</a></li>
-            <div class="time2">
-          <div class="jp-current-time"></div>
-          <span class="slash">/</span>
-          <div class="jp-duration"></div>
-            <a href="javascript:;"><img src="img/mobile/video.png" class="videoimg" alt="Video"></a>
-          </div>
-            </ul>
-          </div>
-        </div>
-</script>
-
 <script type="text/template" id="tmp-mega-gui">
     <div class="mega-timeline clearfix">
         <div class="jp-interface clearfix">
             <div class="jp-controls-holder">
                 <ul class="jp-controls">
-                    <li><a href="javascript:;" class="jp-play viddler-play " tabindex="1">play</a></li>
-                    <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+                    <li><a href="javascript:;" class="jp-play" id="viddler-play" tabindex="1">play</a></li>
+                    <li><a href="javascript:;" class="jp-pause" id="viddler-pause" tabindex="1">pause</a></li>
                 </ul>
                 <div id="jp-mega-playbar-container"></div>
             </div>
@@ -144,5 +98,17 @@
                 <div class="viddler-duration"></div>
             </div>
         </div>
+    </div>
+</script>
+
+<script type="text/template" id="tmp-comment-popup">
+    <img src="img/modalclose.png" alt="" class="comment-close modal-close cursor"/>
+    <div class="comment-popup">
+        <form class="comment-form">
+            <ul class="modal-form">
+                <li><input name="commentText" type="text"/></li>
+                <li><label for="time">Time</label><input name="time" id="comment-play-head-pos"type="text" value="<%= time %>"/></li>
+        </form>
+                <a href="#" id="comment-form-submit"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>            </ul>
     </div>
 </script>

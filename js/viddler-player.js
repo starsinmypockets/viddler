@@ -74,6 +74,13 @@ window.testPlayer = function () {
     test.render();
 }
 
+window.testPlayer2 = function () {
+    test = new TestPlayer2View({
+        model : new PlayListModel({id : 2342213}),
+    });
+    test.render();
+}
+
 window.testInitPopcorn = function () {
     playlist = new PopcornPlayListView({
         model : new PlayListModel({id : 2342213}),
