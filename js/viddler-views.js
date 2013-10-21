@@ -1,18 +1,6 @@
 (function ($) {
     var DEBUG = true,
         tlDEBUG = true;
-    
-    window.vplm = window.vplm || 
-        {
-            tlStep : 0,
-            tlSteps :0,
-            tlLength : 0,
-            tlElapsed : 0,
-            tlNow : 0,
-            timeline : {},
-            stepMedia : {},
-            tlComments : {}
-        };        tDEBUG = true;//true;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -669,26 +657,25 @@
         
         // calculates relative timeline elapsed
         runTimeListener : function () {
-                var stepMedia = this.vplm.timeline.mediaElements[this.vplm.tlStep],
-                    that = this;
-                console.log(stepMedia);
-                var updateIntv = setInterval(function() {
-                    that.vplm.tlNow = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + that.vplm.tlElapsed, 10);
-                    if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
-                        clearInterval(updateIntv);
-                    }
-                    timeLinePercent = (that.vplm.tlNow / that.vplm.tlLength)*100
-                    if (tDEBUG) {
-                        console.log('current: '+that.vplm.tlNow);
-                        console.log('elapsed: '+that.vplm.tlElapsed);
-                        console.log('total: '+that.vplm.tlLength);
-                        console.log(timeLinePercent);
-                        console.log('playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
-                    }
-    //                    $('.mega-timeline .jp-seek-bar').width('100%');
-                    $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
-                    $('.viddler-current-time').html(that.secs2time(Math.floor(that.vplm.tlNow/1000)));
-                },250);
+            var stepMedia = this.vplm.timeline.mediaElements[this.vplm.tlStep],
+                that = this;
+            console.log(stepMedia);
+            var updateIntv = setInterval(function() {
+                that.vplm.tlNow = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + that.vplm.tlElapsed, 10);
+                if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
+                    clearInterval(updateIntv);
+                }
+                timeLinePercent = (that.vplm.tlNow / that.vplm.tlLength)*100
+                if (tDEBUG) {
+                    console.log('current: '+that.vplm.tlNow);
+                    console.log('elapsed: '+that.vplm.tlElapsed);
+                    console.log('total: '+that.vplm.tlLength);
+                    console.log(timeLinePercent);
+                    console.log('playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
+                }
+                $('.mega-timeline .jp-mega-seek-bar .jp-mega-play-bar').width(timeLinePercent + '%');
+                $('.viddler-current-time').html(that.secs2time(Math.floor(that.vplm.tlNow/1000)));
+            },250);
         },
         
         // utility = conver seconds to 00:00:00 format
@@ -712,8 +699,17 @@
             }
             return time;
         },
-        runStopListener : function () {
-            
+        
+        runStopListener : function (stop) {
+            var that = this;
+            console.log(stop);
+            var stopIntv = setInterval(function() {
+               if (that.$el.jPlayer().data().jPlayer.status.currentTime > stop/1000) {
+                  if (tDEBUG) console.log('stop listener stop');
+                  clearInterval(stopIntv);
+                  $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
+               }
+            },1000);
         },
         
         loadVPlayerGui : function (opts) {
@@ -758,8 +754,7 @@
          },
          
          play : function (opts) {
-         
-         (opts && opts.start) ? start = opts.start : start = '';
+             (opts && opts.start) ? start = opts.start : start = '';
              this.$el.jPlayer("play", start)
          }, 
          
@@ -770,20 +765,20 @@
         /**
          * Event listener wrappers
          */
-        onPlayerReady : function (func, context) {
+        onPlayerReady : function (func) {
             if (DEBUG) console.log('v player ready call');
             $(this.el).on($.jPlayer.event.ready, func());
         },
         
         // wrap functions in can play
-        onCanPlay : function (context, func) {
+        onCanPlay : function (func) {
             if (DEBUG) console.log('v can Play call');
-            $(this.el).on($.jPlayer.event.canplay, func(context));
+            $(this.el).on($.jPlayer.event.canplay, func());
             // works in webkit only?
         },
         
-        onEnded : function () {
-            
+        onEnded : function (func) {
+            $(this.el).on($.jPlayer.event.ended, func());
         }
     });
     
@@ -809,61 +804,32 @@
                 data = {},
                 comments = [];
                 
-            data.elems = opts.mediaElements;
+            data.elems = this.vplm.timeline.mediaElements;
             _.each(data.elems, function (elem) {
                 elem.width = ((elem.length / that.data.tlLength)*100).toFixed(2);
             });
             console.log(data);
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
-//            $('#jp-mega-playbar-container').html("foo");
 
             $('.mega-timeline .bar .jp-seek-bar').on('click', function (e) {
                 e.preventDefault();
+                console.log("Seek click");
                 var seekPerc = e.offsetX/($(e.currentTarget).width());
                 return false;
             });
             
-            this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
+            //this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
         },
-        
-        updateCurrentTime : function (stepMedia) {
-                var stepMedia = this.vplm.timeline.mediaElements[this.vplm.tlStep];
-                console.log(stepMedia);
-                var updateIntv = setInterval(function() {
-                    this.vplm.tlNow = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + this.vplm.tlElapsed, 10);
-                    if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
-                        clearInterval(updateIntv);
-                    }
-                    timeLinePercent = (that.data.tlNow / that.data.tlLength)*100
-                    if (tDEBUG) {
-                        console.log('current: '+that.vplm.tlNow);
-                        console.log('elapsed: '+that.vplm.tlElapsed);
-                        console.log('total: '+that.vplm.tlLength);
-                        console.log(timeLinePercent);
-                        console.log('playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
-                    }
-    //                    $('.mega-timeline .jp-seek-bar').width('100%');
-                    $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
-                    $('.viddler-current-time').html(secs2time(Math.floor(that.data.tlNow/1000)));
-                },250);
-        },
-        
-        seekToPercent : function () {
-            
-        },
-        
-        secsToTime : function () {
-            
-        },
-        
         
         render : function(opts) {
             //this.$el.html("GUI here");
             this.$el.html(_.template($('#tmp-mega-gui').html()));
+            this.loadMegaTimeLine();
         }
     });
 
     // bind events in outer view
+    // this is equivalent to PlayListView
     TestPlayer2View = BaseView.extend({
         el : "#jp_container_1",
         vplm : window.vplm,
@@ -924,9 +890,6 @@
             _.bindAll(this, "vPlay");
             this.vPG = new VPlayerGui();
             this.vPG.render();
-      //      this.vPG.updateStatusBar();
-            
-            
             this.loadPlayList();
         },
         
@@ -946,7 +909,9 @@
                 type : stepMedia.elementType,
                 url : stepMedia.elementURL
             });
-            this.vP.play({start : 7});
+            this.vP.onEnded(function () {console.log('Ended handler called')});
+            this.vP.play({start : stepMedia.playheadStart/1000});
+            this.vP.runStopListener(stepMedia.playheadStop);
         },
         
         render : function () {}

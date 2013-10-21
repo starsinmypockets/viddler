@@ -26,12 +26,69 @@ function getInternetExplorerVersion() {
 }
 ie8 = (getInternetExplorerVersion() === 8);
 
+    
+window.vplm = window.vplm || 
+    {
+        tlStep : 0,
+        tlSteps :0,
+        tlLength : 0,
+        tlElapsed : 0,
+        tlNow : 0,
+        timeline : {},
+        stepMedia : {},
+        tlComments : {}
+    };        
 
 ( function ($) {
 var ViddlerPlayer = ViddlerPlayer || {};
 
 /* Events aggregator */
 ViddlerPlayer.vent = _.extend({}, Backbone.Events);
+
+/**
+ *  Manage timeline actions
+ **/
+ 
+// continue to next timeline step
+// @@ we need to access or reset the player instance (pass in)
+ViddlerPlayer.vent.bind('doNextStep', function (opts) {
+    var el = window.vplm.timeline.mediaElements[window.vplm.tlStep],
+        vP = opts.vP;
+    window.vplm.tlElapsed += timeline
+    window.vplm.tlStep += 1;
+    window.vplm.elapsed += el.playheadStop - el.playheadStart;
+    // access or reset player instance
+    vP.pause();
+    vP.setElement({el.elementType : el.elementURL});
+    vP.play(el.playheadStart);
+});
+
+// get the tl step, start pos and let 'er rip
+ViddlerPlayer.vent.bind('timeLineSeek', function (opts) {
+    var vP = opts.vP,
+        i,
+        currentEl = {};
+    window.vplm.tlStep = opts.step;
+    // update timeline's elapsed time
+    window.vplm.tlElapsed = 0;
+    for (i = 0; i < window.vplm.tlStep; i++) {
+        function func (i) {
+            var el = window.vplm.timeline.mediaElements[i];
+            window.vplm.tlElapsed += el.playheadStop - el.playheadStart;
+        }
+        func(i);
+    }
+    currentEl = window.vplm.timeline.mediaElements[opts.step];
+    vP.play({ currentEl.elementType : currentEl.elementURL}, currentEl.playheadStart);
+});
+
+ViddlerPlayer.vent.bind('timeLineDone', function (opts) {
+    // set buttons to trigger vent.restartTimeline 
+});
+
+ViddlerPlayer.vent.bind('restartTimeline', function (opts) {
+    // start it over
+});
 
 // get login view
 ViddlerPlayer.vent.bind('doLogin', function () {
