@@ -34,10 +34,13 @@ var app = Davis(function() {
 
 	this.bind('routeNotFound', function(route) {
 		console.log(route);
-	})
+	});
+
+	this.before(function() {
+		// TODO: cleanup
+	});
 
 	this.get('/skin/(.*)', function(req) {
-		console.log('index');
 		window.testInit();
 	});
 
