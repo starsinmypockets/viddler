@@ -45,6 +45,10 @@ var app = Davis(function() {
 	// Fires before every route, TODO: cleanup views and events
 	this.before(function() { });
 
+	this.after(function(req) {
+		app.track('send', 'pageview', req.fullPath);
+	});
+
 
 
 	// Routes
@@ -56,5 +60,14 @@ var app = Davis(function() {
 		console.log('record route');
 	});
 });
+
+app.googleAnalyticsLoaded = 
+app.track = function() {
+	
+	if(typeof window.ga != undefined) {
+		ga.apply(this, arguments);
+	}
+
+};
 
 app.start();
