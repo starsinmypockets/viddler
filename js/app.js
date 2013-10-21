@@ -1,10 +1,13 @@
 var app = Davis(function() {
 	
+
 	this.configure(function () {
           this.raiseErrors = true;
           this.generateRequestOnPageLoad = true;
 	});
 
+
+	// runs once, before the first route is processed
 	this.bind('start', function(req) {
 		rainReady(function(){
 
@@ -32,20 +35,25 @@ var app = Davis(function() {
 
 	});
 
+
+	// client-side 404
 	this.bind('routeNotFound', function(route) {
 		console.log(route);
 	});
 
-	this.before(function() {
-		// TODO: cleanup
-	});
 
+	// Fires before every route, TODO: cleanup views and events
+	this.before(function() { });
+
+
+
+	// Routes
 	this.get('/skin/(.*)', function(req) {
 		window.testInit();
 	});
 
-	this.state('/skin/*index/record', function(req) {
-		console.log('/skin/*index/record');
+	this.state('/skin/record', function(req) {
+		console.log('record route');
 	});
 });
 
