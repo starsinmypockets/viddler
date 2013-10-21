@@ -43,6 +43,7 @@
         jPlayer : {},
         pop : {}, //Popcorn.js
         timeline : {},
+        // initialize playlist data - update from model
         data : {
             comments : {},        
             tlStep : 0,
@@ -82,6 +83,8 @@
             _.bindAll(this, 'commentSubmit');
         },
         
+        
+        // add to @@ vPlayer
         cueToPercent : function (opts) {
             var that = this,
                 elems = this.timeline.mediaElements,
@@ -114,10 +117,14 @@
             });
         },
         
+        
+        // @@ DEP move to vplayer
         canPlay : function(func) {
+            // works in webkit only?
             $(this.$el.jPlayer()).on($.jPlayer.event.canplay, func()); //...
         },
         
+        // @@ DEP move to vplayer
         onPlayerReady : function () {
             if (DEBUG) console.log('Player Ready Handler');
             if (!ie8) this.pop = Popcorn("#jp_video_0");
@@ -127,10 +134,11 @@
             this.playTimeLine({init : true});
         },
         
+        // when playlist model is loaded, initialize view params, load player & start timeline
         onModelReady : function () {
             var that = this,
                 i;
-                
+                                
             if (DEBUG) {
                 console.log('Model Ready Handler');
                 console.log(this.model);
@@ -141,8 +149,7 @@
             }
             // set timeLineLength on the view
             mediaEls = this.model.get("timeline").mediaElements;
-            console.log(mediaEls);
-            
+            if (DEBUG) console.log("Loaded media Elements: " + mediaEls);
             for (i = 0; i < mediaEls.length; i++) {
                 funcs = function (i) {
                     that.data.tlLength += (mediaEls[i].playheadStop - mediaEls[i].playheadStart);
@@ -150,12 +157,28 @@
                 
                 funcs(i);
             }
-            console.log(that.data.tlLength);
             
-            this.loadPlayerGui();
-            this.loadJPlayer();
+            vPG = new VPlayerGui();
+            vPG.render();
+            
+            vP = new VPlayerView();
+            vP.loadVPlayer();
+            
+            // or bind using backbone vent jawn
+            
+            // When model is loaded and player is ready, start timeline
+   /*
+     vP.onPlayerReady(function (that) {
+                console.log('Wrapped ready function');
+                that.loadMegaTimeLine({
+                    mediaElements : mediaEls,
+                    steps : that.data.tlSteps,
+                    timeLineLength : that.data.tlLength
+                });
+        }, this);
+*/
         },
-                
+        
         loadPlayList : function (opts) {
             var that = this;
             this.model.fetch({
@@ -177,6 +200,7 @@
         },
         
         // instantiate jPlayer
+        // @@ move this to view below
         loadJPlayer : function (opts) {
             var that = this;
             this.setElement('#jquery_jplayer_1');
@@ -484,9 +508,11 @@
             this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
         },
         
+        
+        // @@ should go into comment view and instantiate view as needed
         loadCommentPopUp : function (data) {
             var data = {},
-            playerData = this.$el.jPlayer().data().jPlayer.status;    
+            playerData = this.$el.jPlayer().data().jPlayer.status;
             data.time = Math.floor(playerData.currentTime);
             data.avatar = "http://placekitten.com/75/75";
             commentModal = new CreateCommentView({
@@ -606,7 +632,6 @@
         }
     });
     
-    // Initialize with medi
     MegaTimeLineView = PlayListView.extend({
         // return all comments for playlist
         getPlayListComments : function (id) {
@@ -630,6 +655,70 @@
         
     });
     
+    /**
+     * Viddler wrapper around jPlayer
+     **/
+    VPlayerView = Backbone.View.extend({
+        el : '#jquery_jplayer_1',
+        
+        loadVPlayerGui : function (opts) {
+            var that = this;
+            this.setElement('.jp-gui'); 
+            this.$el.html(_.template($('#tmp-mega-gui').html()));
+
+//            $('.jp-gui').html(_.template($('#tmp-mega-gui').html()));
+            //this.$el.html(_.template($('#tmp-mega-gui').html()));
+            this.$('.jp-comment').on('click', function () {
+                that.loadCommentPopUp();
+            });
+        },
+        
+        loadVPlayer : function (opts) {
+            var that = this;
+            this.$el.jPlayer({
+                ready: function () {
+                    // bind events once player is ready
+                    if (DEBUG) {
+                        $('#inspector').jPlayerInspector({
+                            jPlayer : $("#jquery_jplayer_1")
+                        });
+                    }
+                    console.log(that.$el.jPlayer());
+                },
+                swfPath: "../js/vendor",
+                supplied: "m4v, ogv",
+                errorAlerts : true
+            });
+        },
+        
+        // wrap funs in player ready
+        onPlayerReady : function (func, context) {
+            if (DEBUG) console.log('v player ready call');
+            $(this.el).on($.jPlayer.event.ready, func(context));
+            console.log(context);
+        },
+        
+        // wrap functions in can play
+        onCanPlay : function (context, func) {
+            if (DEBUG) console.log('v can Play call');
+            $(this.el).on($.jPlayer.event.canplay, func(context));
+            // works in webkit only?
+        }
+    });
+    
+    // add controls for modals here
+    VPlayerGui = Backbone.View.extend({
+        el : ".jp-gui",
+        
+        render : function(opts) {
+            //this.$el.html("GUI here");
+            this.$el.html(_.template($('#tmp-mega-gui').html()));
+            // @@ bind with events above
+            this.$('.jp-comment').on('click', function () {
+                that.loadCommentPopUp();
+            });
+        }
+    });
     /**
      * Errors
      *
