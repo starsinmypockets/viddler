@@ -3,11 +3,30 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Viddler Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<link rel="stylesheet" href="style.css">
 	<link rel="stylesheet" type="text/css" href="skin/viddler.css">
 	<script src="../js/vendor/jquery.js"></script>
+  <script src="../js/vendor/jquery.cookie.js"></script>
     <script src="../js/vendor/jquery.cookie.js"></script>
-    <script src="../js/vendor/jquery.jplayer.min.js"></script>
+
+  <script src="../js/lib/jquery.jplayer.inspector.js"></script>
+  <script src="../js/lib/underscore.js"></script>
+  <script src="../js/lib/backbone.js"></script>
+  <script src="../js/lib/rain_lib.js"></script>
+  <script src="../js/playerOptions.js"></script>
+  <script src="../js/viddler-player.js"></script>
+  <script src="../js/viddler-models.js"></script>
+  <script src="../js/viddler-collections.js"></script>
+  <script src="../js/viddler-views.js"></script>
+
+  <!--[if !IE]>-->
+      <script src="../js/lib/popcorn-complete.js"></script>
+  <!--<![endif]-->
+
+  <!--[if gte IE 9]>
+      <script src="../js/lib/popcorn-complete.js"></script>
+  <![endif]-->
 
     <script src="../js/lib/jquery.jplayer.inspector.js"></script>
     <script src="../js/lib/underscore.js"></script>
@@ -25,11 +44,32 @@
 </head>
 <body>
 <div class="wrap">
-    <!-- render login error and access messages and forms -->
-        <div class="modalbg" style="display:none">
-            <div class="loginmodal"></div>
-        </div>
-    <!-- end -->
+
+
+<!-- login modal -->
+<div class="modalbg">
+  <div class="loginmodal">
+    <a href="#" class="closetwo"><img src="img/orangex.png" id="orangex" alt="close modal"></a>
+  <header>Lorem Ipsum</header>
+  <section id="modalbody">
+    <h1>Lorem ipsum dolor sit amet</h1>
+    <form action="">
+      <label for="username">User Name</label>
+      <input type="text">
+      <div class="passverification">
+      <img src="img/leftarrow.png" alt="left arrow" class="leftarrow">
+      Please enter correct password.
+    </div>
+      <label for="password">Password</label>
+      <input type="text">
+      <input type="submit" class="loginsubmit inactive">
+    </form>
+
+  </section>
+</div>
+</div>
+<!--end login modal-->
+
     <div id="jp_container_1" class="jp-video">
         <div class="jp-type-single">
             <div id="jquery_jplayer_1" class="jp-jplayer">
@@ -54,17 +94,15 @@
             <div id="errors"></div>
             <!-- end backbone containers -->
         </div>
-        
-        <!-- comment popups -->  
-        <div id="modal-outer" style="display:none">    
-            Add comment
-            <div id="modal-container" class="clearfix"></div>
-            <img src="img/commenttriangle.png" alt="comment triangle" id="modaltriangle">
-        </div>
-        <!-- end comment popup -->
-            
-            
-            
+
+        <!--comment bubble-->
+            <div id="modal-outer">Add Comment<img src="img/modalclose.png" alt="" class="modal-close cursor">
+                <div id="modal-container" class="clearfix">1000 Characters Limit</div>
+                <img src="img/commenttriangle.png" alt="comment triangle" id="modaltriangle">
+                <a href="#"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>
+            </div>
+      <!--end comment bubble-->
+
             <div id="comment-popup-container"></div>
             <div id="error-message-container"></div>
             <div id="comments-container"></div>

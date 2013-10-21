@@ -30,7 +30,7 @@
         "playheadStop": 10000,
         "elementType": "m4v",
         "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
-        "poster" : "",
+        "poster" : "http://placekitten.com/480/270",
         "mediaElement": {},
         "transitionIn": {},
         "transitionOut": {

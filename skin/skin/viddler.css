@@ -114,7 +114,7 @@ position: relative;
 	width: 97%;
 	padding: 0px 15px 0px 15px;
 	height: 54px;
-	margin-top: 20px;
+	margin-top: 10px;
 	-webkit-box-shadow: inset 1px 1px 2px 2px rgba(1, 1, 1, .4);
 box-shadow: inset 1px 1px 2px rgba(1, 1, 1, .4); 
 }
@@ -596,7 +596,7 @@ div.jp-jplayer {
 }
 
 div.jp-jplayer {
-	background-color: #000000;
+	background-color: none;
 }
 
 
@@ -876,6 +876,7 @@ a.also{
 	width: 100%;
 	position: absolute;
 	height: 100%;
+	display:none; /* display:block to enable modal */
 }
 .loginmodal{
 	width: 90%;
@@ -885,7 +886,7 @@ a.also{
 	position: absolute;
 	top:1%;
 	z-index: 99999999;
-	border-radius: 15px;
+	border-radius: 13px;
 	border: #fb9600 solid thick;
 }
 img#orangex{
@@ -903,7 +904,7 @@ img#orangex{
 	padding: 20px;
 	font-family: helvetica;
 	font-weight:bold;
-	border-radius: 10px 10px 0px 0px;
+	border-radius: 8px 8px 0px 0px;
 }
 .loginmodal section#modalbody{
 	padding: 30px;
@@ -918,14 +919,18 @@ img#orangex{
 	max-width: 100%;
 	font-size: 30px;
 	display:block;
+	outline:none;
+	border:none;
 	margin-top: 10px;
+	border-radius: 0px;
 }
 .loginmodal form input:focus{
 	outline:#ff4d4d solid thick;
 	background: #ffffff;
+	color: #333333;
 	font-size: 30px;
 	display:block;
-	margin-top: 14px;
+	margin-top: 10px;
 }
 .loginmodal form label{
 	margin-top: 30px;
@@ -953,11 +958,12 @@ box-shadow: 1px 1px 1px 1px rgba(1, 1, 1, .2);
 	left: -35px;
 }
 input.loginsubmit{
-	margin-top: 150px!important;
+	margin-top: 30px!important;
 	font-family: helvetica;
 	color: #ffffff;
 	font-weight:bold;
 	display:block;
+	border-radius: 5px!important;
 	background: #66a3d9; /* Old browsers */
 background: -moz-linear-gradient(top,  #66a3d9 0%, #4b8ece 100%); /* FF3.6+ */
 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#66a3d9), color-stop(100%,#4b8ece)); /* Chrome,Safari4+ */
@@ -999,8 +1005,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c7c7c7', end
 
 }
 /*end login modal*/
-
+#mega-markers-container{
+	position: relative;
+	top: -5px;
+}
 @media only screen and (max-width: 981px){
+#mega-markers-container{
+	position: relative;
+	top: 0px;
+}
 .loginmodal .passverification{
 	background: none;
 	padding: 5px;
@@ -1380,6 +1393,15 @@ span.number{
 	z-index: 99999999;
 	border-radius: 15px;
 	border: #fb9600 solid thick;
+}
+.loginmodal header{
+	padding: 10px;
+}
+.loginmodal section#modalbody{
+	padding: 15px;
+}
+.loginmodal section#modalbody form input{
+	max-width: 85%;
 }
 }
 /* @end */
