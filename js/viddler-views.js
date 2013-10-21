@@ -36,11 +36,11 @@
         
     });
     
-    // Instantiates jPlayer, handles comments etc
-    // use this.$el.jPlayer() to manipulate player instance
+    // Load subviews and delegate to subviews
     window.PlayListView = BaseView.extend({
         el : '#jp_container_1',
-        jPlayer : {},
+        vP : {}, // viddler player wraps jplayer
+        vPG : {}, // viddler player gui
         pop : {}, //Popcorn.js
         timeline : {},
         // initialize playlist data - update from model
@@ -80,11 +80,12 @@
         initialize : function (opts) {
             this.__init(opts);
             console.log("IE8: "+ie8);
+            // @@ REFACTOR
             _.bindAll(this, 'commentSubmit');
         },
         
         
-        // add to @@ vPlayer
+        // REFACTOR --> @@ vPlayer
         cueToPercent : function (opts) {
             var that = this,
                 elems = this.timeline.mediaElements,
@@ -158,25 +159,12 @@
                 funcs(i);
             }
             
-            vPG = new VPlayerGui();
-            vPG.render();
+            this.vPG = new VPlayerGui();
+            this.vPG.render();
             
-            vP = new VPlayerView();
-            vP.loadVPlayer();
-            
-            // or bind using backbone vent jawn
-            
-            // When model is loaded and player is ready, start timeline
-   /*
-     vP.onPlayerReady(function (that) {
-                console.log('Wrapped ready function');
-                that.loadMegaTimeLine({
-                    mediaElements : mediaEls,
-                    steps : that.data.tlSteps,
-                    timeLineLength : that.data.tlLength
-                });
-        }, this);
-*/
+            this.vP = new VPlayerView();
+            this.vP.loadVPlayer();
+        
         },
         
         loadPlayList : function (opts) {
@@ -199,8 +187,7 @@
             });
         },
         
-        // instantiate jPlayer
-        // @@ move this to view below
+        // @@ REFACTOR --> vPlayerView
         loadJPlayer : function (opts) {
             var that = this;
             this.setElement('#jquery_jplayer_1');
@@ -220,7 +207,7 @@
             });
         },
         
-        // Get the controls
+        // @@ REFACTOR --> gui view
         loadPlayerGui : function (opts) {
             var that = this;
             this.setElement('.jp-gui'); 
@@ -485,7 +472,8 @@
                 $('#play-overlay-button').show();
             }
         },
-        // @@ thius should go into jp-gui view
+        
+        // @@ REFACTOR --> jp-gui view
         loadMegaTimeLine : function (opts) {
             var that = this,
                 data = {},
@@ -509,7 +497,7 @@
         },
         
         
-        // @@ should go into comment view and instantiate view as needed
+        // @@ REFACTOR --> gui view
         loadCommentPopUp : function (data) {
             var data = {},
             playerData = this.$el.jPlayer().data().jPlayer.status;
@@ -522,7 +510,7 @@
             commentModal.render();
         },
         
-        // create comment popup form and submit it
+        // @@ REFACTOR --> comment view
         commentSubmit : function (e) {
             e.preventDefault();
             comment = new CommentModel({
@@ -538,7 +526,7 @@
             $('#comment-popup-container').empty();
         },
         
-        // how many comment markers fit on a timeline?
+        // @@ REFACTDOR --> gui view
         calcCommentMarkers : function (opts) {
             var markerArray, numbMarkers, markerSecs,
                 that=this,
@@ -691,7 +679,19 @@
             });
         },
         
-        // wrap funs in player ready
+        /**
+         * Player methods wrap jPlayer 
+         **/
+         
+         setMedia : function (opts) {
+             this.$el.jPlayer("setMedia", {
+                 //opts.type : opts.url
+             });
+         }, 
+         
+        /**
+         * Event listener wrappers
+         */
         onPlayerReady : function (func, context) {
             if (DEBUG) console.log('v player ready call');
             $(this.el).on($.jPlayer.event.ready, func());
@@ -702,6 +702,10 @@
             if (DEBUG) console.log('v can Play call');
             $(this.el).on($.jPlayer.event.canplay, func(context));
             // works in webkit only?
+        },
+        
+        onEnded : function () {
+            
         }
     });
     
@@ -713,6 +717,7 @@
             'click .jp-comment' : 'commentModal'
         },
         
+        // load comment modal
         commentModal : function () {
             data = {};
             data.time = 123//Math.floor(playerData.currentTime);
@@ -722,6 +727,18 @@
                 tmp : "#tmp-comment-popup"
             });
             commentModal.render();
+        },
+        
+        updateCurrentTime : function () {
+            
+        },
+        
+        seekToPercent : function () {
+            
+        },
+        
+        secsToTime : function () {
+            
         },
         
         render : function(opts) {
@@ -882,37 +899,15 @@
         el : "#jp_container_1",
 
         initialize : function (opts) {
-            var that = this;
-            this.setElement('.jp-gui'); 
-            this.$el.html(_.template($('#tmp-jplayer-gui').html()));
-            this.loadJPlayer();
-        },
-        
-        onPlayerReady : function () {
-            var that = this;
+            this.vPG = new VPlayerGui();
+            this.vPG.render();
             
-            that.$el.jPlayer('setMedia', {m4v : "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v"})
-            $('.jp-play').on('click.init', function (e) {
-                e.preventDefault();
-                that.$el.jPlayer("play", 7);
-                $('.jp-play').unbind('click.init');
-            });
+            this.vP = new VPlayerView();
+            this.vP.loadVPlayer();
         },
         
-        loadJPlayer : function (opts) {
-            var that = this;
-            this.setElement('#jquery_jplayer_1');
-            this.$el.jPlayer({
-                ready: function () {
-                    // bind events once player is ready
-          
-                    that.onPlayerReady();
-                },
-                swfPath: "../js/vendor",
-                supplied: "m4v, ogv",
-                errorAlerts : true
-            });
-        },
+        render : function () {}
+
     });
     
 })(jQuery);

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Viddler Player</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" type="text/css" href="skin/viddler.css">
+	<script src="../js/vendor/jquery.js"></script>
+  <script src="../js/vendor/jquery.jplayer.min.js"></script>
+  <script src="../js/lib/jquery.jplayer.inspector.js"></script>
+  <script src="../js/lib/underscore.js"></script>
+  <script src="../js/lib/backbone.js"></script>
+  <script src="../js/lib/rain_lib.js"></script>
+  <script src="../js/viddler-player.js"></script>
+  <script src="../js/viddler-models.js"></script>
+  <script src="../js/viddler-collections.js"></script>
+  <script src="../js/viddler-views.js"></script>
+
+    
+    
+    <script type="text/javascript">
+    $(document).ready(function(){
+        window.testPlayer();
+        //window.testInit();
+    });
+  </script>
+</head>
+<body>
+<div class="wrap">
+    <div id="jp_container_1" class="jp-video">
+        <div class="jp-type-single">
+            <div id="jquery_jplayer_1" class="jp-jplayer">
+            </div>
+            <img id="play-overlay-button" src="img/play.png" />
+            <div class="jp-no-solution">
+                <span>Update Required</span>
+                    To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+            </div>
+                <div id="footnote-container"></div>
+                <div id="iframe-container"></div>
+        </div>         
+            <!-- backbone containers -->
+            <div id="map-container"></div>
+            <div class="jp-gui"></div>
+            <div id="inspector"></div>
+            <div id="account-container">
+                <a href="#" class="user-login">Login</a>
+                <a href="#" class="user-signup">Sign up</a>
+                <a href="#" class="no">No!</a>
+            </div>
+            <div id="errors"></div>
+            <!-- end backbone containers -->
+        </div>
+            <div id="modal-outer" style="display : none"><span class="modal-close cursor">X</span>
+                <div id="modal-container"></div>
+            </div>
+            <div id="comment-popup-container"></div>
+            <div id="error-message-container"></div>
+            <div id="comments-container"></div>
+
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/template" id="tmp-jplayer-gui">
+        <div class="jp-video-play">
+          <a href="javascript:;" class="jp-video-play-icon" tabindex="1">play</a>
+        </div>
+        <div class="jp-interface clearfix">
+          <div class="jp-controls-holder">
+            <ul class="jp-controls">
+              <li><a href="javascript:;" class="jp-play init-timeline" tabindex="1">play</a></li>
+              <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+            </ul>
+            <div class="bar clearfix">
+                <div id="markers-container"></div>
+            <div class="jp-progress" style="position: relative; z-index: 888;">
+            <div class="jp-seek-bar" style="position: relative; z-index: 1;">
+              <div class="jp-play-bar"><img src="img/time.png" id="time" /></div>
+            </div>
+          </div>
+          <a href="javascript:;"><img src="img/mobile/search.png" alt="Search" class="searchimg"></a>
+          <div class="time">
+              <div class="jp-current-time"></div>
+              <span class="slash">/</span>
+              <div class="jp-duration"></div>
+          </div>
+        </div>
+            <ul class="jp-toggles">
+              <li><a href="javascript:;" title="comments" class="jp-comment" tabindex="1">Comments</a></li> 
+              <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+              <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+               <div class="jp-volume-bar">
+              <div class="jp-volume-bar-value"></div>
+            </div>
+              <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+                <li><a href="javascript:;" class="jp-doohickey" tabindex="1" title="doohickey">Doohickey</a></li>
+              <li><a href="javascript:;" title="hd" class="jp-hd" tabindex="1" title="hd">HD</a></li>
+            <li><a href="javascript:;" class="jp-full-screen" tabindex="1" title="full screen">full screen</a></li>
+            <div class="time2">
+          <div class="jp-current-time"></div>
+          <span class="slash">/</span>
+          <div class="jp-duration"></div>
+            <a href="javascript:;"><img src="img/mobile/video.png" class="videoimg" alt="Video"></a>
+          </div>
+            </ul>
+          </div>
+        </div>
+</script>
+
+<script type="text/template" id="tmp-mega-gui">
+    <div class="mega-timeline clearfix">
+        <div class="jp-interface clearfix">
+            <div class="jp-controls-holder">
+                <ul class="jp-controls">
+                    <li><a href="javascript:;" class="jp-play viddler-play " tabindex="1">play</a></li>
+                    <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+                </ul>
+                <div id="jp-mega-playbar-container"></div>
+            </div>
+            <a href="javascript:;"><img src="img/mobile/search.png" alt="Search" class="searchimg"></a>
+            <ul class="jp-toggles">
+                <li><a href="javascript:;" title="comments" class="jp-comment" tabindex="1">Comments</a></li> 
+                <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+                <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+                <div class="jp-volume-bar">
+                    <div class="jp-volume-bar-value"></div>
+                </div>
+                <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+                <li><a href="javascript:;" class="jp-doohickey" tabindex="1" title="doohickey">Doohickey</a></li>
+                <li><a href="javascript:;" title="hd" class="jp-hd" tabindex="1" title="hd">HD</a></li>
+                <li><a href="javascript:;" class="jp-full-screen" tabindex="1" title="full screen">full screen</a></li>
+                <div class="time2">
+                    <div class="viddler-current-time"></div>
+                    <span class="slash">/</span>
+                    <div class="viddler-duration"></div>
+                    <a href="javascript:;"><img src="img/mobile/video.png" class="videoimg" alt="Video"></a>
+                </div>
+            </ul>
+            <div class="time">
+                <div class="viddler-current-time"></div>
+                <span class="slash">/</span>
+                <div class="viddler-duration"></div>
+            </div>
+        </div>
+    </div>
+</script>

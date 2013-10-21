@@ -25,7 +25,7 @@ function getInternetExplorerVersion() {
     return rv;
 }
 ie8 = (getInternetExplorerVersion() === 8);
-console.log(ie8);
+
 
 ( function ($) {
 var ViddlerPlayer = ViddlerPlayer || {};
@@ -70,9 +70,7 @@ window.testInit = function () {
 }
 
 window.testPlayer = function () {
-    test = new TestPlayerView({
-        tmp : "<br />"
-    });
+    test = new TestPlayerView();
     test.render();
 }
 
