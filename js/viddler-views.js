@@ -1,6 +1,18 @@
 (function ($) {
     var DEBUG = true,
-        tDEBUG = true;//true;
+        tlDEBUG = true;
+    
+    window.vplm = window.vplm || 
+        {
+            tlStep : 0,
+            tlSteps :0,
+            tlLength : 0,
+            tlElapsed : 0,
+            tlNow : 0,
+            timeline : {},
+            stepMedia : {},
+            tlComments : {}
+        };        tDEBUG = true;//true;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -8,6 +20,7 @@
         tag : 'div',
         el : '<br/>',
         vent : {},
+        vplm : window.vplm,
         
         __init : function (opts) {
             opts = opts || {};
@@ -646,8 +659,62 @@
     /**
      * Viddler wrapper around jPlayer
      **/
-    VPlayerView = Backbone.View.extend({
+    VPlayerView = BaseView.extend({
         el : '#jquery_jplayer_1',
+        
+        initialize : function (opts) {
+            this.runTimeListener();
+          //  this.runStopListener(opts.stop);
+        },
+        
+        // calculates relative timeline elapsed
+        runTimeListener : function () {
+                var stepMedia = this.vplm.timeline.mediaElements[this.vplm.tlStep],
+                    that = this;
+                console.log(stepMedia);
+                var updateIntv = setInterval(function() {
+                    that.vplm.tlNow = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + that.vplm.tlElapsed, 10);
+                    if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
+                        clearInterval(updateIntv);
+                    }
+                    timeLinePercent = (that.vplm.tlNow / that.vplm.tlLength)*100
+                    if (tDEBUG) {
+                        console.log('current: '+that.vplm.tlNow);
+                        console.log('elapsed: '+that.vplm.tlElapsed);
+                        console.log('total: '+that.vplm.tlLength);
+                        console.log(timeLinePercent);
+                        console.log('playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
+                    }
+    //                    $('.mega-timeline .jp-seek-bar').width('100%');
+                    $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
+                    $('.viddler-current-time').html(that.secs2time(Math.floor(that.vplm.tlNow/1000)));
+                },250);
+        },
+        
+        // utility = conver seconds to 00:00:00 format
+        secs2time : function(seconds) {
+            var hours   = Math.floor(seconds / 3600);
+            var minutes = Math.floor((seconds - (hours * 3600)) / 60);
+            var seconds = seconds - (hours * 3600) - (minutes * 60);
+            var time = "";
+        
+            (hours != 0) ? time = hours+":" : time = hours+":";
+            if (minutes != 0 || time !== "") {
+              minutes = (minutes < 10 && time !== "") ? "0"+minutes : String(minutes);
+            } else {
+                minutes = "00:"
+            }  
+            time += minutes+":";
+            if (seconds === 0) { 
+                time+="00" 
+            } else {
+                time += (seconds < 10) ? "0"+seconds : String(seconds);
+            }
+            return time;
+        },
+        runStopListener : function () {
+            
+        },
         
         loadVPlayerGui : function (opts) {
             var that = this;
@@ -723,6 +790,7 @@
     // add controls for modals here
     VPlayerGui = Backbone.View.extend({
         el : ".jp-gui",
+        vplm : window.vplm,
         
         // load comment modal
         commentModal : function () {
@@ -759,17 +827,18 @@
         },
         
         updateCurrentTime : function (stepMedia) {
-            if (stepMedia) {
+                var stepMedia = this.vplm.timeline.mediaElements[this.vplm.tlStep];
+                console.log(stepMedia);
                 var updateIntv = setInterval(function() {
-                    that.data.tlNow = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + that.data.tlElapsed, 10);
+                    this.vplm.tlNow = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + this.vplm.tlElapsed, 10);
                     if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                         clearInterval(updateIntv);
                     }
                     timeLinePercent = (that.data.tlNow / that.data.tlLength)*100
                     if (tDEBUG) {
-                        console.log('current: '+that.data.tlNow);
-                        console.log('elapsed: '+that.data.tlElapsed);
-                        console.log('total: '+that.data.tlLength);
+                        console.log('current: '+that.vplm.tlNow);
+                        console.log('elapsed: '+that.vplm.tlElapsed);
+                        console.log('total: '+that.vplm.tlLength);
                         console.log(timeLinePercent);
                         console.log('playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
                     }
@@ -777,7 +846,6 @@
                     $('.mega-timeline .jp-seek-bar .jp-play-bar').width(timeLinePercent + '%');
                     $('.viddler-current-time').html(secs2time(Math.floor(that.data.tlNow/1000)));
                 },250);
-            }
         },
         
         seekToPercent : function () {
@@ -789,28 +857,6 @@
         },
         
         
-        // utility = conver seconds to 00:00:00 format
-        secs2time : function(seconds) {
-            var hours   = Math.floor(seconds / 3600);
-            var minutes = Math.floor((seconds - (hours * 3600)) / 60);
-            var seconds = seconds - (hours * 3600) - (minutes * 60);
-            var time = "";
-        
-            (hours != 0) ? time = hours+":" : time = hours+":";
-            if (minutes != 0 || time !== "") {
-              minutes = (minutes < 10 && time !== "") ? "0"+minutes : String(minutes);
-            } else {
-                minutes = "00:"
-            }  
-            time += minutes+":";
-            if (seconds === 0) { 
-                time+="00" 
-            } else {
-                time += (seconds < 10) ? "0"+seconds : String(seconds);
-            }
-            return time;
-        },
-
         render : function(opts) {
             //this.$el.html("GUI here");
             this.$el.html(_.template($('#tmp-mega-gui').html()));
@@ -818,15 +864,14 @@
     });
 
     // bind events in outer view
-    TestPlayer2View = Backbone.View.extend({
+    TestPlayer2View = BaseView.extend({
         el : "#jp_container_1",
-        
+        vplm : window.vplm,
         events : {
             'click .jp-comment' : 'commentModal',
             'click #viddler-play' : "vPlay",
             'click #viddler-pause' : "vPause"
         },
-        timeline : {},
         
         // initialize playlist data - update from model
         data : {
@@ -858,6 +903,10 @@
             this.model.fetch({
                 success : function (model, response, opts) {
                     console.log(model);
+                    console.log(that.vplm);
+                    that.vplm.timeline = model.get("timeline");
+                    console.log(that.vplm);
+                    that.onModelReady();
                 },
                 error : function (model, response) {
                     that.loadPlayerGui();
@@ -871,18 +920,32 @@
         },
         
         initialize : function (opts) {
+            var stepMedia;
             _.bindAll(this, "vPlay");
             this.vPG = new VPlayerGui();
             this.vPG.render();
+      //      this.vPG.updateStatusBar();
             
+            
+            this.loadPlayList();
+        },
+        
+        onModelReady : function () {
+            var that = this;
+            // setup global timeline data 
+            stepMedia = this.vplm.timeline.mediaElements[0];
+            _.each(this.vplm.timeline.mediaElements, function (el) {
+                console.log(el);
+                that.vplm.tlLength +=  el.playheadStop - el.playheadStart;
+            });
+            console.log(vplm);
+            console.log(stepMedia);
             this.vP = new VPlayerView();
             this.vP.loadVPlayer();
             this.vP.setMedia({
-                type : "m4v",
-                url : "http://raineverywhere.com/client/viddler_r/big_buck_bunny.mp4"
+                type : stepMedia.elementType,
+                url : stepMedia.elementURL
             });
-            
-            this.loadPlayList();
             this.vP.play({start : 7});
         },
         
