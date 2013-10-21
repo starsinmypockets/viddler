@@ -485,7 +485,7 @@
                 $('#play-overlay-button').show();
             }
         },
-        
+        // @@ thius should go into jp-gui view
         loadMegaTimeLine : function (opts) {
             var that = this,
                 data = {},
@@ -694,8 +694,7 @@
         // wrap funs in player ready
         onPlayerReady : function (func, context) {
             if (DEBUG) console.log('v player ready call');
-            $(this.el).on($.jPlayer.event.ready, func(context));
-            console.log(context);
+            $(this.el).on($.jPlayer.event.ready, func());
         },
         
         // wrap functions in can play
@@ -710,13 +709,24 @@
     VPlayerGui = Backbone.View.extend({
         el : ".jp-gui",
         
+        events : {
+            'click .jp-comment' : 'commentModal'
+        },
+        
+        commentModal : function () {
+            data = {};
+            data.time = 123//Math.floor(playerData.currentTime);
+            data.avatar = "http://placekitten.com/75/75";
+            commentModal = new CreateCommentView({
+                data : data,
+                tmp : "#tmp-comment-popup"
+            });
+            commentModal.render();
+        },
+        
         render : function(opts) {
             //this.$el.html("GUI here");
             this.$el.html(_.template($('#tmp-mega-gui').html()));
-            // @@ bind with events above
-            this.$('.jp-comment').on('click', function () {
-                that.loadCommentPopUp();
-            });
         }
     });
     /**
