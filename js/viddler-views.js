@@ -1,6 +1,6 @@
 (function ($) {
-    var DEBUG = false,
-        tDEBUG = false;//true;
+    var DEBUG = true,
+        tDEBUG = true;//true;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -280,13 +280,8 @@
                 
                 //  data['poster'] = stepMedia.poster;
                 console.log(data);
+                                    doTimeLineStep(data);
                 
-                // @@ make sure this works for all cases
-                if (this.data.tlStep > 0 ) {
-                    doTimeLineStep(data);
-                } else {
-                    timeLineDone();
-                }
             }
             
             function renderSprite(html) {
@@ -305,9 +300,18 @@
                 var playerData, 
                     duration,
                     subtitles = true; 
-                    
-                // @@ delegate to this.canPlay
+
                 that.$el.jPlayer("setMedia", data);
+
+                $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
+                    e.preventDefault();
+                    console.log('my click start')
+                    that.$el.jPlayer("play", start/1000);
+                    $('.jp-play').unbind('click.init');
+                    return false;
+                });    
+
+                // @@ delegate to this.canPlay
                 updateCurrentTime();
 
                 if (data.subtitleSrc && subtitles === true && !ie8) {
