@@ -94,7 +94,7 @@ filter:alpha(opacity=40);}
 	font-weight:bold;
 	color: #585f68; 
 	font-size: 16px;
- 	display:none; /* display:block; to display comment bubbles */
+ 	display:block; /* display:block; to display comment bubbles */
 
 }
 #modal-outer img#modaltriangle{

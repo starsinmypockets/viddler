@@ -886,7 +886,7 @@ a.also{
 	position: absolute;
 	top:1%;
 	z-index: 99999999;
-	border-radius: 15px;
+	border-radius: 13px;
 	border: #fb9600 solid thick;
 }
 img#orangex{
@@ -904,7 +904,7 @@ img#orangex{
 	padding: 20px;
 	font-family: helvetica;
 	font-weight:bold;
-	border-radius: 10px 10px 0px 0px;
+	border-radius: 8px 8px 0px 0px;
 }
 .loginmodal section#modalbody{
 	padding: 30px;
@@ -919,15 +919,18 @@ img#orangex{
 	max-width: 100%;
 	font-size: 30px;
 	display:block;
+	outline:none;
+	border:none;
 	margin-top: 10px;
 	border-radius: 0px;
 }
 .loginmodal form input:focus{
 	outline:#ff4d4d solid thick;
 	background: #ffffff;
+	color: #333333;
 	font-size: 30px;
 	display:block;
-	margin-top: 14px;
+	margin-top: 10px;
 }
 .loginmodal form label{
 	margin-top: 30px;
@@ -1002,8 +1005,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c7c7c7', end
 
 }
 /*end login modal*/
-
+#mega-markers-container{
+	position: relative;
+	top: -5px;
+}
 @media only screen and (max-width: 981px){
+#mega-markers-container{
+	position: relative;
+	top: 0px;
+}
 .loginmodal .passverification{
 	background: none;
 	padding: 5px;
