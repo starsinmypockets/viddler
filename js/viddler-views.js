@@ -651,13 +651,14 @@
         el : '#jquery_jplayer_1',
         mediaEl : {},
         initialize : function (opts) {
-            this.mediaEL = opts.mediaEl;
+            this.mediaEl = opts.mediaEl;
             this.runTimeListener();
           //  this.runStopListener(opts.stop);
         },
         
         // calculates relative timeline elapsed
         runTimeListener : function () {
+            console.log(this.mediaEl);
             var stepMedia = this.mediaEl,
                 that = this;
             console.log(stepMedia);
@@ -875,14 +876,7 @@
             this.model.fetch({
                 success : function (model, response, opts) {
                     console.log(model);
-                    // clear global data when we load a new playlist
-                    that.vplm = {};
-                    // set global timeline 
                     that.timeline = model.get("timeline");
-                    
-                    // we should try to limit how much the global object is handling this backbone collection / model
-                    that.vplm.timeline = model.get("timeline");
-                    that.vplm.tlStep = 0;
                     that.onModelReady();
                 },
                 error : function (model, response) {
@@ -904,11 +898,17 @@
             this.loadPlayList();
         },
         
+        // initialize playlist environment
         onModelReady : function () {
-            var that = this;
-            mediaEl = this.timeline.mediaElements[this.vplm.tlStep]
+            var that = this,
+                mediaEl = this.timeline.mediaElements[this.vplm.tlStep],
+                tlLength = 0;
+            
+            // reset vplm globals
+            this.vplm = {};
+            this.vplm.tlStep = 0,
+            
 
-            // setup global timeline data 
             _.each(this.timeline.mediaElements, function (el) {
                 // fetch comments from model
                 if (el.comments.length > 0) {
@@ -917,19 +917,21 @@
                     });
                 }
                 // update vplm data
-                that.vplm.tlLength +=  el.playheadStop - el.playheadStart;
+                console.log(el);
+                console.log(parseInt(el.playheadStop - el.playheadStart, 10));
+                tlLength +=  parseInt(el.playheadStop - el.playheadStart, 10);
             });
             
-            console.log(this.comments)
-            if (DEBUG) console.log(vplm);
-            // comments will be sent with playlist and available through vplm->Timeline
+            this.vplm.tlLength = tlLength;
+            console.log(tlLength);
+            console.log(that.vplm);
             
-//            console.log(comments);
             markers = new CommentMarkerView();
             markers.renderCommentMarkers({comments : this.comments, jqEl : "#mega-markers-container"});
             this.vP = new VPlayerView({
                 mediaEl : mediaEl
             });
+            this.vP.runTimeListener();
             this.vP.loadVPlayer();
             this.vP.setMedia({
                 type : mediaEl.elementType,
@@ -947,17 +949,9 @@
         calcCommentMarkers : function (opts) {
             var markerArray, numbMarkers, markerSecs,
                 that=this,
-               // playerData = this.$el.jPlayer().data('jPlayer').status;
             
-//            if (opts && opts.mega === true) {
-                numbMarkers = Math.floor($('.mega-timeline .bar').width() / 20); // [width of bar] / [ width of marker+4px ]
-                markerSecs = Math.floor(this.vplm.tlLength / numbMarkers); // [ length of video ] / [ number of Markers ]
-/*
-            } else {
-                numbMarkers = Math.floor($('.jp-progress').width() / 20); // [width of bar] / [ width of marker+4px ]
-                markerSecs = Math.floor(playerData.duration / numbMarkers); // [ length of video ] / [ number of Markers ]
-            }
-*/
+            numbMarkers = Math.floor($('.mega-timeline .bar').width() / 20); // [width of bar] / [ width of marker+4px ]
+            markerSecs = Math.floor(this.vplm.tlLength / numbMarkers); // [ length of video ] / [ number of Markers ]
             
             // build array of marker-points with start / stop attrs
             markerArray = []; 
@@ -980,7 +974,7 @@
         
         // Make sure media is loaded before calling
         // or player values will be empty
-                renderCommentMarkers : function (opts) {
+        renderCommentMarkers : function (opts) {
             var that = this,
                 markerArray = this.calcCommentMarkers(opts).markerArray;
                 numbMarkers = this.calcCommentMarkers(opts).numbMarkers;
