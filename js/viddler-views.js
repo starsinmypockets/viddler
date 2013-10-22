@@ -1,3 +1,6 @@
+/**
+ * NOTE: All times in ms; convert to seconds as needed at point of use
+ */
 (function ($) {
     var DEBUG = true,
         tDEBUG = true;
@@ -279,7 +282,6 @@
                 
                 // set ui clock to 0
                 $('.viddler-current-time').html(secs2time(Math.floor(0)));
-
                 $(that.$el.jPlayer()).bind($.jPlayer.event.ended, _.bind(doNext, that));
             }
             
@@ -656,6 +658,9 @@
           //  this.runStopListener(opts.stop);
         },
         
+        clearTime : function () {
+            $('.viddler-current-time').html(this.secs2time(Math.floor(0)));  
+        },
         // calculates relative timeline elapsed
         runTimeListener : function () {
             var stepMedia = this.mediaEl,
@@ -671,7 +676,7 @@
                 timeLinePercent = (window.vplm.tlNow / window.vplm.tlLength)
                 playBarWidth = timeLinePercent*$('.jp-progress').width();
                 
-                if (tDEBUG = false) {
+                if (tDEBUG ) {
                     console.log('current: '+window.vplm.tlNow);
                     console.log('elapsed: '+window.vplm.tlElapsed);
                     console.log('total: '+window.vplm.tlLength);
@@ -707,16 +712,17 @@
         
         runStopListener : function (stop) {
             var that = this;
-            console.log(stop);
             var stopIntv = setInterval(function() {
                if (that.$el.jPlayer().data().jPlayer.status.currentTime > stop/1000) {
-                  if (tDEBUG) console.log('stop listener stop');
+                  console.log('stop listener stop');
                   clearInterval(stopIntv);
                   $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
                }
             },1000);
         },
         
+        // @@ think we lose this
+/*
         loadVPlayerGui : function (opts) {
             var that = this;
             this.setElement('.jp-gui'); 
@@ -725,6 +731,7 @@
                 that.loadCommentPopUp();
             });
         },
+*/
         
         loadVPlayer : function (opts) {
             var that = this;
@@ -779,13 +786,19 @@
             // works in webkit only?
         },
         
+        doFoo : function () {
+            console.log("Dog food");
+        },
+        
         onEnded : function (func) {
-            $(this.el).on($.jPlayer.event.ended, func());
+            func();
+            // maybe we don't need the event?
+            //$(this.el).on($.jPlayer.event.ended, func());
         }
     });
     
     // add controls for modals here
-    VPlayerGui = Backbone.View.extend({
+    VPlayerGuiView = Backbone.View.extend({
         el : ".jp-gui",
         vplm : window.vplm,
         
@@ -801,17 +814,19 @@
             commentModal.render();
         },
         
-        loadMegaTimeLine : function (opts) {
+        loadMegaTimeline : function (opts) {
             var that = this,
                 data = {},
                 comments = [];
                 
-            data.elems = this.vplm.timeline.mediaElements;
+            data.elems = opts.mediaElements;
             _.each(data.elems, function (elem) {
-                elem.width = ((elem.length / that.data.tlLength)*100).toFixed(2);
+                elem.width = ((elem.length / window.vplm.tlLength)*100).toFixed(2);
             });
             console.log(data);
-            $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
+            $('#mega-track-info-container').html("Foobar here");
+
+//            $('#mega-track-info-container').html(_.template($('#tmp-mega-track-info').html(), data));
 
             $('.mega-timeline .bar .jp-seek-bar').on('click', function (e) {
                 e.preventDefault();
@@ -823,10 +838,31 @@
             //this.getMediaElementComments({id : this.model.id, jqEl : "#mega-markers-container", mega : true, timeLineLength : opts.timeLineLength});
         },
         
+        // whack the player
+/*
+        destroyView : function () {
+            //COMPLETELY UNBIND THE VIEW
+            this.undelegateEvents();
+        
+            this.$el.removeData().unbind(); 
+        
+            //Remove view from DOM
+            this.remove();  
+            Backbone.View.prototype.remove.call(this);
+        },
+*/
+        
         render : function(opts) {
             //this.$el.html("GUI here");
             this.$el.html(_.template($('#tmp-mega-gui').html()));
-            this.loadMegaTimeLine();
+            data = {};
+            data.elems = opts.mediaElements;
+            _.each(data.elems, function (elem) {
+                elem.width = ((elem.length / window.vplm.tlLength)*100).toFixed(2);
+            });
+            console.log(data);
+            $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
+
         }
     });
 
@@ -895,8 +931,6 @@
         initialize : function (opts) {
             var stepMedia;
             _.bindAll(this, "vPlay");
-            this.vPG = new VPlayerGui();
-            this.vPG.render();
             this.loadPlayList();
         },
         
@@ -909,8 +943,10 @@
             // reset vplm globals
             resetVplm();
             window.vplm.tlStep = 0;
-            mediaEl = this.timeline.mediaElements[window.vplm.tlStep];
-
+            mediaEls = this.timeline.mediaElements
+            mediaEl = mediaEls[window.vplm.tlStep];
+                
+            // calculate timeline length
             _.each(this.timeline.mediaElements, function (el) {
                 // fetch comments from model
                 if (el.comments.length > 0) {
@@ -920,29 +956,83 @@
                 }
                 tlLength +=  parseInt(el.playheadStop - el.playheadStart, 10);
             });
-            // update vplm data            
             window.vplm.tlLength = tlLength;
+            
+            // make sure tlLength is set before rendering gui
+            this.vPG = new VPlayerGuiView();
+            this.vPG.render({mediaElements : mediaEls});
+            // update vplm data            
+            
+            // instance player
+            this.vP = new VPlayerView({
+                mediaEl : mediaEl
+            });
+            this.vP.loadVPlayer();
             
             // get comment markers
             markers = new CommentMarkerView();
             markers.renderCommentMarkers({comments : this.comments, jqEl : "#mega-markers-container"});
             
             // instance player with initial mediaEl
-            this.vP = new VPlayerView({
-                mediaEl : mediaEl
-            });
+            this.timelinePlay();
+        },
+        
+        // assume that the mediaElement is available from the vplm.tlStep and this.timeline
+        timelinePlay : function (opts) {
+            var start,
+                stop,
+                mediaEl,
+                opts = opts || {};
+            
+            // some sensible defaults for end handler...
+            if (window.vplm.tlStep < window.vplm.tlSteps) {
+                opts.endFunc = this.doNext();
+            }
+            
+            if (window.vplm.tlStep === window.vplm.tlSteps) {
+                opts.endFunc = this.doEnd();
+            }
+            
+            // but override with opts.endFunc
+            if (opts.endFunc) opts.endFunc = opts.endFunc;
+            mediaEl = this.timeline.mediaElements[window.vplm.tlStep];
+            console.log(mediaEl);
+            start = opts.start || mediaEl.playheadStart;
+            stop = opts.stop || mediaEl.playheadStop;
+            
+            if (DEBUG) {
+                console.log('Media: '+mediaEl);
+                console.log('player start: '+start);
+                console.log('player stop: '+stop);
+            }
+            
+            this.vP.mediaEl = mediaEl;
+            this.vP.onEnded(function () {console.log("ender's game")});
             this.vP.runTimeListener();
-            this.vP.loadVPlayer();
+            this.vP.runStopListener(stop);
+      //      this.vP.loadVPlayer();
             this.vP.setMedia({
                 type : mediaEl.elementType,
                 url : mediaEl.elementURL
             });
-            this.vP.onEnded(function () {console.log('Ended handler called')}); //run playliststophandler
-            this.vP.play({start : mediaEl.playheadStart/1000});
-            this.vP.runStopListener(mediaEl.playheadStop);
-            
+            this.vP.clearTime(); // set ui clock to 0
+            this.vP.play({start : start/1000});
             this.commentsView = new CommentsListView({comments : mediaEl.comments});
             this.commentsView.render();
+
+        },
+        
+        doNext : function (opts) {
+            console.log("Do next handler");
+            if (window.vplm.tlStep < window.vplm.tlSteps) {
+                window.vplm.tlStep++;
+            } else {
+                this.doEnd();
+            }
+        },
+        
+        doEnd : function (opts) {
+            console.log("Do end handler");
         },
         
         render : function () {}

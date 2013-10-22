@@ -101,18 +101,6 @@
     </div>
 </script>
 
-<script type="text/template" id="tmp-comment-popup">
-    <img src="img/modalclose.png" alt="" class="comment-close modal-close cursor"/>
-    <div class="comment-popup">
-        <form class="comment-form">
-            <ul class="modal-form">
-                <li><input name="commentText" type="text"/></li>
-                <li><label for="time">Time</label><input name="time" id="comment-play-head-pos"type="text" value="<%= time %>"/></li>
-        </form>
-                <a href="#" id="comment-form-submit"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>            </ul>
-    </div>
-</script>
-
 <script type="text/template" id="tmp-mega-timeline">
     <div class="bar">
         <div id="mega-markers-container"></div>
@@ -123,10 +111,28 @@
         </div>
         <div class="clearfix"></div>
         <div id="mega-track-info" class="">
+            <% _.each(elems, function (elem) { %>
+                <span class="timeline-tag" style="width : <%= elem.width %>%"><%= elem.timeLineTag %></span>
+            <% }); %>
+        </div>
     </div>
-        <% _.each(elems, function (elem) { %>
-            <span class="timeline-tag" style="width : <%= elem.width %>%"><%= elem.timeLineTag %></span>
-        <% }); %>
+</script>
+
+<script type="text/template" id="tmp-mega-track-info">
+    <% _.each(elems, function (elem) { %>
+        <span class="timeline-tag" style="width : <%= elem.width %>%"><%= elem.timeLineTag %></span>
+    <% }); %>
+</script>
+
+<script type="text/template" id="tmp-comment-popup">
+    <img src="img/modalclose.png" alt="" class="comment-close modal-close cursor"/>
+    <div class="comment-popup">
+        <form class="comment-form">
+            <ul class="modal-form">
+                <li><input name="commentText" type="text"/></li>
+                <li><label for="time">Time</label><input name="time" id="comment-play-head-pos"type="text" value="<%= time %>"/></li>
+        </form>
+                <a href="#" id="comment-form-submit"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>            </ul>
     </div>
 </script>
 
