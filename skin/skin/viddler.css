@@ -268,7 +268,7 @@ div.jp-video div.jp-progress {
 	border-bottom: #42474d solid thin; 
 }
 
-div.jp-seek-bar {
+div.jp-seek-bar, div.jp-mega-seek-bar {
 	background: #1a2025;
 	width:0px;
 	height:100%;
@@ -277,7 +277,7 @@ box-shadow: inset 1px 1px 1px 1px rgba(1, 1, 1, .4);
 	border-radius: 10px;
 	cursor: pointer;
 }
-div.jp-play-bar {
+div.jp-play-bar, div.jp-mega-play-bar {
 	background: url("../img/progress.jpg") repeat-x;
 	width:0px;
 	height: 10px;

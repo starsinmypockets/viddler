@@ -53,13 +53,15 @@ ViddlerPlayer.vent = _.extend({}, Backbone.Events);
 // @@ we need to access or reset the player instance (pass in)
 ViddlerPlayer.vent.bind('doNextStep', function (opts) {
     var el = window.vplm.timeline.mediaElements[window.vplm.tlStep],
-        vP = opts.vP;
+        vP = opts.vP,
+        data = {};
     window.vplm.tlElapsed += timeline
     window.vplm.tlStep += 1;
     window.vplm.elapsed += el.playheadStop - el.playheadStart;
     // access or reset player instance
     vP.pause();
-    vP.setElement({el.elementType : el.elementURL});
+    data[el.elementType] = el.elementURL;
+    vP.setElement(data);
     vP.play(el.playheadStart);
 });
 
@@ -67,7 +69,8 @@ ViddlerPlayer.vent.bind('doNextStep', function (opts) {
 ViddlerPlayer.vent.bind('timeLineSeek', function (opts) {
     var vP = opts.vP,
         i,
-        currentEl = {};
+        currentEl = {},
+        data = {};
     window.vplm.tlStep = opts.step;
     // update timeline's elapsed time
     window.vplm.tlElapsed = 0;
@@ -79,7 +82,8 @@ ViddlerPlayer.vent.bind('timeLineSeek', function (opts) {
         func(i);
     }
     currentEl = window.vplm.timeline.mediaElements[opts.step];
-    vP.play({ currentEl.elementType : currentEl.elementURL}, currentEl.playheadStart);
+    data[currentEl.elementType] = currentEl.elementURL;
+    vP.play(data, currentEl.playheadStart);
 });
 
 ViddlerPlayer.vent.bind('timeLineDone', function (opts) {
@@ -168,12 +172,14 @@ rainReady(function(){
        /* Session Authentication */
         var $doc = $(document);
         
+/*
         $doc.ajaxSend(function (event, xhr) {
             var authToken = $.cookie('access_token');
             if (authToken) {
                 xhr.setRequestHeader("Authorization", "Bearer " + authToken);
             }
         });
+*/
 
         $doc.ajaxError(function (event, xhr) {
             if (xhr.status == 401)

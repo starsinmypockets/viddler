@@ -1,6 +1,6 @@
 (function ($) {
     var DEBUG = true,
-        tlDEBUG = true;
+        tDEBUG = true;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -673,7 +673,7 @@
                     console.log(timeLinePercent);
                     console.log('playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
                 }
-                $('.mega-timeline .jp-mega-seek-bar .jp-mega-play-bar').width(timeLinePercent + '%');
+                $('.jp-mega-seek-bar, .jp-mega-play-bar').width(timeLinePercent + '%');
                 $('.viddler-current-time').html(that.secs2time(Math.floor(that.vplm.tlNow/1000)));
             },250);
         },
@@ -716,9 +716,6 @@
             var that = this;
             this.setElement('.jp-gui'); 
             this.$el.html(_.template($('#tmp-mega-gui').html()));
-
-//            $('.jp-gui').html(_.template($('#tmp-mega-gui').html()));
-            //this.$el.html(_.template($('#tmp-mega-gui').html()));
             this.$('.jp-comment').on('click', function () {
                 that.loadCommentPopUp();
             });
@@ -833,20 +830,27 @@
     TestPlayer2View = BaseView.extend({
         el : "#jp_container_1",
         vplm : window.vplm,
+        timeline : {},
         events : {
             'click .jp-comment' : 'commentModal',
             'click #viddler-play' : "vPlay",
             'click #viddler-pause' : "vPause"
         },
         
-        // initialize playlist data - update from model
-        data : {
-            comments : {},        
-            tlStep : 0,
-            tlSteps :0,
-            tlLength : 0,
-            tlElapsed : 0,
-            tlNow : 0,
+        getMediaElementComments : function (opts) {
+            var that = this,
+                opts = opts || {},
+                comments = {};
+                
+            if (opts.id) {
+                // fetch mediaEl comments from vplm
+            } else {
+                _.each(this.timeline.mediaElements, function (el) {
+                    comments = _.extend(comments, el.comments);
+                });
+                console.log(comments);
+                // otherwise assume we want all of them
+            }
         },
         
         // delegate player events to vP view
@@ -869,7 +873,13 @@
             this.model.fetch({
                 success : function (model, response, opts) {
                     console.log(model);
+                    // clear global data when we load a new playlist
+                    that.vplm = {};
                     console.log(that.vplm);
+                    // set global timeline 
+                    that.timeline = model.get("timeline");
+                    
+                    // we should try to limit how much the global object is handling this backbone collection / model
                     that.vplm.timeline = model.get("timeline");
                     console.log(that.vplm);
                     that.onModelReady();
@@ -898,11 +908,15 @@
             // setup global timeline data 
             stepMedia = this.vplm.timeline.mediaElements[0];
             _.each(this.vplm.timeline.mediaElements, function (el) {
-                console.log(el);
                 that.vplm.tlLength +=  el.playheadStop - el.playheadStart;
             });
-            console.log(vplm);
-            console.log(stepMedia);
+            if (DEBUG) console.log(vplm);
+            if (DEBUG) console.log(stepMedia);
+            // comments will be sent with playlist and available through vplm->Timeline
+            
+            console.log(comments);
+            markers = new CommentMarkerView();
+            markers.renderCommentMarkers({comments : comments});
             this.vP = new VPlayerView();
             this.vP.loadVPlayer();
             this.vP.setMedia({
@@ -915,6 +929,81 @@
         },
         
         render : function () {}
+    });
+    
+    CommentMarkerView = BaseView.extend({
+        calcCommentMarkers : function (opts) {
+            var markerArray, numbMarkers, markerSecs,
+                that=this,
+               // playerData = this.$el.jPlayer().data('jPlayer').status;
+            
+//            if (opts && opts.mega === true) {
+                numbMarkers = Math.floor($('.mega-timeline .bar').width() / 20); // [width of bar] / [ width of marker+4px ]
+                markerSecs = Math.floor(this.vplm.tlLength / numbMarkers); // [ length of video ] / [ number of Markers ]
+/*
+            } else {
+                numbMarkers = Math.floor($('.jp-progress').width() / 20); // [width of bar] / [ width of marker+4px ]
+                markerSecs = Math.floor(playerData.duration / numbMarkers); // [ length of video ] / [ number of Markers ]
+            }
+*/
+            
+            // build array of marker-points with start / stop attrs
+            markerArray = []; 
+            
+            for (var i = 1; i <+ numbMarkers; i++) {
+                markerArray[0] = {};                
+                markerArray[0].start = 0;
+                markerArray[0].stop = markerSecs;
+            
+                function funcs(i) {
+                    markerArray[i] = {};
+                    markerArray[i].start = markerArray[i-1].stop + 1;
+                    markerArray[i].stop = markerArray[i].start + markerSecs;
+                }
+                funcs(i);
+            }
+            
+            return { markerArray : markerArray, numbMarkers : numbMarkers};
+        },
+        
+        // Make sure media is loaded before calling
+        // or player values will be empty
+        renderCommentMarkers : function (opts) {
+            var that = this,
+                markerArray = this.calcCommentMarkers(opts).markerArray;
+                numbMarkers = this.calcCommentMarkers(opts).numbMarkers;
+                comments = opts.comments;
+                markers = [],
+                j = 0,
+                pos = 1;
+                
+            // now build array of populated marker positions for rendering
+            if (DEBUG) {
+                console.log(markerArray);
+                console.log(comments);
+                console.log(opts);                
+            }
+            _.each(markerArray, function(spot) {
+                _.each(comments, function (comment) {
+                    if (comment.time >= spot.start && comment.time <= spot.stop) {
+                        markers[j] = {};
+                        markers[j].start = spot.start;
+                        markers[j].stop = spot.stop;
+                        markers[j].pos = pos;
+                        markers[j].left = (100/numbMarkers)*pos; // express the left value as a percent
+                        j++;
+                    }
+                });
+                pos++; // keep track of which position we're in
+            });
+            
+            // now render this nonsense 
+            data = {};
+            data.markers = markers;
+            if (DEBUG) console.log(data);
+            $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));                
+            // render proper context here
+        },
     });
     
     /**
@@ -1066,10 +1155,7 @@
      * Simple player to test events etc
      *
      **/
-
     
-    // @@ so outer view needs to coordinate between the subviewsa...
-
     TestPlayerView = Backbone.View.extend({
         el : "#jp_container_1",
 

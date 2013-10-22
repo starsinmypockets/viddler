@@ -129,3 +129,9 @@
         <% }); %>
     </div>
 </script>
+
+<script type="text/template" id="tmp-comment-markers">
+    <% _.each(markers, function (marker) { %>
+        <img src="img/orangearrow.png" style="left: <%= marker.left %>%; position : absolute"/>
+    <% }); %>
+</script>
