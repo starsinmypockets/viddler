@@ -27,6 +27,9 @@
 </head>
 <body>
 <div class="wrap">
+    <div class="modalbg" style="display:none">
+        <div class="loginmodal"></div>
+    </div>
     <div id="jp_container_1" class="jp-video">
         <div class="jp-type-single">
             <div id="jquery_jplayer_1" class="jp-jplayer">
@@ -51,8 +54,10 @@
             <div id="errors"></div>
             <!-- end backbone containers -->
         </div>
-            <div id="modal-outer" style="display : none"><span class="modal-close cursor">X</span>
-                <div id="modal-container"></div>
+            <div id="modal-outer" style="display:none">    
+                Add comment
+                <div id="modal-container" class="clearfix"></div>
+                <img src="img/commenttriangle.png" alt="comment triangle" id="modaltriangle"/>
             </div>
             <div id="comment-popup-container"></div>
             <div id="error-message-container"></div>

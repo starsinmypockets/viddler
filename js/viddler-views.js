@@ -2,8 +2,8 @@
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
 (function ($) {
-    var DEBUG = true,
-        tDEBUG = true;
+    var DEBUG = false,
+        tDEBUG = false;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -131,7 +131,7 @@
                     }
                     console.log(that.$el.jPlayer());
                 },
-                swfPath: "../js/vendor",
+                swfPath: "http://cdnjs.cloudflare.com/ajax/libs/jplayer/2.4.0/",
                 supplied: "m4v, ogv",
                 errorAlerts : true
             });
@@ -142,15 +142,18 @@
          **/
          
          setMedia : function (opts) {
+             var data = {},
+                that = this;
              console.log(opts);
-             data = {};
              data[opts.type] = opts.url;
              this.$el.jPlayer("setMedia", data);
          },
          
          play : function (opts) {
+             var that = this;
              (opts && opts.start) ? start = opts.start : start = '';
-             this.$el.jPlayer("play", start)
+
+                that.$el.jPlayer("play", start)
          }, 
          
          pause : function (e, opts) {
@@ -187,6 +190,10 @@
     VPlayerGuiView = Backbone.View.extend({
         el : ".jp-gui",
         vplm : window.vplm,
+        
+        events : {
+            'click .jp-comment' : "loadCommentPopup"    
+        },
         
         // load comment modal
         commentModal : function () {
@@ -236,20 +243,33 @@
             this.remove();  
             Backbone.View.prototype.remove.call(this);
         },
-*/
+*/        loadCommentPopUp : function (data) {
+            var data = {},
+            playerData = this.$el.jPlayer().data().jPlayer.status;    
+            data.time = Math.floor(playerData.currentTime);
+            data.avatar = "http://placekitten.com/75/75";
+            commentModal = new CreateCommentView({
+                data : data,
+                tmp : "#tmp-comment-popup"
+            });
+            commentModal.render();
+        },
         
         render : function(opts) {
-            //this.$el.html("GUI here");
+            var data = {},
+                that=this;
+            // load player controls
             this.$el.html(_.template($('#tmp-mega-gui').html()));
-            data = {};
+            
+            // calc and render track info
             data.elems = opts.mediaElements;
             _.each(data.elems, function (elem) {
                 elem.width = ((elem.length / window.vplm.tlLength)*100).toFixed(2);
             });
-            console.log(data);
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
-
-        }
+            this.$('.jp-comment').on('click', function () {
+                that.loadCommentPopUp();
+            });        }
     });
 
     // bind events in outer view
@@ -304,8 +324,6 @@
                     that.onModelReady();
                 },
                 error : function (model, response) {
-                    that.loadPlayerGui();
-                    that.loadJPlayer();
                     error = new ErrorMsgView({
                         errorType : "server",
                         errorMsg : "Error retrieving playlist data from server"
@@ -397,13 +415,14 @@
             this.vP.onEnded(function () {console.log("ender's game")});
             this.vP.runTimeListener();
             this.vP.runStopListener(stop);
-      //      this.vP.loadVPlayer();
+            this.vP.loadVPlayer();
             this.vP.setMedia({
                 type : mediaEl.elementType,
                 url : mediaEl.elementURL
             });
             this.vP.clearTime(); // set ui clock to 0
-            this.vP.play({start : start/1000});
+//            setTimeout(this.vP.play({start : start/1000}), 750);
+            //this.vP.play({start : start/1000});
             this.commentsView = new CommentsListView({comments : mediaEl.comments});
             this.commentsView.render();
 
@@ -422,7 +441,8 @@
             console.log("Do end handler");
         },
         
-        render : function () {}
+        render : function () {},
+        
     });
     
     CommentMarkerView = BaseView.extend({
@@ -612,13 +632,15 @@
     });
     
     CreateCommentView = ModalView.extend({
+        el : '#modal-container',
         events : {
             'click #comment-form-submit' : 'commentSubmit',
+            'click .comment-close' : 'hide'
         },
         
         initialize : function (opts) {
             this.__init(opts);
-            _.bindAll(this, 'commentSubmit');
+            _.bindAll(this, 'commentSubmit', 'hide');
             this.data = opts.data;
         },
         
@@ -644,13 +666,14 @@
         },
         
         render : function (opts) {
-            this.setElement('#modal-container');
-            this.$el.html(this.template(this.data));
+            this.$el.html(_.template($("#tmp-comment-popup").html()));
+/*
             $('.comment-close').on('click', function (e) {
                 e.preventDefault();
                 $('#modal-outer').hide();
                 return false;
             });
+*/
             $('#modal-outer').show();
         }
     });
