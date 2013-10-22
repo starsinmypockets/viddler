@@ -658,25 +658,28 @@
         
         // calculates relative timeline elapsed
         runTimeListener : function () {
-            console.log(this.mediaEl);
             var stepMedia = this.mediaEl,
-                that = this;
-            console.log(stepMedia);
+                that = this,
+                timeLinePercent,
+                playBarWidth;
+            console.log(window.vplm);
             var updateIntv = setInterval(function() {
-                that.vplm.tlNow = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + that.vplm.tlElapsed, 10);
+                window.vplm.tlNow = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + window.vplm.tlElapsed, 10);
                 if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                     clearInterval(updateIntv);
                 }
-                timeLinePercent = (that.vplm.tlNow / that.vplm.tlLength)*100
-                if (tDEBUG) {
-                    console.log('current: '+that.vplm.tlNow);
-                    console.log('elapsed: '+that.vplm.tlElapsed);
-                    console.log('total: '+that.vplm.tlLength);
+                timeLinePercent = (window.vplm.tlNow / window.vplm.tlLength)
+                playBarWidth = timeLinePercent*$('.jp-progress').width();
+                
+                if (tDEBUG = false) {
+                    console.log('current: '+window.vplm.tlNow);
+                    console.log('elapsed: '+window.vplm.tlElapsed);
+                    console.log('total: '+window.vplm.tlLength);
                     console.log(timeLinePercent);
                     console.log('playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
                 }
-                $('.jp-mega-seek-bar, .jp-mega-play-bar').width(timeLinePercent + '%');
-                $('.viddler-current-time').html(that.secs2time(Math.floor(that.vplm.tlNow/1000)));
+                $('.jp-mega-play-bar').width(playBarWidth);
+                $('.viddler-current-time').html(that.secs2time(Math.floor(window.vplm.tlNow/1000)));
             },250);
         },
         
@@ -831,7 +834,6 @@
     // this is equivalent to PlayListView
     TestPlayer2View = BaseView.extend({
         el : "#jp_container_1",
-        vplm : window.vplm,
         timeline : {},
         comments : [],
         events : {
@@ -901,13 +903,13 @@
         // initialize playlist environment
         onModelReady : function () {
             var that = this,
-                mediaEl = this.timeline.mediaElements[this.vplm.tlStep],
+                mediaEl = {},
                 tlLength = 0;
             
             // reset vplm globals
-            this.vplm = {};
-            this.vplm.tlStep = 0,
-            
+            resetVplm();
+            window.vplm.tlStep = 0;
+            mediaEl = this.timeline.mediaElements[window.vplm.tlStep];
 
             _.each(this.timeline.mediaElements, function (el) {
                 // fetch comments from model
@@ -922,12 +924,13 @@
                 tlLength +=  parseInt(el.playheadStop - el.playheadStart, 10);
             });
             
-            this.vplm.tlLength = tlLength;
-            console.log(tlLength);
-            console.log(that.vplm);
+            window.vplm.tlLength = tlLength;
             
+            // get comment markers
             markers = new CommentMarkerView();
             markers.renderCommentMarkers({comments : this.comments, jqEl : "#mega-markers-container"});
+            
+            // instance player with initial mediaEl
             this.vP = new VPlayerView({
                 mediaEl : mediaEl
             });

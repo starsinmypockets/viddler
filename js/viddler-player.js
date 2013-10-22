@@ -38,6 +38,18 @@ window.vplm = window.vplm ||
         stepMedia : {},
         tlComments : {}
     };        
+function resetVplm () {
+    window.vplm =     {
+        tlStep : 0,
+        tlSteps :0,
+        tlLength : 0,
+        tlElapsed : 0,
+        tlNow : 0,
+        timeline : {},
+        stepMedia : {},
+        tlComments : {}
+    };   
+}
 
 ( function ($) {
 var ViddlerPlayer = ViddlerPlayer || {};
