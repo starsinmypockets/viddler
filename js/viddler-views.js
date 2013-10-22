@@ -649,15 +649,16 @@
      **/
     VPlayerView = BaseView.extend({
         el : '#jquery_jplayer_1',
-        
+        mediaEl : {},
         initialize : function (opts) {
+            this.mediaEL = opts.mediaEl;
             this.runTimeListener();
           //  this.runStopListener(opts.stop);
         },
         
         // calculates relative timeline elapsed
         runTimeListener : function () {
-            var stepMedia = this.vplm.timeline.mediaElements[this.vplm.tlStep],
+            var stepMedia = this.mediaEl,
                 that = this;
             console.log(stepMedia);
             var updateIntv = setInterval(function() {
@@ -831,6 +832,7 @@
         el : "#jp_container_1",
         vplm : window.vplm,
         timeline : {},
+        comments : [],
         events : {
             'click .jp-comment' : 'commentModal',
             'click #viddler-play' : "vPlay",
@@ -875,13 +877,12 @@
                     console.log(model);
                     // clear global data when we load a new playlist
                     that.vplm = {};
-                    console.log(that.vplm);
                     // set global timeline 
                     that.timeline = model.get("timeline");
                     
                     // we should try to limit how much the global object is handling this backbone collection / model
                     that.vplm.timeline = model.get("timeline");
-                    console.log(that.vplm);
+                    that.vplm.tlStep = 0;
                     that.onModelReady();
                 },
                 error : function (model, response) {
@@ -905,27 +906,38 @@
         
         onModelReady : function () {
             var that = this;
+            mediaEl = this.timeline.mediaElements[this.vplm.tlStep]
+
             // setup global timeline data 
-            stepMedia = this.vplm.timeline.mediaElements[0];
-            _.each(this.vplm.timeline.mediaElements, function (el) {
+            _.each(this.timeline.mediaElements, function (el) {
+                // fetch comments from model
+                if (el.comments.length > 0) {
+                    _.each(el.comments, function (comment) {
+                        that.comments.push(comment);
+                    });
+                }
+                // update vplm data
                 that.vplm.tlLength +=  el.playheadStop - el.playheadStart;
             });
+            
+            console.log(this.comments)
             if (DEBUG) console.log(vplm);
-            if (DEBUG) console.log(stepMedia);
             // comments will be sent with playlist and available through vplm->Timeline
             
-            console.log(comments);
+//            console.log(comments);
             markers = new CommentMarkerView();
-            markers.renderCommentMarkers({comments : comments});
-            this.vP = new VPlayerView();
+            markers.renderCommentMarkers({comments : this.comments, jqEl : "#mega-markers-container"});
+            this.vP = new VPlayerView({
+                mediaEl : mediaEl
+            });
             this.vP.loadVPlayer();
             this.vP.setMedia({
-                type : stepMedia.elementType,
-                url : stepMedia.elementURL
+                type : mediaEl.elementType,
+                url : mediaEl.elementURL
             });
             this.vP.onEnded(function () {console.log('Ended handler called')});
-            this.vP.play({start : stepMedia.playheadStart/1000});
-            this.vP.runStopListener(stepMedia.playheadStop);
+            this.vP.play({start : mediaEl.playheadStart/1000});
+            this.vP.runStopListener(mediaEl.playheadStop);
         },
         
         render : function () {}
@@ -968,7 +980,7 @@
         
         // Make sure media is loaded before calling
         // or player values will be empty
-        renderCommentMarkers : function (opts) {
+                renderCommentMarkers : function (opts) {
             var that = this,
                 markerArray = this.calcCommentMarkers(opts).markerArray;
                 numbMarkers = this.calcCommentMarkers(opts).numbMarkers;
@@ -1000,7 +1012,10 @@
             // now render this nonsense 
             data = {};
             data.markers = markers;
+            console.log(opts);
             if (DEBUG) console.log(data);
+            console.log(_.template($('#tmp-comment-markers').html(), data));
+           // $(opts.jqEL).html("FOOOO");
             $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));                
             // render proper context here
         },
