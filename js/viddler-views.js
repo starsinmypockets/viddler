@@ -65,7 +65,7 @@
                      comments = collection.toJSON();
                      that.loadComments({comments : comments});
                      if (opts.mega===true)that.renderCommentMarkers({comments : comments, jqEl : opts.jqEl, timeLineLength : opts.timeLineLength/1000, mega : opts.mega});
-                    return comments;
+                     return comments;
                 },
                 error : function (collection, response) {
                     if (DEBUG) console.log("Error loading comments");
@@ -918,12 +918,9 @@
                         that.comments.push(comment);
                     });
                 }
-                // update vplm data
-                console.log(el);
-                console.log(parseInt(el.playheadStop - el.playheadStart, 10));
                 tlLength +=  parseInt(el.playheadStop - el.playheadStart, 10);
             });
-            
+            // update vplm data            
             window.vplm.tlLength = tlLength;
             
             // get comment markers
@@ -940,9 +937,12 @@
                 type : mediaEl.elementType,
                 url : mediaEl.elementURL
             });
-            this.vP.onEnded(function () {console.log('Ended handler called')});
+            this.vP.onEnded(function () {console.log('Ended handler called')}); //run playliststophandler
             this.vP.play({start : mediaEl.playheadStart/1000});
             this.vP.runStopListener(mediaEl.playheadStop);
+            
+            this.commentsView = new CommentsListView({comments : mediaEl.comments});
+            this.commentsView.render();
         },
         
         render : function () {}
@@ -1018,6 +1018,23 @@
         },
     });
     
+    CommentsListView = BaseView.extend({
+        el : "#comments-container",
+        comments : {},
+        
+        initialize : function (opts) {
+            opts = opts || {};
+            opts.tmp = opts.tmp || "#tmp-comments";
+            this.comments = opts.comments || {};
+            this.__init(opts);
+        },
+        
+        render : function () {
+            data = {};
+            data.items = this.comments;
+            this.$el.html(this.template(data));
+        }
+    });
     /**
      * Errors
      *
