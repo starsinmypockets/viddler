@@ -148,7 +148,7 @@ window.testPlayer = function () {
 }
 
 window.testPlayer2 = function () {
-    test = new TestPlayer2View({
+    test = new PlaylistView({
         model : new PlayListModel({id : 2342213}),
     });
     test.render();

@@ -105,28 +105,19 @@
             return time;
         },
         
-        runStopListener : function (stop) {
+        runStopListener : function (stop, func) {
             var that = this;
             var stopIntv = setInterval(function() {
                if (that.$el.jPlayer().data().jPlayer.status.currentTime > stop/1000) {
                   console.log('stop listener stop');
                   clearInterval(stopIntv);
                   $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
+                  if (func) {
+                      func();
+                  }
                }
             },1000);
         },
-        
-        // @@ think we lose this
-/*
-        loadVPlayerGui : function (opts) {
-            var that = this;
-            this.setElement('.jp-gui'); 
-            this.$el.html(_.template($('#tmp-mega-gui').html()));
-            this.$('.jp-comment').on('click', function () {
-                that.loadCommentPopUp();
-            });
-        },
-*/
         
         loadVPlayer : function (opts) {
             var that = this;
@@ -263,7 +254,7 @@
 
     // bind events in outer view
     // this is equivalent to PlayListView
-    TestPlayer2View = BaseView.extend({
+    PlaylistView = BaseView.extend({
         el : "#jp_container_1",
         timeline : {},
         comments : [],
@@ -377,6 +368,7 @@
             var start,
                 stop,
                 mediaEl,
+                endWith,
                 opts = opts || {};
             
             // some sensible defaults for end handler...
