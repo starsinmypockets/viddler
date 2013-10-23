@@ -14,7 +14,7 @@
         "playheadStop": 20000,
         "length": 10000,
         "elementType": "m4v",
-        "elementURL": "http://raineverywhere.com/client/viddler_r/big_buck_bunny.mp4",
+        "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
         "subtitle-source": "../test.srt",
         "timeLineTag": "Vid-1",
         "poster" : "http://placekitten.com/480/270",

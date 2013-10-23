@@ -119,6 +119,11 @@
             },1000);
         },
         
+        onPlayerReady : function () {
+            console.log("ready");
+            this.$el.jPlayer("setMedia", {"m4v" : "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v"});    
+        },
+        
         loadVPlayer : function (opts) {
             var that = this;
             this.$el.jPlayer({
@@ -129,11 +134,12 @@
                             jPlayer : $("#jquery_jplayer_1")
                         });
                     }
-                    console.log(that.$el.jPlayer());
+                    that.onPlayerReady();
                 },
-                swfPath: "http://cdnjs.cloudflare.com/ajax/libs/jplayer/2.4.0/",
-                supplied: "m4v, ogv",
-                errorAlerts : true
+                swfPath: "../js/vendor/",
+                supplied: "m4v",
+                errorAlerts : true,
+                solition : "flash"
             });
         },
         
@@ -160,13 +166,6 @@
              this.$el.jPlayer("pause");
          },
          
-        /**
-         * Event listener wrappers
-         */
-        onPlayerReady : function (func) {
-            if (DEBUG) console.log('v player ready call');
-            $(this.el).on($.jPlayer.event.ready, func());
-        },
         
         // wrap functions in can play
         onCanPlay : function (func) {
@@ -367,18 +366,27 @@
             this.vPG = new VPlayerGuiView();
             this.vPG.render({mediaElements : mediaEls});
             
-            // instance player
+            // instance player view
             this.vP = new VPlayerView({
                 mediaEl : mediaEl
             });
-            this.vP.loadVPlayer();
+            
+            // load player and continue
+            $.when(this.vP.loadVPlayer()).done(function () {
+                markers = new CommentMarkerView();
+                markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
+                that.timelinePlay();                
+            }
+            );
             
             // get comment markers
+/*
             markers = new CommentMarkerView();
             markers.renderCommentMarkers({comments : this.comments, jqEl : "#mega-markers-container"});
+*/
             
             // instance player with initial mediaEl
-            this.timelinePlay();
+           // this.timelinePlay();
         },
         
         // assume that the mediaElement is available from the vplm.tlStep and this.timeline
@@ -416,12 +424,13 @@
             this.vP.runTimeListener();
             this.vP.runStopListener(stop);
             this.vP.loadVPlayer();
+/*
             this.vP.setMedia({
                 type : mediaEl.elementType,
                 url : mediaEl.elementURL
             });
+*/
             this.vP.clearTime(); // set ui clock to 0
-//            setTimeout(this.vP.play({start : start/1000}), 750);
             //this.vP.play({start : start/1000});
             this.commentsView = new CommentsListView({comments : mediaEl.comments});
             this.commentsView.render();
