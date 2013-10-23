@@ -19,6 +19,38 @@ var QueryString = function () {
     return query_string;
 } ();
 
+//// LiveRail Events
+// initComplete, all ads are about to start
+function onLiveRailInitComplete() {
+  console.log('event="initComplete"');
+}
+
+// a campaign in the preroll playlist is about to begin
+function onLiveRailAdStart() {
+  console.log('event="adStart"');
+}
+
+// video ad has ended
+function onLiveRailAdEnd() {
+  console.log('event="adEnd"');
+}
+
+// user has clicked on the video ad
+function onLiveRailClickThru() {
+  console.log('event="clickThru"');
+}
+
+// all ads (if any available) have completed
+// proceed to main content
+function onLiveRailPrerollComplete(hasPlayedAd){
+  console.log('LiveRail complete. hasPlayedAd=' + hasPlayedAd);
+  if(hasPlayedAd){
+       // proceed to the main content
+  }else{
+       // daisy chain to some other ad-tag
+  }
+}
+
 var fileref = document.createElement('script');
 fileref.src = "http://cdn-static.liverail.com/js/LiveRail.Interstitial-1.0.js?LR_PUBLISHER_ID=1331&LR_VIDEO_ID=" + QueryString.lr_video_id + "&LR_TITLE=" + QueryString.lr_title + "&LR_LAYOUT_SKIN_ID=2&spacing=10";
 document.documentElement.appendChild(fileref);

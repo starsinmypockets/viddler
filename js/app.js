@@ -1,8 +1,8 @@
 // All sorts of initialization here
-var app = app || {};
+var App = App || {};
 
 // Tracker object. Page tracking plugins add functions here and the router calls trackPage()
-app.Tracker = {
+App.Tracker = {
 
 	pageTrackFunctions : [],
 	
@@ -30,16 +30,16 @@ app.Tracker = {
 	
 };
 
-app.Plugins = {
+App.Plugins = {
 
 	init: function () {
 		// Initializing config values for plugins
 		var pluginScripts = [];
 
 
-		for (var key in app.Config.plugins) {
+		for (var key in App.Config.plugins) {
 		   
-		   var initConfigFn = app.Config.plugins[key];
+		   var initConfigFn = App.Config.plugins[key];
 		   
 		   initConfigFn();
 		   pluginScripts.push("../js/plugins/" + key + "/" + key + "-plugin.js");
@@ -52,3 +52,7 @@ app.Plugins = {
 	}
 
 };
+
+App.init = function () {
+	App.Plugins.init();
+}

@@ -4,7 +4,7 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
 
-if(app.Config.gaAccountId) {
+if(App.Config.gaAccountId) {
 
 	ga('create', App.Config.gaAccountId);
 
@@ -19,11 +19,11 @@ if(app.Config.gaAccountId) {
 
 ga('send','pageview');
 
-app.Tracker.addPageTrackFunction(function(req) {
+App.Tracker.addPageTrackFunction(function(req) {
 	ga('send', 'pageview', req.fullPath)
 });
 
-app.Tracker.addEventTrackFunction(function(event) {
+App.Tracker.addEventTrackFunction(function(event) {
 	ga('send', 'event', event.category, event.action, event.label, event.value);
 });
 

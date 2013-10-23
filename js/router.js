@@ -1,12 +1,12 @@
-var app = app || {};
+var App = App || {};
 
-app.Router = Davis(function() {
+App.Router = Davis(function() {
 	
 
 	this.configure(function () {
 
-		for (var key in app.Config.davis) {		   
-		   this[key] = app.Config.davis[key];
+		for (var key in App.Config.davis) {		   
+		   this[key] = App.Config.davis[key];
 		}
 
 	});
@@ -53,7 +53,7 @@ app.Router = Davis(function() {
 	});
 
 	this.after(function(req) {
-		app.Tracker.trackPage(req);
+		App.Tracker.trackPage(req);
 	});
 
 
@@ -68,4 +68,4 @@ app.Router = Davis(function() {
 	});
 });
 
-app.Plugins.init();
+App.Plugins.init();
