@@ -135,7 +135,7 @@
                         });
                     }
                 },
-                swfPath: "../js/vendor",
+                swfPath: "/vendor",
                 supplied: "m4v",
                 errorAlerts : true
             });
