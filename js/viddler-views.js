@@ -357,10 +357,13 @@
             window.vplm.tlSteps = mediaEls.length;
             window.vplm.tlLength = tlLength;
             
-            // make sure tlLength is set before rendering gui
+            // render gui
             this.vPG = new VPlayerGuiView();
             this.vPG.render({mediaElements : mediaEls});
             
+            // add play button overlay
+            $('#play-overlay-button').show();
+
             
             // @@ at some point we mmight want this to happen later
             // instance player view
