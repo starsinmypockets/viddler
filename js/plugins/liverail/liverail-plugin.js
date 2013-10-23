@@ -5,32 +5,43 @@
 /*  <script language="javascript" src="http://cdn-static.liverail.com/js/LiveRail.Interstitial-1.0.js?LR_PUBLISHER_ID=1331&LR_VIDEO_ID=[contentID]&LR_TITLE=[contentTitle]&LR_LAYOUT_SKIN_ID=2&spacing=10"></script> */
 // This has to execute in the <head> since we're doing an inline document.write
 
+window.testLiveRail = function () {
+  
+  // create iframe with query params: lr_video_id, lr_title
+  var iframeUrl = "liverail-iframe.html?lr_video_id=" + app.Config.lr_video_id + "&lr_title=" + app.Config.lr_title;
+  $('<iframe />', { 
+    name: 'liverail',
+    id: 'liverail-iframe',
+    src: iframeUrl
+  }).appendTo('body');
+
+};
 
 //// LiveRail Events
 // initComplete, all ads are about to start
 function onLiveRailInitComplete() {
-  //alert('event="initComplete"');
+  console.log('event="initComplete"');
 }
 
 // a campaign in the preroll playlist is about to begin
 function onLiveRailAdStart() {
-  //alert('event="adStart"');
+  console.log('event="adStart"');
 }
 
 // video ad has ended
 function onLiveRailAdEnd() {
-  //alert('event="adEnd"');
+  console.log('event="adEnd"');
 }
 
 // user has clicked on the video ad
 function onLiveRailClickThru() {
-  //alert('event="clickThru"');
+  console.log('event="clickThru"');
 }
 
 // all ads (if any available) have completed
 // proceed to main content
 function onLiveRailPrerollComplete(hasPlayedAd){
-  //alert('LiveRail complete. hasPlayedAd=' + hasPlayedAd);
+  console.log('LiveRail complete. hasPlayedAd=' + hasPlayedAd);
   if(hasPlayedAd){
        // proceed to the main content
   }else{

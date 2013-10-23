@@ -1,3 +1,5 @@
+var app = app || {};
+
 app.Router = Davis(function() {
 	
 
@@ -66,5 +68,5 @@ app.Router = Davis(function() {
 	});
 });
 
-
+app.Plugins.init();
 app.Router.start();

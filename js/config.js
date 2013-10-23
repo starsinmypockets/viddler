@@ -1,36 +1,35 @@
-var config = {};
+var app = app || {};
+app.Config = {};
 
 // Define plugins to be used here
 // foldername : Display Name
-config.plugins = {
+app.Config.plugins = {
 	
 	googleanalytics : function() {
 		// Google Analytics variables
-		config.ga_account = "";
+		app.Config.ga_account = "";
 	}
 
 	/*
 	,sitecatalyst : function() {
 		// SiteCatalyst variables
-		config.s_account = "";
-		config.s_visitorNamespace = "";
-		config.s_trackingServer = "";
+		app.Config.s_account = "";
+		app.Config.s_visitorNamespace = "";
+		app.Config.s_trackingServer = "";
 	}
 	*/
 	
-	/*
 	,liverail : function() {
 		// LiveRail variables
 		// These will need to be populated by the api
-		config.lr_video_id = "asdf1234";
-		config.lr_title = "Big Buck Bunny";
+		app.Config.lr_video_id = "asdf1234";
+		app.Config.lr_title = "Big Buck Bunny";
 	}
-	*/
 };
 
 // Davis Settings
 // http://olivernn.github.io/davis.js/docs/#settings
-config.davis = {
+app.Config.davis = {
 	raiseErrors : true,
 	generateRequestOnPageLoad : true
 };
