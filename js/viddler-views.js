@@ -300,7 +300,8 @@
         },
         
         // delegate player events to vP view
-        vPlay : function (opts) {
+/*
+        vPlay : function (e, opts) {
             console.log(opts);
             e.preventDefault();
             this.vP.play();
@@ -313,6 +314,7 @@
             this.vP.pause();  
             return false;
         },
+*/
         
         loadPlayList : function (opts) {
             var that = this;
@@ -375,6 +377,7 @@
             
             // wait for player load player and continue
             $.when(this.vP.loadVPlayer()).done(function () {
+                if (!ie8) that.pop = Popcorn("#jp_video_0");
                 markers = new CommentMarkerView();
                 markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
                 that.timelinePlay();                
@@ -413,6 +416,17 @@
             if (DEBUG) console.log(opts);
             this.vP.runTimeListener();
             this.vP.runStopListener(opts.stop);
+            
+            console.log('timelinestep opts', opts);
+            if (opts.mediaEl.subtitleSrc) {
+                console.log("yeah");
+                // clear popcorn events from previous step
+                if (that.pop.hasOwnProperty('destroy')) {
+                    that.pop.destroy();
+                }
+                // add subtitles
+                that.pop.parseSRT(opts.mediaEl.subtitleSrc);
+            }
             
             $.when(this.vP.setMedia({
                 type : opts.mediaEl.elementType,

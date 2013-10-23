@@ -15,7 +15,7 @@
         "length": 10000,
         "elementType": "m4v",
         "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
-        "subtitle-source": "../test.srt",
+        "subtitleSrc": "../test.srt",
         "timeLineTag": "Vid-1",
         "poster" : "http://placekitten.com/480/270",
         "mediaElement": {},
@@ -78,7 +78,7 @@
         "timeLineTag": "Vid-1",
         "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
         "poster" : "http://placekitten.com/480/270",
-        "subtitle-source": "../test2.srt",
+        "subtitleSrc": "../test2.srt",
         "mediaElement": {},
         "comments": [
             {
