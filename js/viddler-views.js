@@ -2,7 +2,8 @@
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
 (function ($) {
-    var DEBUG = false,
+    var DEBUG = true,
+        // output clock data:
         tDEBUG = false;
 
     /* Abstract */
@@ -50,7 +51,6 @@
         initialize : function (opts) {
             this.mediaEl = opts.mediaEl;
             this.runTimeListener();
-          //  this.runStopListener(opts.stop);
         },
         
         clearTime : function () {
@@ -61,9 +61,8 @@
             var stepMedia = this.mediaEl,
                 that = this,
                 timeLinePercent,
-                playBarWidth;
-            console.log(window.vplm);
-            var updateIntv = setInterval(function() {
+                playBarWidth,
+                updateIntv = setInterval(function() {
                 window.vplm.tlNow = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - stepMedia.playheadStart + window.vplm.tlElapsed, 10);
                 if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-stepMedia.playheadStart >= stepMedia.length) {
                     clearInterval(updateIntv);
@@ -112,16 +111,14 @@
                   console.log('stop listener stop');
                   clearInterval(stopIntv);
                   $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
-                  if (func) {
+                  that.pause();
+  /*
+                if (func) {
                       func();
                   }
+*/
                }
             },1000);
-        },
-        
-        onPlayerReady : function () {
-            console.log("ready");
-            this.$el.jPlayer("setMedia", {"m4v" : "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v"});    
         },
         
         loadVPlayer : function (opts) {
@@ -134,12 +131,11 @@
                             jPlayer : $("#jquery_jplayer_1")
                         });
                     }
-                    that.onPlayerReady();
                 },
                 swfPath: "../js/vendor/",
                 supplied: "m4v",
                 errorAlerts : true,
-                solition : "flash"
+                solition : "html, flash"
             });
         },
         
@@ -157,12 +153,12 @@
          
          play : function (opts) {
              var that = this;
+             console.log("my play");
              (opts && opts.start) ? start = opts.start : start = '';
-
-                that.$el.jPlayer("play", start)
+             this.$el.jPlayer("play", start);
          }, 
          
-         pause : function (e, opts) {
+         pause : function () {
              this.$el.jPlayer("pause");
          },
          
@@ -172,10 +168,6 @@
             if (DEBUG) console.log('v can Play call');
             $(this.el).on($.jPlayer.event.canplay, func());
             // works in webkit only?
-        },
-        
-        doFoo : function () {
-            console.log("Dog food");
         },
         
         onEnded : function (func) {
@@ -268,7 +260,8 @@
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
             this.$('.jp-comment').on('click', function () {
                 that.loadCommentPopUp();
-            });        }
+            });
+        }
     });
 
     // bind events in outer view
@@ -300,8 +293,8 @@
         },
         
         // delegate player events to vP view
-        vPlay : function (e) {
-            console.log(e);
+        vPlay : function (opts) {
+            console.log(opts);
             e.preventDefault();
             this.vP.play();
             return false;
@@ -360,33 +353,28 @@
                 }
                 tlLength +=  parseInt(el.playheadStop - el.playheadStart, 10);
             });
+            
             window.vplm.tlLength = tlLength;
             
             // make sure tlLength is set before rendering gui
             this.vPG = new VPlayerGuiView();
             this.vPG.render({mediaElements : mediaEls});
             
+            
+            // @@ at some point we mmight want this to happen later
             // instance player view
             this.vP = new VPlayerView({
                 mediaEl : mediaEl
             });
             
-            // load player and continue
+            this.vP.clearTime(); // set ui clock to 0
+            
+            // wait for player load player and continue
             $.when(this.vP.loadVPlayer()).done(function () {
                 markers = new CommentMarkerView();
                 markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
                 that.timelinePlay();                
-            }
-            );
-            
-            // get comment markers
-/*
-            markers = new CommentMarkerView();
-            markers.renderCommentMarkers({comments : this.comments, jqEl : "#mega-markers-container"});
-*/
-            
-            // instance player with initial mediaEl
-           // this.timelinePlay();
+            });
         },
         
         // assume that the mediaElement is available from the vplm.tlStep and this.timeline
@@ -395,23 +383,26 @@
                 stop,
                 mediaEl,
                 endWith,
-                opts = opts || {};
+                that = this,
+                opts = opts || {},
+                stepOpts = {};
             
             // some sensible defaults for end handler...
             if (window.vplm.tlStep < window.vplm.tlSteps) {
-                opts.endFunc = this.doNext();
+                stepOpts.endFunc = this.doNext();
             }
             
             if (window.vplm.tlStep === window.vplm.tlSteps) {
-                opts.endFunc = this.doEnd();
+                stepOpts.endFunc = this.doEnd();
             }
             
             // but override with opts.endFunc
-            if (opts.endFunc) opts.endFunc = opts.endFunc;
+            if (opts.endFunc) stepOpts.endFunc = opts.endFunc;
             mediaEl = this.timeline.mediaElements[window.vplm.tlStep];
-            console.log(mediaEl);
-            start = opts.start || mediaEl.playheadStart;
-            stop = opts.stop || mediaEl.playheadStop;
+            stepOpts.mediaEl = mediaEl;
+            stepOpts.start = opts.start || mediaEl.playheadStart;
+            stepOpts.stop = opts.stop || mediaEl.playheadStop;
+            
             
             if (DEBUG) {
                 console.log('Media: '+mediaEl);
@@ -419,28 +410,33 @@
                 console.log('player stop: '+stop);
             }
             
-            this.vP.mediaEl = mediaEl;
+            // fire this step
+            this.timelineStep(stepOpts);
+        },
+        
+        timelineStep : function (opts) {
+            var that = this;
+            if (DEBUG) console.log(opts);
             this.vP.onEnded(function () {console.log("ender's game")});
             this.vP.runTimeListener();
-            this.vP.runStopListener(stop);
-            this.vP.loadVPlayer();
-/*
-            this.vP.setMedia({
-                type : mediaEl.elementType,
-                url : mediaEl.elementURL
-            });
-*/
-            this.vP.clearTime(); // set ui clock to 0
-            //this.vP.play({start : start/1000});
-            this.commentsView = new CommentsListView({comments : mediaEl.comments});
-            this.commentsView.render();
-
+            this.vP.runStopListener(opts.stop);
+            
+            $.when(this.vP.setMedia({
+                type : opts.mediaEl.elementType,
+                url : opts.mediaEl.elementURL
+            })).done(function () {
+                console.log('Media set');
+                that.vP.play({start : opts.start/1000});
+                that.commentsView = new CommentsListView({comments : opts.mediaEl.comments});
+                that.commentsView.render();
+            });            
         },
         
         doNext : function (opts) {
             console.log("Do next handler");
             if (window.vplm.tlStep < window.vplm.tlSteps) {
                 window.vplm.tlStep++;
+                this.timelinePlay();
             } else {
                 this.doEnd();
             }
