@@ -132,6 +132,7 @@ ViddlerPlayer.vent.bind('noAuth', function () {
         tmp : "#tmp-no-auth-form"
     }).render();
 });
+
 /* Basic routing / workflow delegation */
 
 window.testInit = function () {
@@ -149,7 +150,10 @@ window.testPlayer = function () {
 
 window.testPlayer2 = function () {
     test = new PlaylistView({
-        model : new PlayListModel({id : 2342213}),
+        model : new PlayListModel({
+            id : 2342213,
+        }),
+        vent : ViddlerPlayer.vent
     });
     test.render();
 }

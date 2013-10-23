@@ -11,15 +11,16 @@
         id : 'content',
         tag : 'div',
         el : '<br/>',
-        vent : {},
+        vent : {},  // backbone event aggregator
         vplm : window.vplm,
         
         __init : function (opts) {
             opts = opts || {};
-            if (opts.vent) this.vent = opts.vent; 
+            //if (opts.vent) this.vent = opts.vent; 
             if (opts.tmp) {
                 this.template = _.template($(opts.tmp).html());            
             };
+            this.vent = opts.vent; 
         },
         
         initialize : function (opts) {
@@ -49,6 +50,7 @@
         el : '#jquery_jplayer_1',
         mediaEl : {},
         initialize : function (opts) {
+            this.__init(opts);
             this.mediaEl = opts.mediaEl;
             this.runTimeListener();
         },
@@ -111,7 +113,7 @@
                   console.log('stop listener stop');
                   clearInterval(stopIntv);
                   $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
-                  that.pause();
+                  that.vent.trigger('stopListenerStop');
   /*
                 if (func) {
                       func();
@@ -276,6 +278,11 @@
             'click #viddler-pause' : "vPause"
         },
         
+        initialize : function (opts) {
+            this.__init(opts);
+            this.loadPlayList();
+        },
+        
         getMediaElementComments : function (opts) {
             var that = this,
                 opts = opts || {},
@@ -324,12 +331,6 @@
             });
         },
         
-        initialize : function (opts) {
-            var stepMedia;
-            _.bindAll(this, "vPlay");
-            this.loadPlayList();
-        },
-        
         // initialize playlist environment
         onModelReady : function () {
             var that = this,
@@ -364,7 +365,8 @@
             // @@ at some point we mmight want this to happen later
             // instance player view
             this.vP = new VPlayerView({
-                mediaEl : mediaEl
+                mediaEl : mediaEl,
+                vent : this.vent
             });
             
             this.vP.clearTime(); // set ui clock to 0
@@ -429,7 +431,13 @@
                 that.vP.play({start : opts.start/1000});
                 that.commentsView = new CommentsListView({comments : opts.mediaEl.comments});
                 that.commentsView.render();
-            });            
+            });
+
+            console.log(this.vent);
+            this.vent.bind('stopListenerStop', function () {
+                console.log('Stop listener vent jawn');
+                that.timelinePlay();
+            })
         },
         
         doNext : function (opts) {
