@@ -4,7 +4,7 @@
 (function ($) {
     var DEBUG = true,
         // output clock data:
-        tDEBUG = true;
+        tDEBUG = false;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -363,7 +363,6 @@
             
             // add play button overlay
             $('#play-overlay-button').show();
-
             
             // @@ at some point we mmight want this to happen later
             // instance player view
@@ -420,9 +419,21 @@
                 url : opts.mediaEl.elementURL
             })).done(function () {
                 console.log('Media set');
-                that.vP.play({start : opts.start/1000});
                 that.commentsView = new CommentsListView({comments : opts.mediaEl.comments});
                 that.commentsView.render();
+                
+                if (window.vplm.tlStep === 0) {
+                    // play on click for first step
+                    $("#viddler-play, #play-overlay-button").on('click', function (e) {
+                        console.log("click init");
+                        e.preventDefault();
+                        that.vP.play({start : opts.start/1000});
+                        $('#play-overlay-button').hide();
+                    })
+                // auto-play on subsequent step
+                } else {
+                    that.vP.play({start : opts.start/1000});
+                }
             });
 
             console.log(this.vent);
@@ -468,6 +479,16 @@
         doEnd : function (opts) {
             this.vP.pause();
             console.log("Do end handler");
+            // reset playlist
+            window.vplm.tlStep = 0;
+            window.vplm.tlNow = 0;
+            $('#play-overlay-button').show();
+            $("#viddler-play, #play-overlay-button").on('click', function (e) {
+                console.log("click init");
+                e.preventDefault();
+                that.vP.play({start : opts.start/1000});
+                $('#play-overlay-button').hide();
+            });
         },
         
         render : function () {},
