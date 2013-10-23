@@ -18,3 +18,11 @@ if(config.gaAccountId) {
 }
 
 ga('send','pageview');
+
+app.Tracker.addPageTrackFunction(function(req) {
+	ga('send', 'pageview', req.fullPath)
+});
+
+app.Tracker.addEventTrackFunction(function(event) {
+	ga('send', 'event', event.category, event.action, event.label, event.value);
+});

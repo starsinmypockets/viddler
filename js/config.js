@@ -27,3 +27,10 @@ config.plugins = {
 	}
 	*/
 };
+
+// Davis Settings
+// http://olivernn.github.io/davis.js/docs/#settings
+config.davis = {
+	raiseErrors : true,
+	generateRequestOnPageLoad : true
+};

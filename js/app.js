@@ -1,74 +1,29 @@
-var app = Davis(function() {
-	
+// All sorts of initialization here
 
-	this.configure(function () {
-          this.raiseErrors = true;
-          this.generateRequestOnPageLoad = true;
+var app = app || {};
+
+// Copy configuration values
+app.Config = config || {};
+
+// Tracker object. Page tracking plugins add functions here and the router calls trackPage()
+app.Tracker = {};
+
+// Davisjs Router
+app.Router = {};
+
+// Initializing config values for plugins
+for (var key in app.Config.plugins) {
+   
+   var initConfigFn = app.Config.plugins[key];
+   
+   initConfigFn();
+   
+   $.getScript( "../js/plugins/" + key + "/" + key + "-plugin.js", function( data, textStatus, jqxhr ) {
+   		if(jqxhr.status == 200) {
+			console.log( "[Plugin] Loaded: " + key );
+   		} else {
+   			console.log( "[Plugin] Failed: " + key );	   			
+   		}
 	});
 
-
-	// runs once, before the first route is processed
-	this.bind('start', function(req) {
-		rainReady(function(){
-
-		    console.log('rainReady');
-		    $('.user-login').on('click', function () {ViddlerPlayer.vent.trigger('doLogin')});
-		    $('.user-signup').on('click', function () {ViddlerPlayer.vent.trigger('doSignup')});
-		    $('.no').on('click', function () {ViddlerPlayer.vent.trigger('noAuth')});
-		   
-		   /* Session Authentication */
-		    var $doc = $(document);
-		    
-		    $doc.ajaxSend(function (event, xhr) {
-		        var authToken = $.cookie('access_token');
-		        if (authToken) {
-		            xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-		        }
-		    });
-
-		    $doc.ajaxError(function (event, xhr) {
-		        if (xhr.status == 401)
-		            ViddlerPlayer.vent.trigger('noAuth');
-		    });
-
-		});
-
-	});
-
-
-	// client-side 404
-	this.bind('routeNotFound', function(route) {
-		console.log("Route not found --");
-		console.log(route);
-	});
-
-
-	// Fires before every route, TODO: cleanup views and events
-	this.before(function() { });
-
-	this.after(function(req) {
-		app.track('send', 'pageview', req.fullPath);
-	});
-
-
-
-	// Routes
-	this.get('/skin/(.*)', function(req) {
-		window.testInit();
-	});
-
-	this.state('/skin/record', function(req) {
-		console.log('record route');
-	});
-});
-
-app.googleAnalyticsLoaded = 
-app.track = function() {
-	
-	if(typeof window.ga != undefined) {
-		ga.apply(this, arguments);
-	}
-
-};
-
-app.start();
+}
