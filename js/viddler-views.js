@@ -136,7 +136,7 @@
                     }
                 },
                 swfPath: "../js/vendor",
-                supplied: "m4v, ogv",
+                supplied: "m4v",
                 errorAlerts : true
             });
         },
