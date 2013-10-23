@@ -876,7 +876,7 @@ a.also{
 	width: 100%;
 	position: absolute;
 	height: 100%;
-	display:none; /* display:block to enable modal */
+	display:block; /* display:block to enable modal */
 }
 .loginmodal{
 	width: 90%;
