@@ -4,7 +4,7 @@
 (function ($) {
     var DEBUG = true,
         // output clock data:
-        tDEBUG = false;
+        tDEBUG = true;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -112,7 +112,7 @@
                if (that.$el.jPlayer().data().jPlayer.status.currentTime > stop/1000) {
                   console.log('stop listener stop');
                   clearInterval(stopIntv);
-                  $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
+//                  $(that.$el.jPlayer()).trigger($.jPlayer.event.ended);
                   that.vent.trigger('stopListenerStop');
   /*
                 if (func) {
@@ -340,7 +340,6 @@
             // reset vplm global player data
             resetVplm();
             
-            window.vplm.tlStep = 0;
             mediaEls = this.timeline.mediaElements
             mediaEl = mediaEls[window.vplm.tlStep];
                 
@@ -354,7 +353,8 @@
                 }
                 tlLength +=  parseInt(el.playheadStop - el.playheadStart, 10);
             });
-            
+            window.vplm.tlStep = 0;
+            window.vplm.tlSteps = mediaEls.length;
             window.vplm.tlLength = tlLength;
             
             // make sure tlLength is set before rendering gui
@@ -389,17 +389,6 @@
                 opts = opts || {},
                 stepOpts = {};
             
-            // some sensible defaults for end handler...
-            if (window.vplm.tlStep < window.vplm.tlSteps) {
-                stepOpts.endFunc = this.doNext();
-            }
-            
-            if (window.vplm.tlStep === window.vplm.tlSteps) {
-                stepOpts.endFunc = this.doEnd();
-            }
-            
-            // but override with opts.endFunc
-            if (opts.endFunc) stepOpts.endFunc = opts.endFunc;
             mediaEl = this.timeline.mediaElements[window.vplm.tlStep];
             stepOpts.mediaEl = mediaEl;
             stepOpts.start = opts.start || mediaEl.playheadStart;
@@ -407,9 +396,10 @@
             
             
             if (DEBUG) {
-                console.log('Media: '+mediaEl);
-                console.log('player start: '+start);
-                console.log('player stop: '+stop);
+                console.log('Media: ',mediaEl);
+                console.log('player start: '+stepOpts.start);
+                console.log('player stop: '+stepOpts.stop);
+                console.log('vplm: ',window.vplm);
             }
             
             // fire this step
@@ -419,7 +409,6 @@
         timelineStep : function (opts) {
             var that = this;
             if (DEBUG) console.log(opts);
-            this.vP.onEnded(function () {console.log("ender's game")});
             this.vP.runTimeListener();
             this.vP.runStopListener(opts.stop);
             
@@ -434,9 +423,32 @@
             });
 
             console.log(this.vent);
+            
+            // listen for step end
             this.vent.bind('stopListenerStop', function () {
+                var i, els;
                 console.log('Stop listener vent jawn');
-                that.timelinePlay();
+                
+                // check step, update global values and continue
+                if (window.vplm.tlStep === window.vplm.tlSteps-1) {
+                    that.doEnd();
+                } else {
+                    window.vplm.tlStep++;
+                    
+                    // update global elapsed time
+                    els = that.timeline.mediaElements;
+                    window.vplm.tlElapsed = 0;
+                    for (i = 0; i < window.vplm.tlStep; i++) {
+                        function func (i) {
+                            window.vplm.tlElapsed += els[i].playheadStop - els[i].playheadStart;
+                        }
+                        
+                        func(i);
+                    }
+                    console.log(window.vplm);
+                    that.vent.off("stopListenerStop");
+                    that.timelinePlay();
+                }
             })
         },
         
@@ -451,6 +463,7 @@
         },
         
         doEnd : function (opts) {
+            this.vP.pause();
             console.log("Do end handler");
         },
         
