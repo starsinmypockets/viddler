@@ -26,3 +26,5 @@ app.Tracker.addPageTrackFunction(function(req) {
 app.Tracker.addEventTrackFunction(function(event) {
 	ga('send', 'event', event.category, event.action, event.label, event.value);
 });
+
+console.log( "[Plugin] Loaded: Google Analytics");

@@ -34,17 +34,21 @@ app.Plugins = {
 
 	init: function () {
 		// Initializing config values for plugins
+		var pluginScripts = [];
+
+
 		for (var key in app.Config.plugins) {
 		   
 		   var initConfigFn = app.Config.plugins[key];
 		   
 		   initConfigFn();
-
-		   LazyLoad.js("../js/plugins/" + key + "/" + key + "-plugin.js", function(pluginName) {
-				console.log( "[Plugin] Loaded: " + pluginName );
-		   }, key);
+		   pluginScripts.push("../js/plugins/" + key + "/" + key + "-plugin.js");
 
 		}
+
+		LazyLoad.js(pluginScripts, function() { 
+			console.log( "[Plugin] All plugins loaded." ); 
+		});
 	}
 
 };

@@ -48,3 +48,5 @@ function onLiveRailPrerollComplete(hasPlayedAd){
        // daisy chain to some other ad-tag
   }
 }
+
+console.log( "[Plugin] Loaded: LiveRail");
