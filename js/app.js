@@ -38,6 +38,7 @@ var app = Davis(function() {
 
 	// client-side 404
 	this.bind('routeNotFound', function(route) {
+		console.log("Route not found --");
 		console.log(route);
 	});
 
