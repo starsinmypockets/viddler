@@ -11,6 +11,8 @@
   <script src="../js/lib/jquery.jplayer.inspector.js"></script>
   <script src="../js/lib/underscore.js"></script>
   <script src="../js/lib/backbone.js"></script>
+  <script src="../js/lib/davis.js"></script>
+  <script src="../js/lib/lazyload.js"></script>
   <script src="../js/lib/rain_lib.js"></script>
   <script src="../js/viddler-player.js"></script>
   <script src="../js/viddler-models.js"></script>
@@ -25,12 +27,9 @@
       <script src="../js/lib/popcorn-complete.js"></script>
 <![endif]-->    
 
-  <script type="text/javascript">
-    $(document).ready(function(){
-        window.testPlayer2();
-        //window.testInit();
-    });
-  </script>
+  <script src="../js/config.js"></script>
+  <script src="../js/app.js"></script>
+
 </head>
 <body>
 <div class="wrap">
@@ -98,8 +97,6 @@
 
     </div>
 </div>
-</body>
-</html>
 
 <script type="text/template" id="tmp-mega-gui">
     <div class="mega-timeline clearfix">
@@ -262,3 +259,11 @@
         <span>Please subscribe to view this content</span>
     </div>
 </script>
+
+<script src="../js/router.js"></script>
+<script type="text/javascript">
+  App.init();
+</script>
+
+</body>
+</html>

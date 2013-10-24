@@ -177,7 +177,7 @@ window.testMPInit = function () {
         console.log('bar click');
         playlist.loadCommentPopUp();
     });   
-};
+};  
 
 rainReady(function(){
     $(document).ready(function(){  // is JQuery ready. if rain ready than it should be
