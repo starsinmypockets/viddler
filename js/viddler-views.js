@@ -85,7 +85,10 @@ ie8 = true;
                         console.log('playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
                     }
                     $('.jp-mega-play-bar').width(playBarWidth);
-                    $('.viddler-current-time').html(that.secs2time(Math.floor(window.vplm.tlNow/1000)));
+                    if (window.vplm.tlNow > 0) {
+                        $('.viddler-current-time').html(that.secs2time(Math.floor(window.vplm.tlNow/1000)));
+                    
+                    }
                 },1000);
         },
         
@@ -345,7 +348,6 @@ s
                 vent : this.vent
             });
             
-            this.vP.clearGuiTime(); // set gui clock to 0
             
             // wait for player load player and continue
 
@@ -356,11 +358,11 @@ s
                 markers = new CommentMarkerView();
                 markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
                 that.timelinePlay();
+                $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
                 that.vent.off('playerReady');   
             });
     
             this.vP.loadVPlayer();
-
         },
         
         // assume that the mediaElement is available from the vplm.tlStep and this.timeline
@@ -452,6 +454,7 @@ s
                     $('.jp-play').unbind('click.init');
                     return false;
                 });
+                
             // auto-play on subsequent step
             } else {
                 that.vP.play({start : opts.start/1000});
@@ -468,18 +471,6 @@ s
             });
             return stepComments;
         },
-        
-/*
-        doNext : function (opts) {
-            console.log("Do next handler");
-            if (window.vplm.tlStep < window.vplm.tlSteps) {
-                window.vplm.tlStep++;
-                this.timelinePlay();
-            } else {
-                this.doEnd();
-            }
-        },
-*/
         
         doEnd : function (opts) {
             this.vP.pause();
