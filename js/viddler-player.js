@@ -50,9 +50,9 @@ function resetVplm () {
         tlComments : {}
     };   
 }
+var ViddlerPlayer = ViddlerPlayer || {};
 
 ( function ($) {
-var ViddlerPlayer = ViddlerPlayer || {};
 
 /* Events aggregator */
 ViddlerPlayer.vent = _.extend({}, Backbone.Events);
@@ -155,7 +155,7 @@ window.testPlayer2 = function () {
         }),
         vent : ViddlerPlayer.vent
     });
-    test.render();
+    test.loadPlayList();
 }
 
 window.testInitPopcorn = function () {

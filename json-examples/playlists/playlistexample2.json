@@ -19,31 +19,6 @@
         "timeLineTag": "Vid-1",
         "poster" : "http://placekitten.com/480/270",
         "mediaElement": {},
-        "comments": [
-            {
-                "id" : 678,
-                "media_element" : 123,
-                "playListId" : 2342213,
-                "title": "Comment Title 2",
-                "commentText": "Comment 1",
-                "thumbnail": "http://placekitten.com/75/75",
-                "replyUrl": "http://api.viddler.com/comment/reply/someid",
-                "userName" : "JP Slim",
-                "daysAgo" : "Today",
-                "time" : "2"
-            },{
-                "id" : 679,
-                "media_element" : 123,
-                "playListId" : 2342213,
-                "title": "Comment Title 2",
-                "commentText": "Comment 2",
-                "thumbnail": "http://placekitten.com/75/75",
-                "replyUrl": "http://api.viddler.com/comment/reply/someid",
-                "userName" : "JP Slim",
-                "daysAgo" : "Today",
-                "time" : "12"
-            }
-        ],
         "transitionIn": {},
         "transitionOut": {
         }
@@ -58,7 +33,7 @@
         "length": 10000,
         "elementType": "m4v",
         "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
-        "timeLineTag": "Vid-1",
+        "timeLineTag": "Vid-2",
         "poster" : "http://placekitten.com/480/270",
         "mediaElement": {},
         "comments": [],
@@ -75,26 +50,11 @@
         "playheadStop": 24000,
         "length": 8000,
         "elementType": "m4v",
-        "timeLineTag": "Vid-1",
+        "timeLineTag": "Vid-3",
         "elementURL": "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer_480x270_h264aac.m4v",
         "poster" : "http://placekitten.com/480/270",
         "subtitleSrc": "../test2.srt",
         "mediaElement": {},
-        "comments": [
-            {
-                "id" : 789,
-                "media_element" : 125,
-                "playListId" : 2342213,
-                "title": "Comment Title 1",
-                "commentText": "I love cheese, especially airedale queso. Cheese and biscuits halloumi cauliflower cheese cottage cheese swiss boursin fondue caerphilly. Cow port-salut camembert de normandie macaroni cheese feta who moved my cheese babybel boursin. Red leicester roquefort boursin squirty cheese jarlsberg blue castello caerphilly chalk and cheese. Lancashire.",
-                "thumbnail": "http://placekitten.com/75/75",
-                "replyUrl": "http://api.viddler.com/comment/reply/someid",
-                "userName" : "JP Slim", 
-                "thumbnail": "http://placekitten.com/75/75",
-                "daysAgo" : "Two days ago",
-                "time" : "6"
-            }
-        ],
         "transitionIn": {},
         "transitionOut": {
         }
