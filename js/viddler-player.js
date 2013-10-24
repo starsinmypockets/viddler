@@ -50,9 +50,9 @@ function resetVplm () {
         tlComments : {}
     };   
 }
+var ViddlerPlayer = ViddlerPlayer || {};
 
 ( function ($) {
-var ViddlerPlayer = ViddlerPlayer || {};
 
 /* Events aggregator */
 ViddlerPlayer.vent = _.extend({}, Backbone.Events);
