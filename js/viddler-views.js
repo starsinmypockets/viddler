@@ -185,7 +185,7 @@
         vplm : window.vplm,
         
         events : {
-            'click .jp-comment' : "loadCommentPopup"    
+            'click .jp-comment' : "loadCommentPopup"
         },
         
         // load comment modal
@@ -238,14 +238,14 @@
         },
 */        loadCommentPopUp : function (data) {
             var data = {},
-            playerData = this.$el.jPlayer().data().jPlayer.status;    
+            playerData = this.$el.jPlayer().data().jPlayer.status;
             data.time = Math.floor(playerData.currentTime);
             data.avatar = "http://placekitten.com/75/75";
             commentModal = new CreateCommentView({
                 data : data,
                 tmp : "#tmp-comment-popup"
             });
-            commentModal.render();
+//            commentModal.render();
         },
         
         render : function(opts) {
@@ -624,7 +624,6 @@
      *
      ***/
     ModalView = BaseView.extend({
-        el : ".wrap",
                 
         initialize : function (opts) {
             this.__init(opts);
@@ -696,7 +695,8 @@
     });
     
     CreateCommentView = ModalView.extend({
-        el : '#modal-container',
+        el : '#modal-outer',
+        time : '123',
         events : {
             'click #comment-form-submit' : 'commentSubmit',
             'click .comment-close' : 'hide'
@@ -730,7 +730,7 @@
         },
         
         render : function (opts) {
-            this.$el.html(_.template($("#tmp-comment-popup").html()));
+          //  this.$el.html(_.template($("#tmp-comment-popup").html(), {time : this.time}));
 /*
             $('.comment-close').on('click', function (e) {
                 e.preventDefault();
@@ -738,7 +738,8 @@
                 return false;
             });
 */
-            $('#modal-outer').show();
+        console.log("Render");
+         //   $('#modal-outer').show();
         }
     });
     
