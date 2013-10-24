@@ -13,6 +13,8 @@
   <script src="../js/lib/jquery.jplayer.inspector.js"></script>
   <script src="../js/lib/underscore.js"></script>
   <script src="../js/lib/backbone.js"></script>
+  <script src="../js/lib/davis.js"></script>
+  <script src="../js/lib/lazyload.js"></script>
   <script src="../js/lib/rain_lib.js"></script>
   <script src="../js/playerOptions.js"></script>
   <script src="../js/viddler-player.js"></script>
@@ -20,19 +22,17 @@
   <script src="../js/viddler-collections.js"></script>
   <script src="../js/viddler-views.js"></script>
 
-
+  <!--[if !IE]>-->
+      <script src="../js/lib/popcorn-complete.js"></script>
+  <!--<![endif]-->
 
   <!--[if gte IE 9]>
       <script src="../js/lib/popcorn-complete.js"></script>
-  <![endif]-->
+<![endif]-->    
 
+  <script src="../js/config.js"></script>
+  <script src="../js/app.js"></script>
 
-  <script type="text/javascript">
-    $(document).ready(function(){
-        window.testPlayer2();
-    });
-  </script>
-	
 </head>
 <body>
 <div class="wrap">
@@ -96,12 +96,6 @@
             <div id="comments-container"></div>
     </div>
 </div>
-
-</body>
-</html>
-
-
-
 
 <!-- Underscore Templates -->
 <script type="text/template" id="tmp-comments">
@@ -309,3 +303,11 @@
         <% }); %>
     </div>
 </script>
+
+<script src="../js/router.js"></script>
+<script type="text/javascript">
+  App.init();
+</script>
+
+</body>
+</html>

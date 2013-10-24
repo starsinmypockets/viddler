@@ -177,30 +177,6 @@ window.testMPInit = function () {
         console.log('bar click');
         playlist.loadCommentPopUp();
     });   
-};
+};  
 
-rainReady(function(){
-    $(document).ready(function(){  // is JQuery ready. if rain ready than it should be
-        console.log('rainReady');
-        $('.user-login').on('click', function () {ViddlerPlayer.vent.trigger('doLogin')});
-        $('.user-signup').on('click', function () {ViddlerPlayer.vent.trigger('doSignup')});
-        $('.no').on('click', function () {ViddlerPlayer.vent.trigger('noAuth')});
-       /* Session Authentication */
-        var $doc = $(document);
-        
-/*
-        $doc.ajaxSend(function (event, xhr) {
-            var authToken = $.cookie('access_token');
-            if (authToken) {
-                xhr.setRequestHeader("Authorization", "Bearer " + authToken);
-            }
-        });
-*/
-
-        $doc.ajaxError(function (event, xhr) {
-            if (xhr.status == 401)
-                ViddlerPlayer.vent.trigger('noAuth');
-        });
-    });
-});
 })(jQuery);
