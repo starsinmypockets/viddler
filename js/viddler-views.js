@@ -1,3 +1,4 @@
+ie8 = true;
 /**
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
@@ -37,7 +38,7 @@
         
         checkSub : function (opts) {
             return opts.isSub;
-        } 
+        }, 
         
     });
     
@@ -132,6 +133,7 @@
                             jPlayer : $("#jquery_jplayer_1")
                         });
                     }
+                    that.vent.trigger("playerReady");
                 },
                 swfPath: "../js/vendor/",
                 supplied: "m4v",
@@ -250,7 +252,7 @@
             this.remove();  
             Backbone.View.prototype.remove.call(this);
         },
-*/        loadCommentPopUp : function (data) {
+*/      loadCommentPopUp : function (data) {
             console.log("comment");
             var data = {},
             playerData = this.$el.jPlayer().data().jPlayer.status;
@@ -393,12 +395,23 @@
             this.vP.clearTime(); // set ui clock to 0
             
             // wait for player load player and continue
+            this.vP.loadVPlayer();
+            this.vent.bind('playerReady', function () {
+                if (!ie8) that.pop = Popcorn("#jp_video_0");
+                markers = new CommentMarkerView();
+                markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
+                that.timelinePlay();
+                this.vent.off('playerReady');   
+            });
+            
+/*
             $.when(this.vP.loadVPlayer()).done(function () {
                 if (!ie8) that.pop = Popcorn("#jp_video_0");
                 markers = new CommentMarkerView();
                 markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
                 that.timelinePlay();                
             });
+*/
         },
         
         // assume that the mediaElement is available from the vplm.tlStep and this.timeline
@@ -435,7 +448,7 @@
             this.vP.runStopListener(opts.stop);
             
             console.log('timelinestep opts', opts);
-            if (opts.mediaEl.subtitleSrc) {
+            if (opts.mediaEl.subtitleSrc && !ie8) {
                 console.log("yeah");
                 // clear popcorn events from previous step
                 if (that.pop.hasOwnProperty('destroy')) {
@@ -444,7 +457,7 @@
                 // add subtitles
                 that.pop.parseSRT(opts.mediaEl.subtitleSrc);
             }
-            
+
             $.when(this.vP.setMedia({
                 type : opts.mediaEl.elementType,
                 url : opts.mediaEl.elementURL
@@ -468,7 +481,6 @@
                     that.vP.play({start : opts.start/1000});
                 }
             });
-
             console.log(this.vent);
             
             // listen for step end

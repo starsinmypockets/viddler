@@ -155,7 +155,7 @@ window.testPlayer2 = function () {
         }),
         vent : ViddlerPlayer.vent
     });
-    test.render();
+    test.loadPlayList();
 }
 
 window.testInitPopcorn = function () {
