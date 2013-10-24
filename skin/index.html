@@ -86,16 +86,12 @@
                 <a href="#" class="no">No!</a>
             </div>
             <div id="errors"></div>
-            <!-- end backbone containers -->
-        </div>
-
-        <!--comment bubble-->
-            <div id="modal-outer">Add Comment<img src="img/modalclose.png" alt="" class="modal-close cursor">
+            <div id="modal-outer" style="display:none">Add Comment<img src="img/modalclose.png" alt="" class="modal-close cursor">
                 <div id="modal-container" class="clearfix">1000 Characters Limit</div>
                 <img src="img/commenttriangle.png" alt="comment triangle" id="modaltriangle">
-                <a href="#"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>
             </div>
-      <!--end comment bubble-->
+            <!-- end backbone containers -->
+        </div>
 
             <div id="comment-popup-container"></div>
             <div id="error-message-container"></div>
@@ -142,7 +138,7 @@
         <div class="jp-interface clearfix">
           <div class="jp-controls-holder">
             <ul class="jp-controls">
-              <li><a href="javascript:;" class="jp-play init-timeline" tabindex="1">play</a></li>
+              <li><a href="javascript:;" class="jp-play" id="viddler-play" tabindex="1">play</a></li>
               <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
             </ul>
             <div class="bar clearfix">
@@ -186,14 +182,14 @@
 </script>
 
 <script type="text/template" id="tmp-comment-popup">
-    <img src="img/modalclose.png" alt="" class="comment-close modal-close cursor"/>
     <div class="comment-popup">
         <form class="comment-form">
             <ul class="modal-form">
                 <li><input name="commentText" type="text"/></li>
                 <li><label for="time">Time</label><input name="time" id="comment-play-head-pos"type="text" value="<%= time %>"/></li>
         </form>
-                <a href="#" id="comment-form-submit"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>            </ul>
+                <a href="#" id="comment-form-submit"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>            
+            </ul>
     </div>
 </script>
 
@@ -266,7 +262,7 @@
         <div class="jp-interface clearfix">
             <div class="jp-controls-holder">
                 <ul class="jp-controls">
-                    <li><a href="javascript:;" class="jp-play " tabindex="1">play</a></li>
+                    <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
                     <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
                 </ul>
                 <div id="jp-mega-playbar-container"></div>
@@ -284,21 +280,18 @@
                 <li><a href="javascript:;" title="hd" class="jp-hd" tabindex="1" title="hd">HD</a></li>
                 <li><a href="javascript:;" class="jp-full-screen" tabindex="1" title="full screen">full screen</a></li>
                 <div class="time2">
-                    <div class="jp-current-time"></div>
+                    <div class="viddler-current-time"></div>
                     <span class="slash">/</span>
-                    <div class="jp-duration"></div>
+                    <div class="viddler-duration"></div>
                     <a href="javascript:;"><img src="img/mobile/video.png" class="videoimg" alt="Video"></a>
                 </div>
             </ul>
             <div class="time">
-                <div class="jp-current-time"></div>
+                <div class="viddler-current-time"></div>
                 <span class="slash">/</span>
-                <div class="jp-duration"></div>
+                <div class="viddler-duration"></div>
             </div>
         </div>
-        
-        
-        
     </div>
 </script>
 
@@ -306,8 +299,8 @@
     <div class="bar">
         <div id="mega-markers-container"></div>
         <div class="jp-progress" style="position: relative; z-index: 888;">
-            <div class="jp-seek-bar clearfix" style="position: relative; z-index: 1;">
-                <div class="jp-play-bar"><img src="img/time.png" id="time" /></div>
+            <div class="jp-mega-seek-bar clearfix" style="position: relative; z-index: 1;">
+                <div class="jp-mega-play-bar"><img src="img/time.png" id="time" /></div>
             </div>
         </div>
         <div class="clearfix"></div>

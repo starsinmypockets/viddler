@@ -12,7 +12,6 @@
         tag : 'div',
         el : '<br/>',
         vent : {},  // backbone event aggregator
-        vplm : window.vplm,
         
         __init : function (opts) {
             opts = opts || {};
@@ -139,6 +138,25 @@
                 errorAlerts : true,
                 solition : "html, flash"
             });
+            $('.jp-comment').unbind();
+            $('.jp-comment').on('click', function (e) {
+                e.preventDefault();
+                that.loadCommentPopUp();
+                return false;
+            });
+        },
+        
+       loadCommentPopUp : function (data) {
+            console.log("comment");
+            var data = {},
+            playerData = this.$el.jPlayer().data().jPlayer.status;
+            data.time = Math.floor(playerData.currentTime);
+            data.avatar = "http://placekitten.com/75/75";
+            commentModal = new CreateCommentView({
+                data : data,
+                tmp : "#tmp-comment-popup"
+            });
+            commentModal.render();
         },
         
         /**
@@ -183,11 +201,7 @@
     VPlayerGuiView = Backbone.View.extend({
         el : ".jp-gui",
         vplm : window.vplm,
-        
-        events : {
-            'click .jp-comment' : "loadCommentPopup"
-        },
-        
+
         // load comment modal
         commentModal : function () {
             data = {};
@@ -237,6 +251,7 @@
             Backbone.View.prototype.remove.call(this);
         },
 */        loadCommentPopUp : function (data) {
+            console.log("comment");
             var data = {},
             playerData = this.$el.jPlayer().data().jPlayer.status;
             data.time = Math.floor(playerData.currentTime);
@@ -245,7 +260,7 @@
                 data : data,
                 tmp : "#tmp-comment-popup"
             });
-//            commentModal.render();
+            commentModal.render();
         },
         
         render : function(opts) {
@@ -260,8 +275,10 @@
                 elem.width = ((elem.length / window.vplm.tlLength)*100).toFixed(2);
             });
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
-            this.$('.jp-comment').on('click', function () {
+            this.$('.jp-comment').on('click', function (e) {
+                e.preventDefault();
                 that.loadCommentPopUp();
+                return false;
             });
         }
     });
@@ -273,7 +290,7 @@
         timeline : {},
         comments : [],
         events : {
-            'click .jp-comment' : 'commentModal',
+          //  'click .jp-comment' : 'commentModal',
             'click #viddler-play' : "vPlay",
             'click #viddler-pause' : "vPause"
         },
@@ -437,13 +454,15 @@
                 that.commentsView.render();
                 
                 if (window.vplm.tlStep === 0) {
-                    // play on click for first step
-                    $("#viddler-play, #play-overlay-button").on('click', function (e) {
-                        console.log("click init");
+                    // Initial Play
+                    // iOS needs initial media play to be contained in user-initiated call stack
+                    $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
                         e.preventDefault();
                         that.vP.play({start : opts.start/1000});
                         $('#play-overlay-button').hide();
-                    })
+                        $('.jp-play').unbind('click.init');
+                        return false;
+                    });
                 // auto-play on subsequent step
                 } else {
                     that.vP.play({start : opts.start/1000});
@@ -497,15 +516,14 @@
             window.vplm.tlStep = 0;
             window.vplm.tlNow = 0;
             $('#play-overlay-button').show();
-            $("#viddler-play, #play-overlay-button").on('click', function (e) {
+            $(".jp-play, #play-overlay-button").on('click.init', function (e) {
                 console.log("click init");
                 e.preventDefault();
                 that.vP.play({start : opts.start/1000});
                 $('#play-overlay-button').hide();
+                $('.jp-play').unbind('click.init');
             });
         },
-        
-        render : function () {},
         
     });
     
@@ -515,7 +533,7 @@
                 that=this,
             
             numbMarkers = Math.floor($('.mega-timeline .bar').width() / 20); // [width of bar] / [ width of marker+4px ]
-            markerSecs = Math.floor(this.vplm.tlLength / numbMarkers); // [ length of video ] / [ number of Markers ]
+            markerSecs = Math.floor(window.vplm.tlLength / numbMarkers); // [ length of video ] / [ number of Markers ]
             
             // build array of marker-points with start / stop attrs
             markerArray = []; 
@@ -695,7 +713,7 @@
     });
     
     CreateCommentView = ModalView.extend({
-        el : '#modal-outer',
+        el : '#modal-container',
         time : '123',
         events : {
             'click #comment-form-submit' : 'commentSubmit',
@@ -730,7 +748,21 @@
         },
         
         render : function (opts) {
-          //  this.$el.html(_.template($("#tmp-comment-popup").html(), {time : this.time}));
+            this.setElement('#modal-container');
+            //this.$el.html(this.template({time : window.vplm.tlNow}));
+            this.$el.html(_.template($("#tmp-comment-popup").html(), {time : window.vplm.tlNow}));
+            $('.comment-close').on('click', function (e) {
+                e.preventDefault();
+                $('#modal-outer').hide();
+                return false;
+            });
+            $('#modal-outer').show();
+            $('.modal-close').on('click', function (e) {
+                e.preventDefault();
+                $('#modal-container').html('');
+                $('#modal-outer').hide();
+            });
+            console.log("Render");
 /*
             $('.comment-close').on('click', function (e) {
                 e.preventDefault();
@@ -738,7 +770,6 @@
                 return false;
             });
 */
-        console.log("Render");
          //   $('#modal-outer').show();
         }
     });
