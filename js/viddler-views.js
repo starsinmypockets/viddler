@@ -5,7 +5,7 @@ ie8 = true;
 (function ($) {
     var DEBUG = true,
         // output clock data:
-        tDEBUG = false;
+        tDEBUG = true;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -47,6 +47,7 @@ ie8 = true;
      * Viddler wrapper around jPlayer
      **/
     VPlayerView = BaseView.extend({
+        timeListenerIntv : {},
         el : '#jquery_jplayer_1',
         mediaEl : {}, // the currently loaded media element
         initialize : function (opts) {
@@ -65,12 +66,14 @@ ie8 = true;
         runTimeListener : function (opts) {
             var that = this,
                 timeLinePercent,
-                playBarWidth,
-                updateIntv = setInterval(function() {
+                playBarWidth;
+                
+                
+                this.timeListenerIntv = setInterval(function() {
                     window.vplm.tlNow = parseInt(that.$el.jPlayer().data().jPlayer.status.currentTime*1000 + window.vplm.tlElapsed - that.mediaEl.playheadStart, 10);
                     if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-that.mediaEl.playheadStart >= that.mediaEl.length) {
                         if (DEBUG) console.log("CLEAR TIME LISTENER INTERVAL");
-                        clearInterval(updateIntv);
+                        clearInterval(that.timeListenerIntv);
                     }
                     timeLinePercent = (window.vplm.tlNow / window.vplm.tlLength)
                     playBarWidth = timeLinePercent*$('.jp-progress').width();
@@ -110,6 +113,8 @@ ie8 = true;
                if (that.$el.jPlayer().data().jPlayer.status.currentTime > window.vplm.stepStop/1000) {
                   if (DEBUG) console.log('stop listener stop');
                   clearInterval(this.stopIntv);
+                  // do we need to clear the time listener?
+                  clearInterval(that.timeListenerIntv);
                   ViddlerPlayer.vent.trigger('stopListenerStop');
                }
             },1000);
@@ -372,17 +377,11 @@ ie8 = true;
                 tlStep = window.vplm.tlStep,
                 tlSteps = window.vplm.tlSteps;
             
-            mediaEl = this.timeline.mediaElements[tlStep];
-            stepOpts.mediaEl = mediaEl;
-            stepOpts.start = opts.start || mediaEl.playheadStart;
-            stepOpts.stop = opts.stop || mediaEl.playheadStop;
-            
-            
-            if (DEBUG) {
-                console.log('mediaEl: ',mediaEl);
-                console.log('player start: '+stepOpts.start);
-                console.log('player stop: '+stepOpts.stop);
-                console.log('vplm: ',window.vplm);
+            if (tlStep != tlSteps) {
+                mediaEl = this.timeline.mediaElements[tlStep];
+                stepOpts.mediaEl = mediaEl;
+                stepOpts.start = opts.start || mediaEl.playheadStart;
+                stepOpts.stop = opts.stop || mediaEl.playheadStop;
             }
             
             // init timeline
@@ -413,12 +412,33 @@ ie8 = true;
             if (DEBUG) console.log(opts);
             window.vplm.stepStop = opts.stop;
             
-            ViddlerPlayer.vent.off('stopListenerStop');
+            // just in case
+            // ViddlerPlayer.vent.off('stopListenerStop');
             
             ViddlerPlayer.vent.once('stopListenerStop', function () {
                 var i, els;
+
+                console.log("Increment step");
+                window.vplm.tlStep++;
                 
-                // check step, update global values and continue
+                // update global elapsed time
+                els = that.timeline.mediaElements;
+                window.vplm.tlElapsed = 0;
+                for (i = 0; i < window.vplm.tlStep; i++) {
+                    function func (i) {
+                        window.vplm.tlElapsed += els[i].playheadStop - els[i].playheadStart;
+                    }
+                    
+                    func(i);
+                }
+                
+                // @@ maybe fix the progress bar jazz here
+                // ...
+                
+                // continue
+                that.timelinePlay();
+
+/*
                 if (window.vplm.tlStep === window.vplm.tlSteps-1) {
                     console.log('>>>>>END');
                     that.doEnd();
@@ -438,6 +458,7 @@ ie8 = true;
                     }
                     that.timelinePlay();
                 }
+*/
             });
             
             // set media and go
@@ -487,13 +508,15 @@ ie8 = true;
         
         doEnd : function (opts) {
             var that = this;
-            this.vP.pause();
-            ViddlerPlayer.vent.off();
-            // should destroy timelistener also
+
             if (DEBUG) console.log("Do end handler");
+            this.vP.pause();
+            ViddlerPlayer.vent.off("stopListenerStop");
+            // should destroy timelistener also
             console.log(ViddlerPlayer.vent);
             // reset global player data
             window.vplm.tlReset();
+            console.log('vplm post reset', vplm)
             $('#play-overlay-button').show();
             $(".jp-play, #play-overlay-button").on('click.init', function (e) {
                 e.preventDefault();
