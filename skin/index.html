@@ -126,7 +126,7 @@
                 <div class="comment">
                       <div class="words"><%= item.commentText %></div>
                       <div class="datetime"><%= item.created %>
-                          <div class="date"><%= item.daysAgo %></div> <img src="img/orangearrow.png" alt="orange arrow"><div class="time3"><%= item.time %></div>
+                          <div class="date"><%= item.daysAgo %></div> <img src="img/orangearrow.png" alt="orange arrow" style="width: 15px; position:relative; top: 3px;"><div class="time3"><%= item.time %></div>
                           </div>
                       </div>
                 </div>
@@ -174,7 +174,6 @@
           <div class="jp-current-time"></div>
           <span class="slash">/</span>
           <div class="jp-duration"></div>
-            <a href="javascript:;"><img src="img/mobile/video.png" class="videoimg" alt="Video"></a>
           </div>
             </ul>
           </div>
@@ -199,7 +198,7 @@
 
 <script type="text/template" id="tmp-comment-markers">
     <% _.each(markers, function (marker) { %>
-        <img src="img/orangearrow.png" style="left: <%= marker.left %>%; position : absolute"/>
+        <img class="orangearrow" src="img/orangearrow.png" style="left: <%= marker.left %>%; position : absolute"/>
     <% }); %>
 </script>
 
@@ -273,7 +272,7 @@
             </div>
             <a href="javascript:;"><img src="img/mobile/search.png" alt="Search" class="searchimg"></a>
             <ul class="jp-toggles">
-                <li><a href="javascript:;" title="comments" tabindex="1"><img src="img/rcomment.png" class="jp-comment" style="float:left;"></a></li> 
+                <li><a href="javascript:;" title="comments" class="jp-comment" tabindex="1"></a></li> 
                 <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
                 <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
                 <div class="jp-volume-bar">
@@ -287,7 +286,6 @@
                     <div class="jp-current-time"></div>
                     <span class="slash">/</span>
                     <div class="jp-duration"></div>
-                    <a href="javascript:;"><img src="img/mobile/video.png" class="videoimg" alt="Video"></a>
                 </div>
             </ul>
             <div class="time">
