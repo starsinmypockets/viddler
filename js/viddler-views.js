@@ -1,10 +1,11 @@
+ie8 = true;
 /**
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
 (function ($) {
-    var DEBUG = true,
+    var DEBUG = false,
         // output clock data:
-        tDEBUG = true;
+        tDEBUG = false;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -18,7 +19,7 @@
             //if (opts.vent) this.vent = opts.vent; 
             if (opts.tmp) {
                 this.template = _.template($(opts.tmp).html());            
-            };
+            }
             this.vent = opts.vent; 
         },
         
@@ -62,20 +63,19 @@
             this.mediaEl = mediaEl;
         },
         
-        // calculates relative timeline elapsed
         runTimeListener : function (opts) {
             var that = this,
                 timeLinePercent,
                 playBarWidth;
                 
-                
+                // update global timeline data
                 this.timeListenerIntv = setInterval(function() {
                     window.vplm.tlNow = parseInt(that.$el.jPlayer().data().jPlayer.status.currentTime*1000 + window.vplm.tlElapsed - that.mediaEl.playheadStart, 10);
                     if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-that.mediaEl.playheadStart >= that.mediaEl.length) {
                         if (DEBUG) console.log("CLEAR TIME LISTENER INTERVAL");
                         clearInterval(that.timeListenerIntv);
                     }
-                    timeLinePercent = (window.vplm.tlNow / window.vplm.tlLength)
+                    timeLinePercent = (window.vplm.tlNow / window.vplm.tlLength);
                     playBarWidth = timeLinePercent*$('.jp-progress').width();
                     
                     if (tDEBUG ) {
@@ -102,7 +102,7 @@
                     if (window.vplm.tlNow > window.vplm.tlLength) {
                         $('.viddler-current-time').html(that.secs2time(Math.floor(window.vplm.tlLength/1000)));                        
                     }
-                },1000);
+                },1000);  // run this faster in production
         },
         
         // listen for global step end time 
@@ -127,15 +127,15 @@
             var seconds = seconds - (hours * 3600) - (minutes * 60);
             var time = "";
         
-            (hours != 0) ? time = hours+":" : time = hours+":";
+            (hours !== 0) ? time = hours+":" : time = hours+":";
             if (minutes != 0 || time !== "") {
               minutes = (minutes < 10 && time !== "") ? "0"+minutes : String(minutes);
             } else {
-                minutes = "00:"
+                minutes = "00:";
             }  
             time += minutes+":";
             if (seconds === 0) { 
-                time+="00" 
+                time+="00";
             } else {
                 time += (seconds < 10) ? "0"+seconds : String(seconds);
             }
@@ -167,7 +167,7 @@
             });
         },
         
-       loadCommentPopUp : function (data) {
+       loadCommentPopUp : function (opts) {
             var data = {},
             playerData = this.$el.jPlayer().data().jPlayer.status;
             data.time = Math.floor(playerData.currentTime);
@@ -179,10 +179,7 @@
             commentModal.render();
         },
         
-        /**
-         * Player methods wrap jPlayer 
-         **/
-         
+         // Player controls 
          setMedia : function (opts) {
              var data = {},
                 that = this;
@@ -192,9 +189,8 @@
          },
          
          play : function (opts) {
-             var that = this,
-                 opts = opts || {};
-             (opts.start) ? start = opts.start : start = '';
+             var that = this;
+             (opts && opts.start) ? start = opts.start : start = '';
              this.$el.jPlayer("play", start);
          }, 
          
@@ -203,39 +199,19 @@
          }
     });
     
-    // add controls for modals here
     VPlayerGuiView = Backbone.View.extend({
         el : ".jp-gui",
         vplm : window.vplm,
-
-        // load comment modal
+        
         commentModal : function () {
             data = {};
-            data.time = 123//Math.floor(playerData.currentTime);
+            data.time = 123; // @@ Math.floor(playerData.currentTime);
             data.avatar = "http://placekitten.com/75/75";
             commentModal = new CreateCommentView({
                 data : data,
                 tmp : "#tmp-comment-popup"
             });
             commentModal.render();
-        },
-        
-        loadMegaTimeline : function (opts) {
-            var that = this,
-                data = {},
-                comments = [];
-                
-            data.elems = opts.mediaElements;
-            _.each(data.elems, function (elem) {
-                elem.width = ((elem.length / window.vplm.tlLength)*100).toFixed(2);
-            });
-
-            $('.mega-timeline .bar .jp-seek-bar').on('click', function (e) {
-                e.preventDefault();
-                var seekPerc = e.offsetX/($(e.currentTarget).width());
-                return false;
-            });
-            
         },
         
         loadCommentPopUp : function (data) {
@@ -253,10 +229,11 @@
         render : function(opts) {
             var data = {},
                 that=this;
+            
             // load player controls
             this.$el.html(_.template($('#tmp-mega-gui').html()));
             
-            // calc and render track info
+            // calculate track info
             data.elems = opts.mediaElements;
             _.each(data.elems, function (elem) {
                 elem.width = ((elem.length / window.vplm.tlLength)*100).toFixed(2);
@@ -267,12 +244,12 @@
                 that.loadCommentPopUp();
                 return false;
             });
+            
             ViddlerPlayer.vent.trigger("playerGuiReady");
         }
     });
 
-    // bind events in outer view
-    // this is equivalent to PlayListView
+    // This is the outer view and houses the whole backbone app
     PlaylistView = BaseView.extend({
         el : "#jp_container_1",
         timeline : {},
@@ -324,7 +301,7 @@
             // clear out player data
             window.vplm.destroy();
             
-            mediaEls = this.timeline.mediaElements
+            mediaEls = this.timeline.mediaElements;
             mediaEl = mediaEls[window.vplm.tlStep];
                 
             // calculate timeline length
@@ -343,7 +320,7 @@
             // add play button overlay
             $('#play-overlay-button').show();
             
-            // wait for gui in DOM and instance player view
+            // wait for gui in DOM and instance player
             ViddlerPlayer.vent.once("playerGuiReady", function () {
                 console.log("playerGuiReady");
                 that.vP = new VPlayerView({mediaEl : mediaEl});
@@ -351,7 +328,7 @@
                 // wait for player, load comments and continue
                 that.getMediaElementComments({id : that.model.id});
                 ViddlerPlayer.vent.once('playerReady', function () {
-                    if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
+                    if (!ie8) that.pop = Popcorn("#jp_video_0");
                     if (DEBUG) console.log('Player ready event');
                     markers = new CommentMarkerView();
                     markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
@@ -365,14 +342,13 @@
             
         },
         
-        // assume that the mediaElement is available from the vplm.tlStep and this.timeline
+        // do timeline step queue-ing
         timelinePlay : function (opts) {
             var start,
                 stop,
                 mediaEl,
                 endWith,
                 that = this,
-                opts = opts || {},
                 stepOpts = {},
                 tlStep = window.vplm.tlStep,
                 tlSteps = window.vplm.tlSteps;
@@ -380,13 +356,12 @@
             if (tlStep != tlSteps) {
                 mediaEl = this.timeline.mediaElements[tlStep];
                 stepOpts.mediaEl = mediaEl;
-                stepOpts.start = opts.start || mediaEl.playheadStart;
-                stepOpts.stop = opts.stop || mediaEl.playheadStop;
+                stepOpts.start = mediaEl.playheadStart;
+                stepOpts.stop = mediaEl.playheadStop;
             }
             
-            // init timeline
             if (tlStep === 0) {
-                // Initial Play
+                // Init timeline
                 // iOS needs initial media play to be contained in user-initiated call stack
                 console.log('Init timeline');
                 $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
@@ -404,7 +379,6 @@
             } else {
                 this.doEnd();
             }
-            // fire this step
         },
         
         timelineStep : function (opts) {
@@ -432,37 +406,12 @@
                     func(i);
                 }
                 
-                // @@ maybe fix the progress bar jazz here
-                // ...
-                
                 // continue
                 that.timelinePlay();
-
-/*
-                if (window.vplm.tlStep === window.vplm.tlSteps-1) {
-                    console.log('>>>>>END');
-                    that.doEnd();
-                } else {
-                    console.log("Increment step");
-                    window.vplm.tlStep++;
-                    
-                    // update global elapsed time
-                    els = that.timeline.mediaElements;
-                    window.vplm.tlElapsed = 0;
-                    for (i = 0; i < window.vplm.tlStep; i++) {
-                        function func (i) {
-                            window.vplm.tlElapsed += els[i].playheadStop - els[i].playheadStart;
-                        }
-                        
-                        func(i);
-                    }
-                    that.timelinePlay();
-                }
-*/
             });
             
             // set media and go
-             ViddlerPlayer.vent.once("mediaReady", function () {
+            ViddlerPlayer.vent.once("mediaReady", function () {
                 console.log("Media update event");
                 console.log('global stop:',window.vplm.stepStop);
                 that.vP.runTimeListener();
@@ -480,8 +429,8 @@
             
             console.log("tlStep", window.vplm);
             
-            // @@this can go in another view method
-            if (opts.mediaEl.subtitleSrc && Modernizr.video.h264) {
+            // @@ currently disabled - this can go in another view method
+            if (opts.mediaEl.subtitleSrc && !ie8) {
                 // clear popcorn events from previous step
                 if (that.pop.hasOwnProperty('destroy')) {
                     that.pop.destroy();
@@ -496,6 +445,14 @@
             this.commentsView.render();
         },
         
+        getStepSubtitles : function (opts) {
+            // tba
+        },
+        
+        getStepSprites : function (opts) {
+            
+        },
+        
         getStepComments : function (opts) {
             var stepComments = [];
             _.each(this.comments, function (comment) {
@@ -506,17 +463,16 @@
             return stepComments;
         },
         
+        // 
         doEnd : function (opts) {
             var that = this;
 
             if (DEBUG) console.log("Do end handler");
             this.vP.pause();
             ViddlerPlayer.vent.off("stopListenerStop");
-            // should destroy timelistener also
-            console.log(ViddlerPlayer.vent);
+
             // reset global player data
             window.vplm.tlReset();
-            console.log('vplm post reset', vplm)
             $('#play-overlay-button').show();
             $(".jp-play, #play-overlay-button").on('click.init', function (e) {
                 e.preventDefault();
@@ -525,16 +481,11 @@
                 $('.jp-play').unbind('click.init');
             });
         },
-        
-        // re-initialize loaded timeline
-        resetTimeline : function () {
-            
-        }
-        
     });
     
+    // orange comment markers
     CommentMarkerView = BaseView.extend({
-        calcCommentMarkers : function (opts) {
+        _calcCommentMarkers : function (opts) {
             var markerArray, numbMarkers, markerSecs,
                 that=this,
             
@@ -563,12 +514,13 @@
         // or player values will be empty
         renderCommentMarkers : function (opts) {
             var that = this,
-                markerArray = this.calcCommentMarkers(opts).markerArray;
-                numbMarkers = this.calcCommentMarkers(opts).numbMarkers;
-                comments = opts.comments;
+                markerArray = this._calcCommentMarkers(opts).markerArray,
+                numbMarkers = this._calcCommentMarkers(opts).numbMarkers,
+                comments = opts.comments,
                 markers = [],
                 j = 0,
-                pos = 1;
+                pos = 1,
+                data = {};
                 
             // now build array of populated marker positions for rendering
             if (DEBUG) {
@@ -591,12 +543,9 @@
             });
             
             // now render this nonsense 
-            data = {};
             data.markers = markers;
             if (DEBUG) console.log(data);
-           // $(opts.jqEL).html("FOOOO");
             $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));                
-            // render proper context here
         },
     });
     
@@ -617,10 +566,7 @@
             this.$el.html(this.template(data));
         }
     });
-    /**
-     * Errors
-     *
-     **/
+    
     ErrorMsgView = BaseView.extend({
         errorType : '',
         errorMsg : '',
@@ -640,10 +586,6 @@
         }
     });
     
-    /***
-     * Modals
-     *
-     ***/
     ModalView = BaseView.extend({
                 
         initialize : function (opts) {
@@ -694,7 +636,7 @@
             data.modalHeader = "Please sign in to view this content."
             this.__render(data);
         }
-    }),
+    });
     
     UserSignupView = ModalView.extend({
        events : {
@@ -709,7 +651,7 @@
         
         render : function() {
             var data = {};
-            data.modalHeader = "Sign up!"
+            data.modalHeader = "Sign up!";
             this.__render(data);
         }
     });
@@ -742,7 +684,6 @@
             // do model save here
             alert("Submit comment");
             this.hide();
-            // comment.save(comment.toJSON())
         },
         
         hide : function () {
