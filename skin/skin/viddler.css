@@ -609,7 +609,6 @@ ul.jp-toggles {
 	float:right;
 	position: relative;
 	top: 10px;
-	width: 260px;	
 }
 
 div.jp-audio .jp-type-single ul.jp-toggles {
@@ -648,7 +647,7 @@ a.jp-hd:hover{
 	background: url(../img/hdhover.png) no-repeat;
 }
 a.jp-comment{
-	width: 33px !important;
+	width: 35px !important;
 	height: 31px !important;
 	background: url(../img/comment.png);
 	top: -4px;
@@ -656,7 +655,7 @@ a.jp-comment{
 	position: relative;
 }
 a.jp-comment:hover{
-	width: 33px !important;
+	width: 35px !important;
 	height: 31px !important;
 	background: url(../img/commenthover.png);
 }
@@ -1403,5 +1402,23 @@ span.number{
 .loginmodal section#modalbody form input{
 	max-width: 85%;
 }
+}
+
+
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
+   a.jp-comment{
+	background: url(../img/rcomment.png);
+	width: 23px !important;
+	height:22px !important;
+	top: 0px;
+	left: 0px;
+	position: relative;
+}
+a.jp-comment:hover{
+	background: url(../img/rcommenthover.png);
+	width: 23px !important;
+	height:22px !important;
+} 
 }
 /* @end */
