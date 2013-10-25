@@ -1008,6 +1008,23 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c7c7c7', end
 	position: relative;
 	top: -5px;
 }
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
+   a.jp-comment{
+	background: url(../img/rcomment.png);
+	width: 23px !important;
+	height:22px !important;
+	top: 0px;
+	left: 0px;
+	position: relative;
+}
+a.jp-comment:hover{
+	background: url(../img/rcommenthover.png);
+	width: 23px !important;
+	height:22px !important;
+} 
+}
+
 @media only screen and (max-width: 981px){
 #mega-markers-container{
 	position: relative;
@@ -1224,19 +1241,6 @@ a.jp-hd:hover{
 	width: 24px !important;
 	height: 15px !important;
 }
-a.jp-comment{
-	background: url(../img/mobile/comment.png);
-	width: 23px !important;
-	height:22px !important;
-	top: 0px;
-	left: 0px;
-	position: relative;
-}
-a.jp-comment:hover{
-	background: url(../img/mobile/commenthover.png);
-	width: 23px !important;
-	height:22px !important;
-}
 a.jp-full-screen {
 	background: url("../img/mobile/fullscreen.png") no-repeat;
 	width: 17px !important;
@@ -1404,21 +1408,4 @@ span.number{
 }
 }
 
-
-
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
-   a.jp-comment{
-	background: url(../img/rcomment.png);
-	width: 23px !important;
-	height:22px !important;
-	top: 0px;
-	left: 0px;
-	position: relative;
-}
-a.jp-comment:hover{
-	background: url(../img/rcommenthover.png);
-	width: 23px !important;
-	height:22px !important;
-} 
-}
 /* @end */
