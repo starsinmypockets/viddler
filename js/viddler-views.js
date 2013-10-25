@@ -5,7 +5,7 @@ ie8 = true;
 (function ($) {
     var DEBUG = true,
         // output clock data:
-        tDEBUG = true;
+        tDEBUG = false;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -148,7 +148,7 @@ ie8 = true;
                             jPlayer : $("#jquery_jplayer_1")
                         });
                     }
-                    that.vent.trigger("playerReady");
+                    ViddlerPlayer.vent.trigger("playerReady");
                 },
                 swfPath: "../js/vendor/",
                 supplied: "m4v",
@@ -224,7 +224,7 @@ ie8 = true;
             _.each(data.elems, function (elem) {
                 elem.width = ((elem.length / window.vplm.tlLength)*100).toFixed(2);
             });
-s
+
             $('.mega-timeline .bar .jp-seek-bar').on('click', function (e) {
                 e.preventDefault();
                 var seekPerc = e.offsetX/($(e.currentTarget).width());
@@ -262,6 +262,7 @@ s
                 that.loadCommentPopUp();
                 return false;
             });
+            ViddlerPlayer.vent.trigger("playerGuiReady");
         }
     });
 
@@ -315,8 +316,8 @@ s
                 mediaEl = {},
                 tlLength = 0;
             
-            // reset vplm global player data
-            window.vplm.tlReset();
+            // clear out player data
+            window.vplm.destroy();
             
             mediaEls = this.timeline.mediaElements
             mediaEl = mediaEls[window.vplm.tlStep];
@@ -331,34 +332,33 @@ s
             window.vplm.tlLength = tlLength;
             
             // render gui
-            this.vPG = new VPlayerGuiView();
-            this.vPG.render({mediaElements : mediaEls});
-            
+           this.vPG = new VPlayerGuiView();
+           this.vPG.render({mediaElements : mediaEls}); 
+
             // add play button overlay
             $('#play-overlay-button').show();
             
             // instance player view
-            this.vP = new VPlayerView({
-                mediaEl : mediaEl,
-                vent : this.vent
+            ViddlerPlayer.vent.once("playerGuiReady", function () {
+                console.log("playerGuiReady");
+                that.vP = new VPlayerView({mediaEl : mediaEl});
+            
+                // wait for player load player and continue
+                that.getMediaElementComments({id : that.model.id});
+                ViddlerPlayer.vent.once('playerReady', function () {
+                    if (!ie8) that.pop = Popcorn("#jp_video_0");
+                    if (DEBUG) console.log('Player ready event');
+                    markers = new CommentMarkerView();
+                    markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
+                    that.timelinePlay();
+                    $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
+    //                that.vent.off('playerReady');
+                    that.vP.clearGuiTime();
+                });
+        
+                that.vP.loadVPlayer();
             });
             
-            
-            // wait for player load player and continue
-
-            this.getMediaElementComments({id : this.model.id});
-            this.vent.bind('playerReady', function () {
-                if (!ie8) that.pop = Popcorn("#jp_video_0");
-                if (DEBUG) console.log('Player ready event');
-                markers = new CommentMarkerView();
-                markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
-                that.timelinePlay();
-                $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
-                that.vent.off('playerReady');
-                that.vP.clearGuiTime();
-            });
-    
-            this.vP.loadVPlayer();
         },
         
         // assume that the mediaElement is available from the vplm.tlStep and this.timeline
@@ -398,13 +398,12 @@ s
 
             ViddlerPlayer.vent.off('stopListenerStop');
             
-            ViddlerPlayer.vent.bind('stopListenerStop', function () {
+            ViddlerPlayer.vent.once('stopListenerStop', function () {
                 var i, els;
 
                 // check step, update global values and continue
-                if (window.vplm.tlStep === window.vplm.tlSteps-1) {
+                if (window.vplm.tlStep === window.vplm.tlSteps) {
                     console.log('>>>>>END');
-                    ViddlerPlayer.vent.off('stopListenerStop');
                     that.doEnd();
                 } else {
                     console.log("Increment step");
@@ -424,12 +423,12 @@ s
                 }
             });
             
-            ViddlerPlayer.vent.on("playerMediaUpdate", function () {
+            ViddlerPlayer.vent.once("playerMediaUpdate", function () {
                 console.log("Media update event");
                 console.log('global stop:',window.vplm.stepStop);
                 that.vP.runTimeListener();
                 that.vP.runStopListener();
-                ViddlerPlayer.vent.off("playerMediaUpdate");
+               // ViddlerPlayer.vent.off("playerMediaUpdate");
             });
             
             console.log("tlStep", window.vplm);
@@ -457,7 +456,9 @@ s
                 // Initial Play
                 // iOS needs initial media play to be contained in user-initiated call stack
                 $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
-                    e.preventDefault();
+                    console.log("Click init event");
+                    e.stopImmediatePropagation();                    
+                    //e.preventDefault();
                     that.vP.play({start : opts.start/1000});
                     $('#play-overlay-button').hide();
                     $('.jp-play').unbind('click.init');
@@ -484,17 +485,18 @@ s
         doEnd : function (opts) {
             var that = this;
             this.vP.pause();
-            console.log("Do end handler");
-            // reset playlist
-            window.vplm.tlStep = 0;
-            window.vplm.tlNow = 0;
+            ViddlerPlayer.vent.off();
+            // should destroy timelistener also
+            if (DEBUG) console.log("Do end handler");
+            console.log(ViddlerPlayer.vent);
+            // reset global player data
+            window.vplm.tlReset();
             $('#play-overlay-button').show();
             $(".jp-play, #play-overlay-button").on('click.init', function (e) {
                 e.preventDefault();
-                that.onModelReady();
+                that.timelinePlay();
                 $('#play-overlay-button').hide();
                 $('.jp-play').unbind('click.init');
-                ViddlerPlayer.vent.off('stopListenerStop');
             });
         },
         
