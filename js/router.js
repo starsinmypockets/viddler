@@ -1,7 +1,7 @@
 var App = App || {};
 
+Davis.extend(Davis.hashRouting({ prefix: "!" }));
 App.Router = Davis(function() {
-	
 
 	this.configure(function () {
 
