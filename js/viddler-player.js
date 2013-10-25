@@ -26,9 +26,8 @@ function getInternetExplorerVersion() {
 }
 ie8 = (getInternetExplorerVersion() === 8);
 
-    
-window.vplm = window.vplm || 
-    {
+// manage global timeline events
+window.vplm = window.vplm || {
         tlStep : 0,
         tlSteps :0,
         tlLength : 0,
@@ -36,20 +35,27 @@ window.vplm = window.vplm ||
         tlNow : 0,
         timeline : {},
         stepMedia : {},
-        tlComments : {}
+        tlComments : {},
+        
+        destroy : function () {
+            this.tlStep = 0;
+            this.tlSteps = 0;
+            this.tlLength = 0;
+            this.tlElapsed = 0;
+            this.tlNow = 0;
+            this.timeline = {};
+            this.stepMedia = {};
+            this.tlComments = {};
+        },
+        
+        // reinitialize timeline
+        tlReset : function () {
+            this.tlStep = 0;
+            this.tlElapsed = 0;
+            this.tlNow = 0;
+        } 
     };        
-function resetVplm () {
-    window.vplm =     {
-        tlStep : 0,
-        tlSteps :0,
-        tlLength : 0,
-        tlElapsed : 0,
-        tlNow : 0,
-        timeline : {},
-        stepMedia : {},
-        tlComments : {}
-    };   
-}
+    
 var ViddlerPlayer = ViddlerPlayer || {};
 
 ( function ($) {

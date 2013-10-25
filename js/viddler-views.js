@@ -5,7 +5,7 @@ ie8 = true;
 (function ($) {
     var DEBUG = true,
         // output clock data:
-        tDEBUG = false;
+        tDEBUG = true;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -48,28 +48,29 @@ ie8 = true;
      **/
     VPlayerView = BaseView.extend({
         el : '#jquery_jplayer_1',
-        mediaEl : {},
+        mediaEl : {}, // the currently loaded media element
         initialize : function (opts) {
             this.__init(opts);
             this.mediaEl = opts.mediaEl;
-            console.log(this.mediaEl);
         },
         clearGuiTime : function () {
             $('.viddler-current-time').html(this.secs2time(Math.floor(0)));  
         },
         
+        setMediaEl : function (mediaEl) {
+            this.mediaEl = mediaEl;
+            ViddlerPlayer.vent.trigger('playerMediaUpdate');
+        },
+        
         // calculates relative timeline elapsed
         runTimeListener : function (opts) {
-            console.log(this.mediaEl.playheadStart);
             var that = this,
                 timeLinePercent,
                 playBarWidth,
                 updateIntv = setInterval(function() {
-                console.log("This one", parseInt(that.$el.jPlayer().data().jPlayer.status.currentTime*1000) + window.vplm.tlElapsed - that.mediaEl.playheadStart);
                     window.vplm.tlNow = parseInt(that.$el.jPlayer().data().jPlayer.status.currentTime*1000 + window.vplm.tlElapsed - that.mediaEl.playheadStart, 10);
-//                    window.vplm.tlNow = parseInt((that.$el.jPlayer().data().jPlayer.status.currentTime*1000) - that.mediaEl.playheadStart + window.vplm.tlElapsed, 10);
                     if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-that.mediaEl.playheadStart >= that.mediaEl.length) {
-                        console.log("CLEAR INTERVAL");
+                        if (DEBUG) console.log("CLEAR TIME LISTENER INTERVAL");
                         clearInterval(updateIntv);
                     }
                     timeLinePercent = (window.vplm.tlNow / window.vplm.tlLength)
@@ -84,18 +85,30 @@ ie8 = true;
                         console.log(timeLinePercent);
                         console.log('playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
                     }
-                    $('.jp-mega-play-bar').width(playBarWidth);
+                    
+                    // @@todo - these are ui tweaks to account for some looseness above
+                    if (timeLinePercent <= 1) {
+                        $('.jp-mega-play-bar').width(playBarWidth);
+                    } else {
+                        $('.jp-mega-play-bar').width('100%');
+                    }
+                    
+                    // don't update until we have good global data
                     if (window.vplm.tlNow > 0) {
                         $('.viddler-current-time').html(that.secs2time(Math.floor(window.vplm.tlNow/1000)));
-                    
+                    }
+                    if (window.vplm.tlNow > window.vplm.tlLength) {
+                        $('.viddler-current-time').html(that.secs2time(Math.floor(window.vplm.tlLength/1000)));                        
                     }
                 },1000);
         },
         
-        runStopListener : function (stop) {
+        // listen for global step end time 
+        runStopListener : function () {
             var that = this;
+            console.log('stoplistener stop time', window.vplm.stepStop);
             var stopIntv = stopIntv || setInterval(function() {
-               if (that.$el.jPlayer().data().jPlayer.status.currentTime > stop/1000) {
+               if (that.$el.jPlayer().data().jPlayer.status.currentTime > window.vplm.stepStop/1000) {
                   if (DEBUG) console.log('stop listener stop');
                   clearInterval(this.stopIntv);
                   ViddlerPlayer.vent.trigger('stopListenerStop');
@@ -103,7 +116,7 @@ ie8 = true;
             },1000);
         },
         
-        // utility = conver seconds to 00:00:00 format
+        // utility = convert seconds to 00:00:00 format
         secs2time : function(seconds) {
             var hours   = Math.floor(seconds / 3600);
             var minutes = Math.floor((seconds - (hours * 3600)) / 60);
@@ -151,7 +164,6 @@ ie8 = true;
         },
         
        loadCommentPopUp : function (data) {
-            console.log("comment");
             var data = {},
             playerData = this.$el.jPlayer().data().jPlayer.status;
             data.time = Math.floor(playerData.currentTime);
@@ -215,29 +227,13 @@ ie8 = true;
 s
             $('.mega-timeline .bar .jp-seek-bar').on('click', function (e) {
                 e.preventDefault();
-                console.log("Seek click");
                 var seekPerc = e.offsetX/($(e.currentTarget).width());
                 return false;
             });
             
         },
         
-        // whack the player
-/*
-        destroyView : function () {
-            //COMPLETELY UNBIND THE VIEW
-            this.undelegateEvents();
-        
-            this.$el.removeData().unbind(); 
-        
-            //Remove view from DOM
-            this.remove();  
-            Backbone.View.prototype.remove.call(this);
-        },
-*/      
-
         loadCommentPopUp : function (data) {
-            console.log("comment");
             var data = {},
             playerData = this.$el.jPlayer().data().jPlayer.status;
             data.time = Math.floor(playerData.currentTime);
@@ -301,7 +297,6 @@ s
             var that = this;
             this.model.fetch({
                 success : function (model, response, opts) {
-                    console.log(model);
                     that.timeline = model.get("timeline");
                     that.onModelReady();
                 },
@@ -321,7 +316,7 @@ s
                 tlLength = 0;
             
             // reset vplm global player data
-            resetVplm();
+            window.vplm.tlReset();
             
             mediaEls = this.timeline.mediaElements
             mediaEl = mediaEls[window.vplm.tlStep];
@@ -359,7 +354,8 @@ s
                 markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
                 that.timelinePlay();
                 $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
-                that.vent.off('playerReady');   
+                that.vent.off('playerReady');
+                that.vP.clearGuiTime();
             });
     
             this.vP.loadVPlayer();
@@ -395,36 +391,20 @@ s
         timelineStep : function (opts) {
             var that = this;
             if (DEBUG) console.log(opts);
-            ViddlerPlayer.vent.off("stopListenerStop");
-            this.vP.mediaEl = opts.mediaEl;
-            this.vP.runTimeListener();
-            this.vP.runStopListener(opts.stop);
-            console.log("tlStep", window.vplm);
-            if (opts.mediaEl.subtitleSrc && !ie8) {
-                console.log("yeah");
-                // clear popcorn events from previous step
-                if (that.pop.hasOwnProperty('destroy')) {
-                    that.pop.destroy();
-                }
-                // add subtitles
-                that.pop.parseSRT(opts.mediaEl.subtitleSrc);
-            }
+            window.vplm.stepStop = opts.stop;
             
-            this.vP.setMedia({
-                type : opts.mediaEl.elementType,
-                url : opts.mediaEl.elementURL
-            });
-            
-            // load step comments
-            stepComments = this.getStepComments({id : opts.mediaEl.id});
-            this.commentsView = new CommentsListView({comments : stepComments});
-            this.commentsView.render();
+            // think we need to wait for this to complete before starting listeners;
+            this.vP.setMediaEl(opts.mediaEl);
 
+            ViddlerPlayer.vent.off('stopListenerStop');
+            
             ViddlerPlayer.vent.bind('stopListenerStop', function () {
                 var i, els;
+
                 // check step, update global values and continue
-                if (window.vplm.tlStep === window.vplm.tlSteps) {
-                    ViddlerPlayer.vent.off("stopListenerStop");
+                if (window.vplm.tlStep === window.vplm.tlSteps-1) {
+                    console.log('>>>>>END');
+                    ViddlerPlayer.vent.off('stopListenerStop');
                     that.doEnd();
                 } else {
                     console.log("Increment step");
@@ -443,6 +423,35 @@ s
                     that.timelinePlay();
                 }
             });
+            
+            ViddlerPlayer.vent.on("playerMediaUpdate", function () {
+                console.log("Media update event");
+                console.log('global stop:',window.vplm.stepStop);
+                that.vP.runTimeListener();
+                that.vP.runStopListener();
+                ViddlerPlayer.vent.off("playerMediaUpdate");
+            });
+            
+            console.log("tlStep", window.vplm);
+            if (opts.mediaEl.subtitleSrc && !ie8) {
+                // clear popcorn events from previous step
+                if (that.pop.hasOwnProperty('destroy')) {
+                    that.pop.destroy();
+                }
+                // add subtitles
+                that.pop.parseSRT(opts.mediaEl.subtitleSrc);
+            }
+            
+            this.vP.setMedia({
+                type : opts.mediaEl.elementType,
+                url : opts.mediaEl.elementURL
+            });
+            
+            // load step comments
+            stepComments = this.getStepComments({id : opts.mediaEl.id});
+            this.commentsView = new CommentsListView({comments : stepComments});
+            this.commentsView.render();
+
             
             if (window.vplm.tlStep === 0) {
                 // Initial Play
@@ -473,6 +482,7 @@ s
         },
         
         doEnd : function (opts) {
+            var that = this;
             this.vP.pause();
             console.log("Do end handler");
             // reset playlist
@@ -481,11 +491,17 @@ s
             $('#play-overlay-button').show();
             $(".jp-play, #play-overlay-button").on('click.init', function (e) {
                 e.preventDefault();
-                that.vP.play({start : opts.start/1000});
+                that.onModelReady();
                 $('#play-overlay-button').hide();
                 $('.jp-play').unbind('click.init');
+                ViddlerPlayer.vent.off('stopListenerStop');
             });
         },
+        
+        // re-initialize loaded timeline
+        resetTimeline : function () {
+            
+        }
         
     });
     
