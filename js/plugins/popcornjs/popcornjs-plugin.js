@@ -1,3 +1,7 @@
+if(Modernizr.video) {
+
+
+
 /*
  * popcorn.js version 1.3
  * http://popcornjs.org
@@ -2760,11 +2764,13 @@
     //  Supports non-specific elements
     var dataAttr = "data-timeline-sources",
         medias = document.querySelectorAll( "[" + dataAttr + "]" );
+
     Popcorn.forEach( medias, function( idx, key ) {
 
       var media = medias[ key ],
           hasDataSources = false,
           dataSources, data, popcornMedia;
+
       //  Ensure that the DOM has an id
       if ( !media.id ) {
 
@@ -2777,6 +2783,7 @@
         popcornMedia = Popcorn( "#" + media.id );
 
         dataSources = ( media.getAttribute( dataAttr ) || "" ).split( "," );
+
         if ( dataSources[ 0 ] ) {
 
           Popcorn.forEach( dataSources, function( source ) {
@@ -7265,6 +7272,7 @@ api - https://github.com/documentcloud/document-viewer/blob/master/public/javasc
     Multiple {\pos(142,120)\b1}SSA tags are stripped
    */
   Popcorn.parser( "parseSRT", function( data ) {
+
     // declare needed variables
     var retObj = {
           title: "",
@@ -9161,3 +9169,8 @@ api - https://github.com/documentcloud/document-viewer/blob/master/public/javasc
     end: toggleClass
   });
 })( Popcorn );
+
+
+console.log( "[Plugin] Loaded: Popcorn.js");
+
+}

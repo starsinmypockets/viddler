@@ -1,4 +1,3 @@
-ie8 = true;
 /**
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
@@ -352,7 +351,7 @@ ie8 = true;
                 // wait for player, load comments and continue
                 that.getMediaElementComments({id : that.model.id});
                 ViddlerPlayer.vent.once('playerReady', function () {
-                    if (!ie8) that.pop = Popcorn("#jp_video_0");
+                    if (Modernizr.video.h264) that.pop = Popcorn("#jp_video_0");
                     if (DEBUG) console.log('Player ready event');
                     markers = new CommentMarkerView();
                     markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
@@ -482,7 +481,7 @@ ie8 = true;
             console.log("tlStep", window.vplm);
             
             // @@this can go in another view method
-            if (opts.mediaEl.subtitleSrc && !ie8) {
+            if (opts.mediaEl.subtitleSrc && Modernizr.video.h264) {
                 // clear popcorn events from previous step
                 if (that.pop.hasOwnProperty('destroy')) {
                     that.pop.destroy();

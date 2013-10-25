@@ -25,6 +25,18 @@ App.Config.plugins = {
 		// These will need to be populated by the api
 		App.Config.lr_video_id = "asdf1234";
 		App.Config.lr_title = "Big Buck Bunny";
+
+		// LiveRail pre-roll on all clips
+		App.Config.lr_preroll = true;
+	}
+
+	,plaincontent : function () {
+		// Plain content plugin
+		// Displays html in place of player
+	}
+
+	,popcornjs : function () {
+		
 	}
 };
 
