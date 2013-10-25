@@ -328,7 +328,7 @@ ie8 = true;
                 // wait for player, load comments and continue
                 that.getMediaElementComments({id : that.model.id});
                 ViddlerPlayer.vent.once('playerReady', function () {
-                    if (!ie8) that.pop = Popcorn("#jp_video_0");
+                    if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
                     if (DEBUG) console.log('Player ready event');
                     markers = new CommentMarkerView();
                     markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
