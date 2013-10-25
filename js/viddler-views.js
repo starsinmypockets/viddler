@@ -59,7 +59,6 @@ ie8 = true;
         
         setMediaEl : function (mediaEl) {
             this.mediaEl = mediaEl;
-            ViddlerPlayer.vent.trigger('playerMediaUpdate');
         },
         
         // calculates relative timeline elapsed
@@ -182,14 +181,15 @@ ie8 = true;
          setMedia : function (opts) {
              var data = {},
                 that = this;
-
              data[opts.type] = opts.url;
              this.$el.jPlayer("setMedia", data);
+             ViddlerPlayer.vent.trigger('mediaReady');
          },
          
          play : function (opts) {
-             var that = this;
-             (opts && opts.start) ? start = opts.start : start = '';
+             var that = this,
+                 opts = opts || {};
+             (opts.start) ? start = opts.start : start = '';
              this.$el.jPlayer("play", start);
          }, 
          
@@ -338,12 +338,12 @@ ie8 = true;
             // add play button overlay
             $('#play-overlay-button').show();
             
-            // instance player view
+            // wait for gui in DOM and instance player view
             ViddlerPlayer.vent.once("playerGuiReady", function () {
                 console.log("playerGuiReady");
                 that.vP = new VPlayerView({mediaEl : mediaEl});
-            
-                // wait for player load player and continue
+                
+                // wait for player, load comments and continue
                 that.getMediaElementComments({id : that.model.id});
                 ViddlerPlayer.vent.once('playerReady', function () {
                     if (!ie8) that.pop = Popcorn("#jp_video_0");
@@ -352,10 +352,9 @@ ie8 = true;
                     markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
                     that.timelinePlay();
                     $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
-    //                that.vent.off('playerReady');
                     that.vP.clearGuiTime();
                 });
-        
+                
                 that.vP.loadVPlayer();
             });
             
@@ -369,9 +368,11 @@ ie8 = true;
                 endWith,
                 that = this,
                 opts = opts || {},
-                stepOpts = {};
+                stepOpts = {},
+                tlStep = window.vplm.tlStep,
+                tlSteps = window.vplm.tlSteps;
             
-            mediaEl = this.timeline.mediaElements[window.vplm.tlStep];
+            mediaEl = this.timeline.mediaElements[tlStep];
             stepOpts.mediaEl = mediaEl;
             stepOpts.start = opts.start || mediaEl.playheadStart;
             stepOpts.stop = opts.stop || mediaEl.playheadStop;
@@ -384,8 +385,27 @@ ie8 = true;
                 console.log('vplm: ',window.vplm);
             }
             
+            // init timeline
+            if (tlStep === 0) {
+                // Initial Play
+                // iOS needs initial media play to be contained in user-initiated call stack
+                console.log('Init timeline');
+                $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
+                    console.log("Click init event", opts);
+                    e.stopImmediatePropagation();                    
+                    e.preventDefault();
+                    that.timelineStep(stepOpts);
+                    //that.vP.play({start : opts.start/1000});
+                    $('#play-overlay-button').hide();
+                    $('.jp-play').unbind('click.init');
+                    return false;
+                });
+            } else if (tlStep < tlSteps) {
+                this.timelineStep(stepOpts);
+            } else {
+                this.doEnd();
+            }
             // fire this step
-            this.timelineStep(stepOpts);
         },
         
         timelineStep : function (opts) {
@@ -393,16 +413,13 @@ ie8 = true;
             if (DEBUG) console.log(opts);
             window.vplm.stepStop = opts.stop;
             
-            // think we need to wait for this to complete before starting listeners;
-            this.vP.setMediaEl(opts.mediaEl);
-
             ViddlerPlayer.vent.off('stopListenerStop');
             
             ViddlerPlayer.vent.once('stopListenerStop', function () {
                 var i, els;
-
+                
                 // check step, update global values and continue
-                if (window.vplm.tlStep === window.vplm.tlSteps) {
+                if (window.vplm.tlStep === window.vplm.tlSteps-1) {
                     console.log('>>>>>END');
                     that.doEnd();
                 } else {
@@ -423,15 +440,26 @@ ie8 = true;
                 }
             });
             
-            ViddlerPlayer.vent.once("playerMediaUpdate", function () {
+            // set media and go
+             ViddlerPlayer.vent.once("mediaReady", function () {
                 console.log("Media update event");
                 console.log('global stop:',window.vplm.stepStop);
                 that.vP.runTimeListener();
                 that.vP.runStopListener();
-               // ViddlerPlayer.vent.off("playerMediaUpdate");
+                that.vP.play({start : opts.start/1000});
             });
             
+            this.vP.setMediaEl(opts.mediaEl);
+            
+            this.vP.setMedia({
+                type : opts.mediaEl.elementType,
+                url : opts.mediaEl.elementURL
+            });
+            
+            
             console.log("tlStep", window.vplm);
+            
+            // @@this can go in another view method
             if (opts.mediaEl.subtitleSrc && !ie8) {
                 // clear popcorn events from previous step
                 if (that.pop.hasOwnProperty('destroy')) {
@@ -441,35 +469,10 @@ ie8 = true;
                 that.pop.parseSRT(opts.mediaEl.subtitleSrc);
             }
             
-            this.vP.setMedia({
-                type : opts.mediaEl.elementType,
-                url : opts.mediaEl.elementURL
-            });
-            
             // load step comments
             stepComments = this.getStepComments({id : opts.mediaEl.id});
             this.commentsView = new CommentsListView({comments : stepComments});
             this.commentsView.render();
-
-            
-            if (window.vplm.tlStep === 0) {
-                // Initial Play
-                // iOS needs initial media play to be contained in user-initiated call stack
-                $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
-                    console.log("Click init event");
-                    e.stopImmediatePropagation();                    
-                    //e.preventDefault();
-                    that.vP.play({start : opts.start/1000});
-                    $('#play-overlay-button').hide();
-                    $('.jp-play').unbind('click.init');
-                    return false;
-                });
-                
-            // auto-play on subsequent step
-            } else {
-                that.vP.play({start : opts.start/1000});
-            }
-            
         },
         
         getStepComments : function (opts) {
