@@ -48,6 +48,7 @@ ie8 = true;
      **/
     VPlayerView = BaseView.extend({
         timeListenerIntv : {},
+        stopListenerIntv : {},
         el : '#jquery_jplayer_1',
         mediaEl : {}, // the currently loaded media element
         initialize : function (opts) {
@@ -109,10 +110,10 @@ ie8 = true;
         runStopListener : function () {
             var that = this;
             console.log('stoplistener stop time', window.vplm.stepStop);
-            var stopIntv = stopIntv || setInterval(function() {
+            this.stopListenerIntv = setInterval(function() {
                if (that.$el.jPlayer().data().jPlayer.status.currentTime > window.vplm.stepStop/1000) {
                   if (DEBUG) console.log('stop listener stop');
-                  clearInterval(this.stopIntv);
+                  clearInterval(that.ListenerIntv);
                   // do we need to clear the time listener?
                   clearInterval(that.timeListenerIntv);
                   ViddlerPlayer.vent.trigger('stopListenerStop');
