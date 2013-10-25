@@ -1,0 +1,23 @@
+timeline event order
+
+loadplaylist
+    modelReady
+        loadGui
+            GuiReady
+                Load Player
+                    Player ready 
+                        Timeline Play
+                            Init timeline
+                                timelineStep
+                                    [...]
+                            timelineStep
+                                setMedia
+                                    mediaReady
+                                        runTimeListener
+                                        runStopListener
+                                        play
+                                            stopListenerStop
+                                                update globals
+                                                timelinePlay
+                                                    [...]
+                            doEnd
