@@ -433,7 +433,7 @@ div.jp-audio-stream div.jp-volume-bar {
 	left:92px;
 }
 div.jp-video div.jp-volume-bar {
-	display:inline-block;
+	display:inline-block !important;
 	position: relative;
 	top: 7px;
 	left: 10px;
@@ -637,7 +637,7 @@ ul.jp-toggles {
 	float:right;
 	position: relative;
 	top: 3px;
-	width: 270px;	
+	width: 260px;	
 }
 
 div.jp-audio .jp-type-single ul.jp-toggles {
@@ -659,12 +659,14 @@ ul.jp-toggles li {
 }
 
 ul.jp-toggles li a {
-	display:inline-block;
+	display:inline-block !important;
 	width:28px;
 	text-indent:-9999px;
 	line-height:100%; /* need this for IE6 */
 }
-
+ul.jp-toggles li a.jp-unmute{
+	display:none !important;
+}
 a.jp-hd{
 	background: url(../img/hd.png) no-repeat;
 	-webkit-background-size: 34px;
@@ -1395,6 +1397,21 @@ a img.videoimg{
 }
 }
 @media only screen and (max-width: 640px){
+div.jp-video div.jp-volume-bar {
+	display:none !important;
+	position: relative;
+	top: 7px;
+	left: 10px;
+}
+ul.jp-toggles li a.jp-mute {
+	display:none !important;
+	width:28px;
+	text-indent:-9999px;
+	line-height:100%; /* need this for IE6 */
+}
+ul.jp-toggles li a.jp-volume-max{
+	display:none !important;
+}
 	a.also{
 	background: #4aa9de;
 	-webkit-border-radius: 5px;
