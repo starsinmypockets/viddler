@@ -278,7 +278,11 @@ div.jp-video div.jp-progress {
 	border-radius: 10px;
 	border-bottom: #42474d solid thin; 
 }
-
+.logo{
+	float:right;
+	margin-top: -5px;
+	width: 130px;
+}
 div.jp-seek-bar {
 	background: #1a2025;
 	width:0px;
@@ -1421,7 +1425,7 @@ span.number{
 }
 .logo{
 	float:right;
-	margin-top: -5px;
+	margin-top: 0px;
 	width: 100px;
 }
 }
