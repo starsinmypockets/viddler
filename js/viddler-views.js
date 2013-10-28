@@ -117,11 +117,11 @@ ie8 = function () {
         // listen for global step end time 
         runStopListener : function () {
             var that = this;
-            console.log('[Player]stoplistener stop time', window.vplm.stepStop);
+            if (DEBUG) console.log('[Player] stoplistener stop time', window.vplm.stepStop);
             this.stopListenerIntv = setInterval(function() {
                if (that.$el.jPlayer().data().jPlayer.status.currentTime > window.vplm.stepStop/1000) {
                   if (DEBUG) console.log('stop listener stop');
-                  clearInterval(that.ListenerIntv);
+                  clearInterval(that.stopListenerIntv);
                   // do we need to clear the time listener?
                   clearInterval(that.timeListenerIntv);
                   ViddlerPlayer.vent.trigger('stopListenerStop');
@@ -165,8 +165,9 @@ ie8 = function () {
                 },
                 swfPath: "../js/vendor/",
                 supplied: "m4v",
+                backgroundColor: '#ABCDEE',
                 errorAlerts : true,
-                solition : "html, flash"
+                solution : "html, flash"
             });
             $('.jp-comment').unbind();
             $('.jp-comment').on('click', function (e) {
@@ -251,6 +252,7 @@ ie8 = function () {
             _.each(data.elems, function (elem) {
                 elem.width = ((elem.length / window.vplm.tlLength)*100).toFixed(2);
             });
+            
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
             this.$('.jp-comment').on('click', function (e) {
                 e.preventDefault();
@@ -322,15 +324,16 @@ ie8 = function () {
             _.each(this.timeline.mediaElements, function (el) {
                 tlLength +=  parseInt(el.playheadStop - el.playheadStart, 10);
             });
-            
+                        
+            // initialize gui uses global timeline data
             window.vplm.tlStep = 0;
             window.vplm.tlSteps = mediaEls.length;
-            window.vplm.tlLength = tlLength;
+            window.vplm.tlLength = tlLength;           this.vPG = new VPlayerGuiView();
+            this.vPG.render({mediaElements : mediaEls}); 
             
-            // render gui
-           this.vPG = new VPlayerGuiView();
-           this.vPG.render({mediaElements : mediaEls}); 
-
+            // gui ready update index for seek events
+            window.vplm.tlIndex = this.initTlIndex();  //initTlIndex also binds dom seek events
+            
             // add play button overlay
             $('#play-overlay-button').show();
             
@@ -342,13 +345,7 @@ ie8 = function () {
                 // wait for player, load comments and continue
                 that.getMediaElementComments({id : that.model.id});
                 ViddlerPlayer.vent.once('playerReady', function () {
-                    if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
-                    if (DEBUG) console.log('[Player] Player ready');
-                    markers = new CommentMarkerView();
-                    markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
-                    that.timelinePlay();
-                    $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
-                    that.vP.clearGuiTime();
+                    that.onPlayerReady();
                 });
                 
                 that.vP.loadVPlayer();
@@ -356,12 +353,35 @@ ie8 = function () {
             
         },
         
+        onPlayerReady : function () {
+            var timeOut = null,
+                that = this,
+                setPlayerHeight = function() {
+                    that.$el.css({
+                        minHeight : that.$el.width()/7
+                    });
+                };
+
+            if (DEBUG) console.log('[Player] Player ready');
+            if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
+            markers = new CommentMarkerView();
+            markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
+            that.timelinePlay();
+            $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
+            that.vP.clearGuiTime();
+/*
+            setPlayerHeight();
+            this.$el.onresize = function(){
+                if(timeOut != null) clearTimeout(timeOut);
+                timeOut = setTimeout(setPlayerHeight, 100);
+            }
+*/
+        },
+        
         // do timeline step queue-ing
         timelinePlay : function (opts) {
-            var start,
-                stop,
-                mediaEl,
-                endWith,
+            var mediaEl,
+                opts = opts || {},
                 that = this,
                 stepOpts = {},
                 tlStep = window.vplm.tlStep,
@@ -370,22 +390,17 @@ ie8 = function () {
             if (tlStep != tlSteps) {
                 mediaEl = this.timeline.mediaElements[tlStep];
                 stepOpts.mediaEl = mediaEl;
-                stepOpts.start = mediaEl.playheadStart;
+                stepOpts.start = opts.start || mediaEl.playheadStart; // seekTo passes start time
                 stepOpts.stop = mediaEl.playheadStop;
             }
             
-            if (tlStep === 0) {
+            // a bit of basic routing here:
+            if (opts.seek) {
+                this.timelineStep(stepOpts);
+            } else if (tlStep === 0) {
                 // Init timeline
                 if (DEBUG) console.log('[Player] Init timeline');
                 stepOpts.init = true;
-                $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
-                    e.stopImmediatePropagation();
-                    e.preventDefault();
-                    that.timelineStep(stepOpts);
-                    $('#play-overlay-button').hide();
-                    $('.jp-play').unbind('click.init');
-                    return false;
-                });
                 this.timelineInit(stepOpts);
             } else if (tlStep < tlSteps) {
                 this.timelineStep(stepOpts);
@@ -395,21 +410,29 @@ ie8 = function () {
         },
         
         timelineInit : function (stepOpts) {
+            var that = this;
             stepOpts.init = true;
+            window.vplm.stepStop = stepOpts.stop;
         
             this.vP.setMedia({
                 type : stepOpts.mediaEl.elementType,
                 url : stepOpts.mediaEl.elementURL
             });
-
-            this.vP.runTimeListener();
-            this.vP.runStopListener();
+            
+            // @@ REFACTOR so this isn't repeate here and in timelinestep
+            // set media and go
+            ViddlerPlayer.vent.once("mediaReady", function () {
+                if (DEBUG) console.log("[Player] Media ready");
+                that.vP.runTimeListener();
+                that.vP.runStopListener();
+            });
 
             // load step comments
             stepComments = this.getStepComments({id : stepOpts.mediaEl.id});
             this.commentsView = new CommentsListView({comments : stepComments});
             this.commentsView.render();
             
+            $('#play-overlay-button').show();
             // ios needs user initiated action to enable timeline js behaviors
             $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
                 e.stopImmediatePropagation();
@@ -446,18 +469,18 @@ ie8 = function () {
                 that.timelinePlay();
             });
             
-            // set media and go
-            ViddlerPlayer.vent.once("mediaReady", function () {
-                if (DEBUG) console.log("[Player] Media ready");
-                that.vP.runTimeListener();
-                that.vP.runStopListener();
-                that.vP.play({start : opts.start/1000});
-            });
-            
             this.vP.setMediaEl(opts.mediaEl);
             
+            // @@ REFACTOR - this is ugly - need to abstract this mediaready stuff
             // on first step media is preloaded and user initiates click
             if (!opts.init) {
+                // set media and go
+                ViddlerPlayer.vent.once("mediaReady", function () {
+                    if (DEBUG) console.log("[Player] Media ready");
+                    that.vP.runTimeListener();
+                    that.vP.runStopListener();
+                    that.vP.play({start : opts.start/1000});
+                });
                 this.vP.setMedia({
                     type : opts.mediaEl.elementType,
                     url : opts.mediaEl.elementURL
@@ -466,7 +489,6 @@ ie8 = function () {
                 this.vP.play({start : opts.start/1000});
             }
             
-            // @@ currently disabled - this can go in another view method
             if (opts.mediaEl.subtitleSrc && !ie8) {
                 // clear popcorn events from previous step
                 if (that.pop.hasOwnProperty('destroy')) {
@@ -480,6 +502,65 @@ ie8 = function () {
             stepComments = this.getStepComments({id : opts.mediaEl.id});
             this.commentsView = new CommentsListView({comments : stepComments});
             this.commentsView.render();
+        },
+        
+        // index timeline elements for seek events
+        initTlIndex : function () {
+            var mediaEls = this.timeline.mediaElements,
+                tlSteps = mediaEls.length;
+                tlIndex = [],
+                that = this;
+            
+            // bind seek behavior to progress bar
+            $('.bar .jp-progress').on('click', function (e) {
+                e.preventDefault();
+                var seekPerc = e.offsetX/($(e.currentTarget).width()),
+                    tlMs = seekPerc*window.vplm.tlLength;
+                
+                console.log(seekPerc);
+                console.log(tlMs);
+                that.seekTo(tlMs);
+            });
+
+            for (var i = 0; i < tlSteps; i++) {
+                function func (i) {
+                    tlIndex[i] = {};
+                    tlIndex[i]['start'] = (i === 0) ? 0 : tlIndex[i-1]['stop'];
+                    tlIndex[i]['stop'] = tlIndex[i]['start'] + mediaEls[i]['playheadStop'] - mediaEls[i]['playheadStart'];
+                }
+                
+                func(i);
+            }
+            
+            return tlIndex;
+        },
+        
+        // reinitialize and play timeline from seek point
+        seekTo : function (tlMs) {
+            var mediaEls = this.timeline.mediaElements,
+                seekInf = {},
+                tlIndex = window.vplm.tlIndex,
+                elapsed = 0;
+
+            function func (i) {
+                if (tlMs >= tlIndex[i].start && tlMs < tlIndex[i].stop) {
+                    console.log(tlIndex[i]);
+                    seekInf['step'] = i;
+                    seekInf['seekTo'] =  tlMs - elapsed + mediaEls[i].playheadStart;
+                    return;
+                }
+                elapsed += tlIndex[i].stop - tlIndex[i].start;
+            }
+        
+            for (var i = 0; i < tlIndex.length; i++) {
+                func(i);
+            }
+
+            console.log(seekInf);
+            
+            // update the global tlStep
+            window.vplm.tlStep = seekInf.step;
+            this.timelinePlay({seek : true, start : seekInf.seekTo});
         },
         
         getStepSubtitles : function (opts) {
@@ -510,13 +591,8 @@ ie8 = function () {
 
             // reset global player data
             window.vplm.tlReset();
-            $('#play-overlay-button').show();
-            $(".jp-play, #play-overlay-button").on('click.init', function (e) {
-                e.preventDefault();
-                that.timelinePlay();
-                $('#play-overlay-button').hide();
-                $('.jp-play').unbind('click.init');
-            });
+            console.log(vplm);
+            that.timelinePlay();
         },
     });
     
