@@ -251,13 +251,27 @@ ie8 = function () {
             _.each(data.elems, function (elem) {
                 elem.width = ((elem.length / window.vplm.tlLength)*100).toFixed(2);
             });
+            
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
             this.$('.jp-comment').on('click', function (e) {
                 e.preventDefault();
                 that.loadCommentPopUp();
                 return false;
-            });
+            });            
             
+/*
+            // attach seek percent event to playbar
+            $('.bar .jp-progress').on('click', function (e) {
+                e.preventDefault();
+                var seekPerc = e.offsetX/($(e.currentTarget).width()),
+                    tlMs = seekPerc*window.vplm.tlLength;
+
+                console.log(seekPerc);
+                console.log(tlMs);
+                
+            });
+*/
+
             ViddlerPlayer.vent.trigger("playerGuiReady");
         }
     });
@@ -322,15 +336,16 @@ ie8 = function () {
             _.each(this.timeline.mediaElements, function (el) {
                 tlLength +=  parseInt(el.playheadStop - el.playheadStart, 10);
             });
-            
+                        
+            // initialize gui uses global timeline data
             window.vplm.tlStep = 0;
             window.vplm.tlSteps = mediaEls.length;
-            window.vplm.tlLength = tlLength;
+            window.vplm.tlLength = tlLength;           this.vPG = new VPlayerGuiView();
+            this.vPG.render({mediaElements : mediaEls}); 
             
-            // render gui
-           this.vPG = new VPlayerGuiView();
-           this.vPG.render({mediaElements : mediaEls}); 
-
+            // gui ready update index for seek events
+            window.vplm.tlIndex = this.initTlIndex();  //initTlIndex also binds dom seek events
+            
             // add play button overlay
             $('#play-overlay-button').show();
             
@@ -358,10 +373,8 @@ ie8 = function () {
         
         // do timeline step queue-ing
         timelinePlay : function (opts) {
-            var start,
-                stop,
-                mediaEl,
-                endWith,
+            var mediaEl,
+                opts = opts || {},
                 that = this,
                 stepOpts = {},
                 tlStep = window.vplm.tlStep,
@@ -370,11 +383,14 @@ ie8 = function () {
             if (tlStep != tlSteps) {
                 mediaEl = this.timeline.mediaElements[tlStep];
                 stepOpts.mediaEl = mediaEl;
-                stepOpts.start = mediaEl.playheadStart;
+                stepOpts.start = opts.start || mediaEl.playheadStart; // seekTo passes start time
                 stepOpts.stop = mediaEl.playheadStop;
             }
             
-            if (tlStep === 0) {
+            // a bit of basic routing here:
+            if (opts.seek) {
+                this.timelineStep(stepOpts);
+            } else if (tlStep === 0) {
                 // Init timeline
                 if (DEBUG) console.log('[Player] Init timeline');
                 stepOpts.init = true;
@@ -446,8 +462,6 @@ ie8 = function () {
                 that.timelinePlay();
             });
             
-
-            
             this.vP.setMediaEl(opts.mediaEl);
             
             // @@ REFACTOR - this is ugly - need to abstract this mediaready stuff
@@ -468,7 +482,6 @@ ie8 = function () {
                 this.vP.play({start : opts.start/1000});
             }
             
-            // @@ currently disabled - this can go in another view method
             if (opts.mediaEl.subtitleSrc && !ie8) {
                 // clear popcorn events from previous step
                 if (that.pop.hasOwnProperty('destroy')) {
@@ -482,6 +495,65 @@ ie8 = function () {
             stepComments = this.getStepComments({id : opts.mediaEl.id});
             this.commentsView = new CommentsListView({comments : stepComments});
             this.commentsView.render();
+        },
+        
+        // index timeline elements for seek events
+        initTlIndex : function () {
+            var mediaEls = this.timeline.mediaElements,
+                tlSteps = mediaEls.length;
+                tlIndex = [],
+                that = this;
+            
+            // bind seek behavior to progress bar
+            $('.bar .jp-progress').on('click', function (e) {
+                e.preventDefault();
+                var seekPerc = e.offsetX/($(e.currentTarget).width()),
+                    tlMs = seekPerc*window.vplm.tlLength;
+                
+                console.log(seekPerc);
+                console.log(tlMs);
+                that.seekTo(tlMs);
+            });
+
+            for (var i = 0; i < tlSteps; i++) {
+                function func (i) {
+                    tlIndex[i] = {};
+                    tlIndex[i]['start'] = (i === 0) ? 0 : tlIndex[i-1]['stop'];
+                    tlIndex[i]['stop'] = tlIndex[i]['start'] + mediaEls[i]['playheadStop'] - mediaEls[i]['playheadStart'];
+                }
+                
+                func(i);
+            }
+            
+            return tlIndex;
+        },
+        
+        // reinitialize and play timeline from seek point
+        seekTo : function (tlMs) {
+            var mediaEls = this.timeline.mediaElements,
+                seekInf = {},
+                tlIndex = window.vplm.tlIndex,
+                elapsed = 0;
+
+            function func (i) {
+                if (tlMs >= tlIndex[i].start && tlMs < tlIndex[i].stop) {
+                    console.log(tlIndex[i]);
+                    seekInf['step'] = i;
+                    seekInf['seekTo'] =  tlMs - elapsed + mediaEls[i].playheadStart;
+                    return;
+                }
+                elapsed += tlIndex[i].stop - tlIndex[i].start;
+            }
+        
+            for (var i = 0; i < tlIndex.length; i++) {
+                func(i);
+            }
+
+            console.log(seekInf);
+            
+            // update the global tlStep
+            window.vplm.tlStep = seekInf.step;
+            this.timelinePlay({seek : true, start : seekInf.seekTo});
         },
         
         getStepSubtitles : function (opts) {
@@ -514,17 +586,6 @@ ie8 = function () {
             window.vplm.tlReset();
             console.log(vplm);
             that.timelinePlay();
-/*
-
-            $('#play-overlay-button').show();
-            $(".jp-play, #play-overlay-button").on('click.init', function (e) {
-                console.log('this one');
-                e.preventDefault();
-                that.timelinePlay();
-                $('#play-overlay-button').hide();
-                $('.jp-play').unbind('click.init');
-            });
-*/
         },
     });
     
