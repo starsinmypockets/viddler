@@ -14,7 +14,7 @@ ie8 = function () {
 (function ($) {
     var DEBUG = true,
         // output clock data:
-        tDEBUG = true;
+        tDEBUG = false;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -121,7 +121,7 @@ ie8 = function () {
             this.stopListenerIntv = setInterval(function() {
                if (that.$el.jPlayer().data().jPlayer.status.currentTime > window.vplm.stepStop/1000) {
                   if (DEBUG) console.log('stop listener stop');
-                  clearInterval(that.ListenerIntv);
+                  clearInterval(that.stopListenerIntv);
                   // do we need to clear the time listener?
                   clearInterval(that.timeListenerIntv);
                   ViddlerPlayer.vent.trigger('stopListenerStop');
@@ -409,6 +409,7 @@ ie8 = function () {
             this.commentsView = new CommentsListView({comments : stepComments});
             this.commentsView.render();
             
+            $('#play-overlay-button').show();
             // ios needs user initiated action to enable timeline js behaviors
             $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
                 e.stopImmediatePropagation();
@@ -511,13 +512,19 @@ ie8 = function () {
 
             // reset global player data
             window.vplm.tlReset();
+            console.log(vplm);
+            that.timelinePlay();
+/*
+
             $('#play-overlay-button').show();
             $(".jp-play, #play-overlay-button").on('click.init', function (e) {
+                console.log('this one');
                 e.preventDefault();
                 that.timelinePlay();
                 $('#play-overlay-button').hide();
                 $('.jp-play').unbind('click.init');
             });
+*/
         },
     });
     
