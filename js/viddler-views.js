@@ -14,7 +14,7 @@ ie8 = function () {
 (function ($) {
     var DEBUG = true,
         // output clock data:
-        tDEBUG = false;
+        tDEBUG = true;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -117,7 +117,7 @@ ie8 = function () {
         // listen for global step end time 
         runStopListener : function () {
             var that = this;
-            console.log('[Player]stoplistener stop time', window.vplm.stepStop);
+            if (DEBUG) console.log('[Player] stoplistener stop time', window.vplm.stepStop);
             this.stopListenerIntv = setInterval(function() {
                if (that.$el.jPlayer().data().jPlayer.status.currentTime > window.vplm.stepStop/1000) {
                   if (DEBUG) console.log('stop listener stop');
@@ -378,14 +378,6 @@ ie8 = function () {
                 // Init timeline
                 if (DEBUG) console.log('[Player] Init timeline');
                 stepOpts.init = true;
-                $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
-                    e.stopImmediatePropagation();
-                    e.preventDefault();
-                    that.timelineStep(stepOpts);
-                    $('#play-overlay-button').hide();
-                    $('.jp-play').unbind('click.init');
-                    return false;
-                });
                 this.timelineInit(stepOpts);
             } else if (tlStep < tlSteps) {
                 this.timelineStep(stepOpts);
@@ -395,15 +387,22 @@ ie8 = function () {
         },
         
         timelineInit : function (stepOpts) {
+            var that = this;
             stepOpts.init = true;
+            window.vplm.stepStop = stepOpts.stop;
         
             this.vP.setMedia({
                 type : stepOpts.mediaEl.elementType,
                 url : stepOpts.mediaEl.elementURL
             });
-
-            this.vP.runTimeListener();
-            this.vP.runStopListener();
+            
+            // @@ REFACTOR so this isn't repeate here and in timelinestep
+            // set media and go
+            ViddlerPlayer.vent.once("mediaReady", function () {
+                if (DEBUG) console.log("[Player] Media ready");
+                that.vP.runTimeListener();
+                that.vP.runStopListener();
+            });
 
             // load step comments
             stepComments = this.getStepComments({id : stepOpts.mediaEl.id});
@@ -446,18 +445,20 @@ ie8 = function () {
                 that.timelinePlay();
             });
             
-            // set media and go
-            ViddlerPlayer.vent.once("mediaReady", function () {
-                if (DEBUG) console.log("[Player] Media ready");
-                that.vP.runTimeListener();
-                that.vP.runStopListener();
-                that.vP.play({start : opts.start/1000});
-            });
+
             
             this.vP.setMediaEl(opts.mediaEl);
             
+            // @@ REFACTOR - this is ugly - need to abstract this mediaready stuff
             // on first step media is preloaded and user initiates click
             if (!opts.init) {
+                // set media and go
+                ViddlerPlayer.vent.once("mediaReady", function () {
+                    if (DEBUG) console.log("[Player] Media ready");
+                    that.vP.runTimeListener();
+                    that.vP.runStopListener();
+                    that.vP.play({start : opts.start/1000});
+                });
                 this.vP.setMedia({
                     type : opts.mediaEl.elementType,
                     url : opts.mediaEl.elementURL
