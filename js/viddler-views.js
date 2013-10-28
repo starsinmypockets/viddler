@@ -1,4 +1,13 @@
-ie8 = true;
+console.log(ViddlerPlayer.browser[1]);
+
+// this catches ie8 and ff
+ie8 = function () {
+    var bad = false;
+    if (ViddlerPlayer.browser[0] === "Firefox") bad = true;
+    if (ViddlerPlayer.browser[0] === "MSIE" && ViddlerPlayer.browser[1].indexOf(8) === 0) bad = true;
+    return bad;
+}();
+
 /**
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
