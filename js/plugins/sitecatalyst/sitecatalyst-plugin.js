@@ -212,4 +212,7 @@ if(config.s_account && config.s_visitorNamespace && config.s_trackingServer) {
 
 	s_code=s.t();if(s_code)document.write(s_code);
 
+
+	console.log( "[Plugin] Loaded: SiteCatalyst");
+
 }
