@@ -165,8 +165,9 @@ ie8 = function () {
                 },
                 swfPath: "../js/vendor/",
                 supplied: "m4v",
+                backgroundColor: '#ABCDEE',
                 errorAlerts : true,
-                solition : "html, flash"
+                solution : "html, flash"
             });
             $('.jp-comment').unbind();
             $('.jp-comment').on('click', function (e) {
@@ -257,21 +258,8 @@ ie8 = function () {
                 e.preventDefault();
                 that.loadCommentPopUp();
                 return false;
-            });            
-            
-/*
-            // attach seek percent event to playbar
-            $('.bar .jp-progress').on('click', function (e) {
-                e.preventDefault();
-                var seekPerc = e.offsetX/($(e.currentTarget).width()),
-                    tlMs = seekPerc*window.vplm.tlLength;
-
-                console.log(seekPerc);
-                console.log(tlMs);
-                
             });
-*/
-
+            
             ViddlerPlayer.vent.trigger("playerGuiReady");
         }
     });
@@ -357,18 +345,37 @@ ie8 = function () {
                 // wait for player, load comments and continue
                 that.getMediaElementComments({id : that.model.id});
                 ViddlerPlayer.vent.once('playerReady', function () {
-                    if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
-                    if (DEBUG) console.log('[Player] Player ready');
-                    markers = new CommentMarkerView();
-                    markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
-                    that.timelinePlay();
-                    $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
-                    that.vP.clearGuiTime();
+                    that.onPlayerReady();
                 });
                 
                 that.vP.loadVPlayer();
             });
             
+        },
+        
+        onPlayerReady : function () {
+            var timeOut = null,
+                that = this,
+                setPlayerHeight = function() {
+                    that.$el.css({
+                        minHeight : that.$el.width()/7
+                    });
+                };
+
+            if (DEBUG) console.log('[Player] Player ready');
+            if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
+            markers = new CommentMarkerView();
+            markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
+            that.timelinePlay();
+            $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
+            that.vP.clearGuiTime();
+/*
+            setPlayerHeight();
+            this.$el.onresize = function(){
+                if(timeOut != null) clearTimeout(timeOut);
+                timeOut = setTimeout(setPlayerHeight, 100);
+            }
+*/
         },
         
         // do timeline step queue-ing

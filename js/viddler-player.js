@@ -190,3 +190,14 @@ window.testMPInit = function () {
 };  
 
 })(jQuery);
+
+$(document).ready(function () {
+    console.log('doc ready');
+
+    $(window).on('resize', function () {
+        var height = $('#jp_container_1').width()*.58;
+        $('#jquery_jplayer_1').css({
+            'min-height' : height
+        });
+    }).resize();
+});
