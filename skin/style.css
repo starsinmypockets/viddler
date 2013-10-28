@@ -68,10 +68,10 @@ video#jp_video_0, img#jp_poster_0, #jquery_jplayer_1{
 /* timeline */
 .mega-timeline .jp-progress .jp-seek-bar {width:100%;}
 #mega-track-info {margin-top:12px; width:100%}
-.timeline-tag {display:block; float:left;  font-size:.6em}
+.timeline-tag {display:block; float:left; font-size:.6em}
 
 /* account */
-#account-container {margin:2em; position: absolute; z-index: 99999999; top: 0px; left: -250px;}
+/* #account-container {margin:2em; position: absolute; z-index: 99999999; top: 0px; left: -250px;} */
 
 
 /* Sprites */
@@ -131,7 +131,7 @@ filter:alpha(opacity=40);}
 
 
 .cursor { cursor: pointer; }
-#play-overlay-button {position:absolute; cursor:pointer; top:40%; width: 50px; height: 50px; margin-left: -25px; left: 50%; z-index:10000; display:none;}
+#play-overlay-button {position:absolute; cursor:pointer; top:40%; width: 50px; margin-left: -25px; left: 50%;height:70px; z-index:10000; display:none;}
 
 @media only screen and (max-width: 480px){
 	/* Modals */
