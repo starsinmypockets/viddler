@@ -68,7 +68,7 @@ video#jp_video_0, img#jp_poster_0, #jquery_jplayer_1{
 /* timeline */
 .mega-timeline .jp-progress .jp-seek-bar {width:100%;}
 #mega-track-info {margin-top:12px; width:100%}
-.timeline-tag {display:block; float:left; font-size:.6em}
+.timeline-tag {display:block; float:left;  font-size:.6em}
 
 /* account */
 #account-container {margin:2em; position: absolute; z-index: 99999999; top: 0px; left: -250px;}
