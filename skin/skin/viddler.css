@@ -1071,6 +1071,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c7c7c7', end
 	position: relative;
 	top: -5px;
 }
+
+
+/************
+*************
+MEDIA QUERIES HERE
+*************
+************/
+
+
 @media only screen and (max-width: 981px){
 #mega-markers-container{
 	position: relative;
