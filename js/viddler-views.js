@@ -518,6 +518,7 @@ ie8 = function () {
                 console.log(seekPerc);
                 console.log(tlMs);
                 that.seekTo(tlMs);
+                return false;
             });
 
             for (var i = 0; i < tlSteps; i++) {
