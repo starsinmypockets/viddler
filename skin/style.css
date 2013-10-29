@@ -133,6 +133,7 @@ filter:alpha(opacity=40);}
 .cursor { cursor: pointer; }
 #play-overlay-button {position:absolute; cursor:pointer; top:40%;  margin-left: -25px; left: 50%;height:70px; z-index:10000; display:none;}
 
+
 @media only screen and (max-width: 480px){
 	/* Modals */
 

@@ -368,7 +368,7 @@ div.jp-video a.jp-unmute {
 div.jp-video a.jp-unmute {
 	position: relative;
 	top: 0px;
-	left:13px;
+	left:15px;
 }
 
 div.jp-video a.jp-volume-max {
@@ -1074,6 +1074,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c7c7c7', end
 }
 
 
+
 /************
 *************
 MEDIA QUERIES HERE
@@ -1270,6 +1271,13 @@ a.jp-volume-max {
 a.jp-volume-max:hover {
 	background: url("../img/mobile/maxvolumehover.png") no-repeat;
 		display:none !important;
+}
+
+div.jp-video div.jp-volume-bar {
+	display:none !important;
+	position: relative;
+	top: 7px;
+	left: 10px;
 }
 
 div.jp-volume-bar {
