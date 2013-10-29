@@ -108,7 +108,7 @@ ViddlerPlayer.vent.bind('restartTimeline', function (opts) {
 });
 
 // get login view
-ViddlerPlayer.vent.bind('doLogin', function () {
+ViddlerPlayer.vent.bind('doLogin', function (e) {
     login = new UserLoginView({
         tmp : '#tmp-user-login-form'
     }).render();
@@ -121,7 +121,6 @@ ViddlerPlayer.vent.bind('click .jp-seek-bar', function (e) {
 
 // get signup view
 ViddlerPlayer.vent.bind('doSignup', function () {
-    console.log('triggered signup');
     login = new UserSignupView({
         tmp : '#tmp-user-signup-form'
     }).render();
