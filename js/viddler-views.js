@@ -347,6 +347,7 @@ ie8 = function () {
                 ViddlerPlayer.vent.once('playerReady', function () {
                     that.onPlayerReady();
                 });
+                that.vP.loadVPlayer();
             });
             
         },
