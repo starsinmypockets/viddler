@@ -714,7 +714,7 @@ ie8 = function () {
         __render : function(data) {
             var data = data || {};
             this.setElement('.loginmodal');
-            this.delegateEvents();
+            //this.delegateEvents();
             this.$el.html(this.template(data));
             $('.modal-close').on('click', function (e) {
                 e.preventDefault();
@@ -731,10 +731,12 @@ ie8 = function () {
             'click #user-login-submit' : 'doLogin',
         },
         
-        doLogin : function () {
+        doLogin : function (e) {
+            e.preventDefault();
            // alert('login!');
             // do api login call here
             this.modalClose();
+            return false;
         },
         
         render : function() {
@@ -757,10 +759,12 @@ ie8 = function () {
             'click #user-signup-submit' : 'doSignup'
         },
         
-        doSignup : function () {
+        doSignup : function (e) {
+            e.preventDefault();
             //alert('signup');
             // do api signup here
             this.modalClose();
+            return false;
         },
         
         render : function() {
