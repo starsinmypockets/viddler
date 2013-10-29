@@ -95,10 +95,10 @@ ie8 = function () {
                         console.log('[Player]playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
                     }
                     
-                    // @@todo - these are ui tweaks to account for some looseness above
-                    if (timeLinePercent <= 1) {
+                    if (playBarWidth > 0) {
                         $('.jp-mega-play-bar').width(playBarWidth);
-                    } else {
+                    } 
+                    if (timeLinePercent > 1) {
                         $('.jp-mega-play-bar').width('100%');
                     }
                     
