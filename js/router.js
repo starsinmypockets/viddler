@@ -16,9 +16,21 @@ App.Router = Davis(function() {
 	this.bind('start', function(req) {
 		rainReady(function() {
 	        console.log('rainReady');
-	        $('.user-login').on('click', function () {ViddlerPlayer.vent.trigger('doLogin')});
-	        $('.user-signup').on('click', function () {ViddlerPlayer.vent.trigger('doSignup')});
-	        $('.no').on('click', function () {ViddlerPlayer.vent.trigger('noAuth')});
+	        $('.user-login').on('click', function (e) {
+	            e.preventDefault();
+	            ViddlerPlayer.vent.trigger('doLogin');
+	            return false;
+	        });
+	        $('.user-signup').on('click', function (e) {
+	            e.preventDefault();
+    	        ViddlerPlayer.vent.trigger('doSignup');
+    	        return false;
+    	    });
+	        $('.no').on('click', function (e) {
+	            e.preventDefault();
+    	        ViddlerPlayer.vent.trigger('noAuth');
+    	        return false;
+    	    });
 	       /* Session Authentication */
 	        var $doc = $(document);
 
