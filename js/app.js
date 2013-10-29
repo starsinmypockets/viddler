@@ -55,12 +55,8 @@ App.Plugins = {
 
 		LazyLoad.js(pluginScripts, function() { 
 			console.log( "[Plugin] All plugins loaded." );
-			App.Router.start(); 
+			App.Router.start();
 		});
 	}
 
 };
-
-App.init = function () {
-	App.Plugins.init();
-}
