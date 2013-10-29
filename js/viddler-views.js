@@ -180,7 +180,7 @@ ie8 = function () {
        loadCommentPopUp : function (opts) {
             var data = {},
             playerData = this.$el.jPlayer().data().jPlayer.status;
-            data.time = Math.floor(playerData.currentTime);
+            data.time = secs2time(Math.floor(playerData.currentTime));
             data.avatar = "http://placekitten.com/75/75";
             commentModal = new CreateCommentView({
                 data : data,
@@ -809,9 +809,12 @@ ie8 = function () {
         },
         
         render : function (opts) {
+            var data = {};
+            data.time = Math.floor(window.vplm.tlNow/1000);
+            if (data.time < 0) data.time = 0;
             this.setElement('#modal-container');
             //this.$el.html(this.template({time : window.vplm.tlNow}));
-            this.$el.html(_.template($("#tmp-comment-popup").html(), {time : window.vplm.tlNow}));
+            this.$el.html(_.template($("#tmp-comment-popup").html(), data));
             $('.comment-close').on('click', function (e) {
                 e.preventDefault();
                 $('#modal-outer').hide();
@@ -847,4 +850,27 @@ ie8 = function () {
         render : function () {}
     });
     
+    /**
+     * Utility
+     **/
+    var secs2time = function(seconds) {
+            var hours   = Math.floor(seconds / 3600);
+            var minutes = Math.floor((seconds - (hours * 3600)) / 60);
+            var seconds = seconds - (hours * 3600) - (minutes * 60);
+            var time = "";
+        
+            (hours !== 0) ? time = hours+":" : time = hours+":";
+            if (minutes != 0 || time !== "") {
+              minutes = (minutes < 10 && time !== "") ? "0"+minutes : String(minutes);
+            } else {
+                minutes = "00:";
+            }  
+            time += minutes+":";
+            if (seconds === 0) { 
+                time+="00";
+            } else {
+                time += (seconds < 10) ? "0"+seconds : String(seconds);
+            }
+            return time;
+        }
 })(jQuery);
