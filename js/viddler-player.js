@@ -195,7 +195,7 @@ $(document).ready(function () {
     console.log('doc ready');
 
     $(window).on('resize', function () {
-        var height = $('#jp_container_1').width()*.58;
+        var height = $('#jp_container_1').width()*.6;
         $('#jquery_jplayer_1').css({
             'min-height' : height
         });
