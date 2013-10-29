@@ -136,11 +136,11 @@ a#user-login-submit img, a#user-signup-submit img{
 	width: 60px;
 }
 .cursor { cursor: pointer; }
-#play-overlay-button {position:absolute; cursor:pointer; top:40%; width: 50px; margin-left: -25px; left: 50%;height:70px; z-index:10000; display:none;}
+#play-overlay-button {position:absolute; cursor:pointer; top:40%; margin-left: -25px; left: 50%;height:70px; z-index:10000; display:none;}
 
 @media only screen and (max-width: 480px){
 	/* Modals */
-#play-overlay-button {position:absolute; cursor:pointer; top:32%; width: 50px; height: 50px; margin-left: -25px; left: 50%; z-index:10000; display:none;}
+#play-overlay-button {position:absolute; cursor:pointer; top:32%; height: 50px; margin-left: -25px; left: 50%; z-index:10000; display:none;}
 #modal-outer {
 	background-color:rgba(255,255,255,.9); 
 	width:280px;
