@@ -664,13 +664,13 @@ ul.jp-toggles li {
 }
 
 ul.jp-toggles li a {
-	display:inline-block !important;
+	display:inline-block;
 	width:28px;
 	text-indent:-9999px;
 	line-height:100%; /* need this for IE6 */
 }
 ul.jp-toggles li a.jp-unmute{
-	display:none !important;
+	display:inline-block;
 }
 a.jp-hd{
 	background: url(../img/hd.png) no-repeat;
@@ -1072,6 +1072,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c7c7c7', end
 	position: relative;
 	top: -5px;
 }
+
+
+/************
+*************
+MEDIA QUERIES HERE
+*************
+************/
+
+
 @media only screen and (max-width: 981px){
 #mega-markers-container{
 	position: relative;
