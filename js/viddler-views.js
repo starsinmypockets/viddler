@@ -732,7 +732,7 @@ ie8 = function () {
         },
         
         doLogin : function () {
-            alert('login!');
+           // alert('login!');
             // do api login call here
             this.modalClose();
         },
@@ -758,7 +758,7 @@ ie8 = function () {
         },
         
         doSignup : function () {
-            alert('signup');
+            //alert('signup');
             // do api signup here
             this.modalClose();
         },
@@ -787,6 +787,7 @@ ie8 = function () {
         // create comment popup form and submit it
         commentSubmit : function (e) {
             e.preventDefault();
+/*
             comment = new CommentModel({
                 avatar : 'http://placekitten.com',
                 mediaElement : '###',
@@ -797,7 +798,10 @@ ie8 = function () {
             });
             // do model save here
             alert("Submit comment");
+*/
+            console.log("Comment submit");
             this.hide();
+            return false;
         },
         
         hide : function () {
