@@ -1,5 +1,3 @@
-console.log(ViddlerPlayer.browser[1]);
-
 // this catches ie8 and ff
 ie8 = function () {
     var bad = false;
@@ -14,7 +12,7 @@ ie8 = function () {
 (function ($) {
     var DEBUG = true,
         // output clock data:
-        tDEBUG = false;
+        tDEBUG = true;
 
     /* Abstract */
     window.BaseView = Backbone.View.extend({
@@ -197,7 +195,7 @@ ie8 = function () {
              this.$el.jPlayer("setMedia", data);
              // @@ this doesn't work in IE8
              this.$el.on(($.jPlayer.event.canplay), function () {
-                 console.log("JPLAYER EVENT: canplay");
+                 if (DEBUG) console.log("JPLAYER EVENT: canplay");
                  ViddlerPlayer.vent.trigger('mediaReady');
              });
          },
@@ -339,7 +337,7 @@ ie8 = function () {
             
             // wait for gui in DOM and instance player
             ViddlerPlayer.vent.once("playerGuiReady", function () {
-                console.log("[Player] Gui Ready");
+                if (DEBUG) console.log("[Player] Gui Ready");
                 that.vP = new VPlayerView({mediaEl : mediaEl});
                 
                 // wait for player, load comments and continue
@@ -395,6 +393,7 @@ ie8 = function () {
             
             // a bit of basic routing here:
             if (opts.seek) {
+                console.log('seek case', window.vplm, stepOpts);
                 this.timelineStep(stepOpts);
             } else if (tlStep === 0) {
                 // Init timeline
@@ -448,22 +447,11 @@ ie8 = function () {
             if (DEBUG) console.log("[Player] Timeline step: "+window.vplm.tlStep);
 
             window.vplm.stepStop = opts.stop;
+            that.getElapsedTime();
             
             ViddlerPlayer.vent.once('stopListenerStop', function () {
                 var i, els;
                 window.vplm.tlStep++;
-                
-                // update global elapsed time
-                els = that.timeline.mediaElements;
-                window.vplm.tlElapsed = 0;
-                for (i = 0; i < window.vplm.tlStep; i++) {
-                    function func (i) {
-                        window.vplm.tlElapsed += els[i].playheadStop - els[i].playheadStart;
-                    }
-                    
-                    func(i);
-                }
-                
                 // continue
                 that.timelinePlay();
             });
@@ -503,6 +491,19 @@ ie8 = function () {
             this.commentsView.render();
         },
         
+        // Set total  time for elsapsed mediaElements to global object
+        getElapsedTime : function () {
+            els = that.timeline.mediaElements;
+            window.vplm.tlElapsed = 0;
+            for (i = 0; i < window.vplm.tlStep; i++) {
+                function func (i) {
+                    window.vplm.tlElapsed += els[i].playheadStop - els[i].playheadStart;
+                }
+                
+                func(i);
+            }
+        },
+        
         // index timeline elements for seek events
         initTlIndex : function () {
             var mediaEls = this.timeline.mediaElements,
@@ -515,9 +516,6 @@ ie8 = function () {
                 e.preventDefault();
                 var seekPerc = e.offsetX/($(e.currentTarget).width()),
                     tlMs = seekPerc*window.vplm.tlLength;
-                
-                console.log(seekPerc);
-                console.log(tlMs);
                 that.seekTo(tlMs);
                 return false;
             });
@@ -537,14 +535,14 @@ ie8 = function () {
         
         // reinitialize and play timeline from seek point
         seekTo : function (tlMs) {
+            console.log("SEEK EVENT >>>>>>>>>>>>>>>>");
             var mediaEls = this.timeline.mediaElements,
                 seekInf = {},
-                tlIndex = window.vplm.tlIndex,
+                tlIndex = window.vplm.tlIndex,  // timeline start & stop by element
                 elapsed = 0;
 
             function func (i) {
                 if (tlMs >= tlIndex[i].start && tlMs < tlIndex[i].stop) {
-                    console.log(tlIndex[i]);
                     seekInf['step'] = i;
                     seekInf['seekTo'] =  tlMs - elapsed + mediaEls[i].playheadStart;
                     return;
@@ -560,6 +558,7 @@ ie8 = function () {
             
             // update the global tlStep
             window.vplm.tlStep = seekInf.step;
+            ViddlerPlayer.vent.off("stopListenerStop");
             this.timelinePlay({seek : true, start : seekInf.seekTo});
         },
         
@@ -591,7 +590,6 @@ ie8 = function () {
 
             // reset global player data
             window.vplm.tlReset();
-            console.log(vplm);
             that.timelinePlay();
         },
     });
@@ -790,19 +788,6 @@ ie8 = function () {
         // create comment popup form and submit it
         commentSubmit : function (e) {
             e.preventDefault();
-/*
-            comment = new CommentModel({
-                avatar : 'http://placekitten.com',
-                mediaElement : '###',
-                created : Date(),
-                title : $('.comment-form input[name=title]').val(),
-                commentText : $('.comment-form input[name=commentText]').val(),
-                playHeadPos : $('#comment-play-head-pos').val()
-            });
-            // do model save here
-            alert("Submit comment");
-*/
-            console.log("Comment submit");
             this.hide();
             return false;
         },

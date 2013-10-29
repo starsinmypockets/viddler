@@ -7,7 +7,8 @@ loadplaylist
                 Load Player
                     Player ready 
                         Timeline Play
-                            Init timeline
+                            timelineInit
+                                setMedia <-- not getting mediaready here
                                 timelineStep
                                     [...]
                             timelineStep

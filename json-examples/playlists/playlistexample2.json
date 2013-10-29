@@ -10,7 +10,7 @@
         "title": "h264 video of week",
         "position": 0,
         "zLayer": 0,
-        "playheadStart": 0,
+        "playheadStart": 70000,
         "playheadStop": 80000,
         "length": 80000,
         "elementType": "m4v",
