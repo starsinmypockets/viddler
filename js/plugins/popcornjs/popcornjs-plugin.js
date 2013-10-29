@@ -4298,8 +4298,9 @@ if(Modernizr.video) {
 
     var ctxContainer = context.container = document.createElement( "div" ),
         style = ctxContainer.style,
-        media = context.media;
 
+        media = context.media;
+        context.container.className = "viddlerSubtitle";
     var updatePosition = function() {
       var position = context.position();
       // the video element must have height and width defined
@@ -4329,9 +4330,7 @@ if(Modernizr.video) {
 
     manifest: {
       about: {
-        name: "Popcorn Text Plugin",
-        version: "0.1",
-        author: "@humphd"
+       
       },
       options: {
         start: {
@@ -4370,6 +4369,7 @@ if(Modernizr.video) {
           container = options._container = document.createElement( "div" );
 
       container.style.display = "none";
+      container.className="viddlerSubtitle";
 
       if ( options.target ) {
         // Try to use supplied target
@@ -5300,8 +5300,9 @@ var googleCallback;
 
         var ctxContainer = context.container = document.createElement( "div" ),
             style = ctxContainer.style,
-            media = context.media;
 
+            media = context.media;
+            context.container.className = "viddlerSubtitle";
         var updatePosition = function() {
           var position = context.position();
           // the video element must have height and width defined
