@@ -277,11 +277,12 @@ ie8 = function () {
         getMediaElementComments : function (opts) {
             var that = this,
                 comments = {};
-                
+            console.log(opts);        
             commentCollection = new CommentCollection([], {media_element : opts.id});
             commentCollection.fetch({
                 success : function (collection, response) {
                      that.comments = collection.toJSON();
+                     console.log(that.comments);
                 },
                 error : function (collection, response) {
                     if (DEBUG) console.log("[Player] Error loading comments");
@@ -363,6 +364,7 @@ ie8 = function () {
             if (DEBUG) console.log('[Player] Player ready');
             if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
             markers = new CommentMarkerView();
+            console.log(this.comments);
             markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
             that.timelinePlay();
             $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
