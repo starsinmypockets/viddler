@@ -10,10 +10,9 @@ ie8 = function () {
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
 (function ($) {
-    var DEBUG = true,
+    var DEBUG = false,
         // output clock data:
-        tDEBUG = true;
-
+        tDEBUG = false;
     /* Abstract */
     window.BaseView = Backbone.View.extend({
         id : 'content',
@@ -62,6 +61,7 @@ ie8 = function () {
             this.__init(opts);
             this.mediaEl = opts.mediaEl;
         },
+        
         clearGuiTime : function () {
             $('.viddler-current-time').html(this.secs2time(Math.floor(0)));  
         },
@@ -95,7 +95,8 @@ ie8 = function () {
                         console.log('[Player]playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
                     }
                     
-                    if (playBarWidth > 0) {
+                    // override for drag event on playbar
+                    if (playBarWidth > 0 && !window.vDrags) {
                         $('.jp-mega-play-bar').width(playBarWidth);
                     } 
                     if (timeLinePercent > 1) {
@@ -513,13 +514,64 @@ ie8 = function () {
             
             // bind seek behavior to progress bar
             $('.bar .jp-progress').on('click', function (e) {
+                if (window.vDrags) return false; // don't do click if we're dragging the scrubber
+                console.log('this');
                 e.preventDefault();
                 var seekPerc = e.offsetX/($(e.currentTarget).width()),
                     tlMs = seekPerc*window.vplm.tlLength;
                 that.seekTo(tlMs);
                 return false;
             });
-
+            
+            // drag events for progress bar
+            $('#time').mousedown(function (e) {
+                e.preventDefault();
+               window.vDrags = true
+               console.log('mouseDown', e);
+            });
+            
+            $(document).mousemove(function (e) {
+                e.preventDefault();
+                // make sure we're dragging, and we're targeting appropriate elements
+                if (!window.vDrags) return;
+                if (e.target.className !== "jp-progress" && e.target.className !== "jp-mega-play-bar") return;
+                if (e.target.className === "jp-progress") {
+                    width = (e.offsetX+'px');
+                }
+                if (e.target.className === "jp-mega-play-bar") {
+                    width = (e.offsetX+'px');        
+                }
+                console.log(e);
+                console.log(width);
+                $('.jp-mega-play-bar').css({
+                    width : e.offsetX+'px'
+                });
+            });
+            
+            $(document).mouseup(function (e) {
+                var seekPerc,
+                    width;
+                
+                e.preventDefault();
+                event.stopImmediatePropagation();
+                console.log('UP', window.vDrags);
+                console.log(e);
+                if (window.vDrags) {
+                    if (e.target.id === "time") {
+                        // play the segment on mouseup
+                        seekPerc = $('.jp-mega-play-bar').width()/$('.bar .jp-progress').width();
+                        tlMs = seekPerc*window.vplm.tlLength;
+                        console.log('mouseup', seekPerc, tlMs);
+                        that.seekTo(tlMs);
+                    }
+                    setTimeout(function () {
+                        window.vDrags = false;
+                    }, 500);
+                    return false;
+                } 
+                return false;
+             });
+            
             for (var i = 0; i < tlSteps; i++) {
                 function func (i) {
                     tlIndex[i] = {};
@@ -559,6 +611,7 @@ ie8 = function () {
             // update the global tlStep
             window.vplm.tlStep = seekInf.step;
             ViddlerPlayer.vent.off("stopListenerStop");
+            clearInterval(this.timeListenerIntv);
             this.timelinePlay({seek : true, start : seekInf.seekTo});
         },
         
