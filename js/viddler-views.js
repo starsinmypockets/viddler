@@ -249,7 +249,7 @@ ie8 = function () {
             // calculate track info
             data.elems = opts.mediaElements;
             _.each(data.elems, function (elem) {
-                elem.width = ((elem.length / window.vplm.tlLength)*100).toFixed(2);
+                elem.width = (((elem.playheadStop - elem.playheadStart) / window.vplm.tlLength)*100).toFixed(2);
             });
             
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
