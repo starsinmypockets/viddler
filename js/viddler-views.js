@@ -10,10 +10,9 @@ ie8 = function () {
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
 (function ($) {
-    var DEBUG = true,
+    var DEBUG = false,
         // output clock data:
-        tDEBUG = true;
-
+        tDEBUG = false;
     /* Abstract */
     window.BaseView = Backbone.View.extend({
         id : 'content',
@@ -62,6 +61,7 @@ ie8 = function () {
             this.__init(opts);
             this.mediaEl = opts.mediaEl;
         },
+        
         clearGuiTime : function () {
             $('.viddler-current-time').html(this.secs2time(Math.floor(0)));  
         },
@@ -95,10 +95,11 @@ ie8 = function () {
                         console.log('[Player]playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
                     }
                     
-                    // @@todo - these are ui tweaks to account for some looseness above
-                    if (timeLinePercent <= 1) {
+                    // override for drag event on playbar
+                    if (playBarWidth > 0 && !window.vDrags) {
                         $('.jp-mega-play-bar').width(playBarWidth);
-                    } else {
+                    } 
+                    if (timeLinePercent > 1) {
                         $('.jp-mega-play-bar').width('100%');
                     }
                     
@@ -248,7 +249,7 @@ ie8 = function () {
             // calculate track info
             data.elems = opts.mediaElements;
             _.each(data.elems, function (elem) {
-                elem.width = ((elem.length / window.vplm.tlLength)*100).toFixed(2);
+                elem.width = (((elem.playheadStop - elem.playheadStart) / window.vplm.tlLength)*100).toFixed(2);
             });
             
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
@@ -276,11 +277,12 @@ ie8 = function () {
         getMediaElementComments : function (opts) {
             var that = this,
                 comments = {};
-                
+            console.log(opts);        
             commentCollection = new CommentCollection([], {media_element : opts.id});
             commentCollection.fetch({
                 success : function (collection, response) {
                      that.comments = collection.toJSON();
+                     console.log(that.comments);
                 },
                 error : function (collection, response) {
                     if (DEBUG) console.log("[Player] Error loading comments");
@@ -362,6 +364,7 @@ ie8 = function () {
             if (DEBUG) console.log('[Player] Player ready');
             if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
             markers = new CommentMarkerView();
+            console.log(this.comments);
             markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
             that.timelinePlay();
             $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
@@ -513,13 +516,64 @@ ie8 = function () {
             
             // bind seek behavior to progress bar
             $('.bar .jp-progress').on('click', function (e) {
+                if (window.vDrags) return false; // don't do click if we're dragging the scrubber
+                console.log('this');
                 e.preventDefault();
                 var seekPerc = e.offsetX/($(e.currentTarget).width()),
                     tlMs = seekPerc*window.vplm.tlLength;
                 that.seekTo(tlMs);
                 return false;
             });
-
+            
+            // drag events for progress bar
+            $('#time').mousedown(function (e) {
+                e.preventDefault();
+               window.vDrags = true
+               console.log('mouseDown', e);
+            });
+            
+            $(document).mousemove(function (e) {
+                e.preventDefault();
+                // make sure we're dragging, and we're targeting appropriate elements
+                if (!window.vDrags) return;
+                if (e.target.className !== "jp-progress" && e.target.className !== "jp-mega-play-bar") return;
+                if (e.target.className === "jp-progress") {
+                    width = (e.offsetX+'px');
+                }
+                if (e.target.className === "jp-mega-play-bar") {
+                    width = (e.offsetX+'px');        
+                }
+                console.log(e);
+                console.log(width);
+                $('.jp-mega-play-bar').css({
+                    width : e.offsetX+'px'
+                });
+            });
+            
+            $(document).mouseup(function (e) {
+                var seekPerc,
+                    width;
+                
+                e.preventDefault();
+                event.stopImmediatePropagation();
+                console.log('UP', window.vDrags);
+                console.log(e);
+                if (window.vDrags) {
+                    if (e.target.id === "time") {
+                        // play the segment on mouseup
+                        seekPerc = $('.jp-mega-play-bar').width()/$('.bar .jp-progress').width();
+                        tlMs = seekPerc*window.vplm.tlLength;
+                        console.log('mouseup', seekPerc, tlMs);
+                        that.seekTo(tlMs);
+                    }
+                    setTimeout(function () {
+                        window.vDrags = false;
+                    }, 500);
+                    return false;
+                } 
+                return false;
+             });
+            
             for (var i = 0; i < tlSteps; i++) {
                 function func (i) {
                     tlIndex[i] = {};
@@ -559,6 +613,7 @@ ie8 = function () {
             // update the global tlStep
             window.vplm.tlStep = seekInf.step;
             ViddlerPlayer.vent.off("stopListenerStop");
+            clearInterval(this.timeListenerIntv);
             this.timelinePlay({seek : true, start : seekInf.seekTo});
         },
         
