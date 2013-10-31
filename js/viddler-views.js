@@ -10,7 +10,7 @@ ie8 = function () {
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
 (function ($) {
-    var DEBUG = true,
+    var DEBUG = false,
         // output clock data:
         tDEBUG = false;
     /* Abstract */
@@ -279,13 +279,10 @@ ie8 = function () {
         getMediaElementComments : function (opts) {
             var that = this,
                 comments = {};
-            console.log(opts);        
             commentCollection = new CommentCollection([], {media_element : opts.id});
             commentCollection.fetch({
                 success : function (collection, response) {
-                    console.log('comment id',opts.id);
-                    console.log(collection);
-                    commentsView = new CommentsListView({comments : collection.toJSON()});
+                    commentsView = new CommentsListView({collection : collection});
                     commentsView.render();
                 },
                 error : function (collection, response) {
@@ -367,7 +364,6 @@ ie8 = function () {
             if (DEBUG) console.log('[Player] Player ready');
             if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
             markers = new CommentMarkerView();
-            console.log(this.comments);
             markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
             that.timelinePlay();
             $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
@@ -399,7 +395,6 @@ ie8 = function () {
             
             // a bit of basic routing here:
             if (opts.seek) {
-                console.log('seek case', window.vplm, stepOpts);
                 this.timelineStep(stepOpts);
             } else if (tlStep === 0) {
                 // Init timeline
@@ -541,6 +536,7 @@ ie8 = function () {
                 if (e.target.className === "jp-mega-play-bar") {
                     width = (e.offsetX+'px');        
                 }
+                console.log('UP', window.vDrags);
                 console.log(e);
                 console.log(width);
                 $('.jp-mega-play-bar').css({
@@ -554,9 +550,8 @@ ie8 = function () {
                 
                 e.preventDefault();
                 event.stopImmediatePropagation();
-                console.log('UP', window.vDrags);
-                console.log(e);
                 if (window.vDrags) {
+                    console.log('mouseUp drag event');
                     if (e.target.id === "time") {
                         // play the segment on mouseup
                         seekPerc = $('.jp-mega-play-bar').width()/$('.bar .jp-progress').width();
@@ -709,25 +704,77 @@ ie8 = function () {
             // now render this nonsense 
             data.markers = markers;
             if (DEBUG) console.log(data);
-            $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));                
+            $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));
         },
     });
     
     CommentsListView = BaseView.extend({
         el : "#comments-container",
-        comments : {},
+        comments : {}, // @@DEPRECATE
+        collection : {},
+        curPage : 0,
+        numPages : 0,
+        perPage : 10,
+        events : {
+            'click .page-next' : 'doNext',
+            'click .page-prev' : 'doPrev',
+            'click .page-number' : 'doPage'
+        },
         
         initialize : function (opts) {
             opts = opts || {};
             opts.tmp = opts.tmp || "#tmp-comments";
-            this.comments = opts.comments || {};
+            this.collection = opts.collection;
+            this.comments = this.collection.toJSON();
+            this.numPages = this.collection.length / this.perPage;
             this.__init(opts);
         },
         
+        doNext : function (e) {
+            e.preventDefault();
+            if (this.curPage < this.numPages) {
+                this.curPage ++;
+                this.render();
+            }
+        },
+        
+        doPrev : function (e) {
+            e.preventDefault();
+            if (this.curPage > 0) {
+                this.curPage --;
+                this.render();
+            }
+        },
+        
+        doPage : function (e) {
+            e.preventDefault();
+            console.log(e); 
+            console.log(e.target.dataset.page);
+            this.curPage = parseInt(e.target.dataset.page);
+            this.render();
+        },
+        
         render : function () {
-            data = {};
-            data.items = this.comments;
+            var data = {};
+            data.items = this.comments.slice(this.curPage, this.curPage+this.perPage);
+            data.total = this.collection.length;
+            console.log(this.curPage, this.curPage+this.perPage, data)
             this.$el.html(this.template(data));
+            this.renderPager();
+        },
+        
+        renderPager : function () {
+            var data = {};
+            data.els = Math.floor(this.collection.length/this.perPage);
+            this.$('#comments-pager-container').html(_.template($("#tmp-comments-pager").html(), data));
+        },
+        
+        // bind events on subview with jQuery
+        bindEvents : function () {
+            var that = this;
+            ViddlerPlayer.vent.once('click .page-next', function (e) {
+                console.log('ugh');
+            })
         }
     });
     

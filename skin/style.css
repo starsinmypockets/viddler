@@ -79,6 +79,10 @@ video#jp_video_0, img#jp_poster_0, #jquery_jplayer_1{
 .sprite {font-weight:bold; background-color:#E2F5AB; padding:.4em; border-radius:2em; opacity:0.4;
 filter:alpha(opacity=40);}
 
+/* pager */
+#comment-pager {margin:10px}
+.pager-el {display:block; width:10px; text-align:center; float:left; margin:5px}
+
 /* Modals */
 
 #modal-outer {

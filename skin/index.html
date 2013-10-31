@@ -92,7 +92,7 @@
   <div class="comments clearfix" id="comments-container">
         <div class="row clearfix">
             <a href="#" class="also">Also Viewed</a>
-            <div class="comments2">Comments <span class="number">(<%= items.length %>)</span></div>
+            <div class="comments2">Comments <span class="number">(<%= total %>)</span></div>
             <img src="img/viddler.png" class="logo" alt="Viddler">
         </div>
         <div class="row clearfix">
@@ -110,7 +110,18 @@
                 </div>
             </div>
         <% }); %>
+        <div id="comments-pager-container"></div>
   </div>
+</script>
+
+<script type="text/template" id="tmp-comments-pager">
+    <div id="comment-pager" class="vid-pager">
+        <div class="page-prev pager-el cursor"><</div>
+            <% for (i = 0; i < els; i++ ) { %>
+                <span class="pager-el page-number cursor" data-page="<%= i %>"><%= i+1 %></span>
+            <% } %>
+        <div class="page-next pager-el cursor">></div>
+    </div>
 </script>
 
 <script type="text/template" id="tmp-jplayer-gui">
