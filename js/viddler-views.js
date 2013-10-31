@@ -10,7 +10,7 @@ ie8 = function () {
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
 (function ($) {
-    var DEBUG = false,
+    var DEBUG = true,
         // output clock data:
         tDEBUG = false;
     /* Abstract */
@@ -365,7 +365,7 @@ ie8 = function () {
             if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
             markers = new CommentMarkerView();
             console.log(this.comments);
-            markers.renderCommentMarkers({comments : that.comments, jqEl : "#mega-markers-container"});
+            markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
             that.timelinePlay();
             $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
             that.vP.clearGuiTime();
@@ -651,7 +651,7 @@ ie8 = function () {
     
     // orange comment markers
     CommentMarkerView = BaseView.extend({
-        _calcCommentMarkers : function (opts) {
+        _calcMarkerPos : function () {
             var markerArray, numbMarkers, markerSecs,
                 that=this,
             
@@ -680,9 +680,9 @@ ie8 = function () {
         // or player values will be empty
         renderCommentMarkers : function (opts) {
             var that = this,
-                markerArray = this._calcCommentMarkers(opts).markerArray,
-                numbMarkers = this._calcCommentMarkers(opts).numbMarkers,
-                comments = opts.comments,
+                markerArray = this._calcMarkerPos().markerArray,
+                numbMarkers = this._calcMarkerPos().numbMarkers,
+                commentSpots = opts.commentSpots,
                 markers = [],
                 j = 0,
                 pos = 1,
@@ -690,18 +690,18 @@ ie8 = function () {
                 
             // now build array of populated marker positions for rendering
             if (DEBUG) {
-                console.log(markerArray);
-                console.log(comments);
+                console.log('commentSpots:', commentSpots);
+                console.log('markerArray:', markerArray);
                 console.log(opts);                
             }
             _.each(markerArray, function(spot) {
-                _.each(comments, function (comment) {
-                    if (comment.time*1000 >= spot.start && comment.time*1000 <= spot.stop) {
+                _.each(commentSpots, function (cPos) {
+                    if (cPos*1000 >= spot.start && cPos*1000 <= spot.stop) {
                         markers[j] = {};
                         markers[j].start = spot.start;
                         markers[j].stop = spot.stop;
                         markers[j].pos = pos;
-                        markers[j].left = (100/numbMarkers)*pos; // express the left value as a percent
+                        markers[j].left = ((100/numbMarkers)*pos)-(100/numbMarkers); // express the left value as a percent - subtract one width
                         j++;
                     }
                 });
