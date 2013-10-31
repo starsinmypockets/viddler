@@ -269,7 +269,7 @@ ie8 = function () {
     PlaylistView = BaseView.extend({
         el : "#jp_container_1",
         timeline : {},
-        comments : [],
+        stepComments : [],
         
         initialize : function (opts) {
             this.__init(opts);
@@ -283,8 +283,10 @@ ie8 = function () {
             commentCollection = new CommentCollection([], {media_element : opts.id});
             commentCollection.fetch({
                 success : function (collection, response) {
-                     that.comments = collection.toJSON();
-                     console.log(that.comments);
+                    console.log('comment id',opts.id);
+                    console.log(collection);
+                    commentsView = new CommentsListView({comments : collection.toJSON()});
+                    commentsView.render();
                 },
                 error : function (collection, response) {
                     if (DEBUG) console.log("[Player] Error loading comments");
@@ -345,7 +347,6 @@ ie8 = function () {
                 that.vP = new VPlayerView({mediaEl : mediaEl});
                 
                 // wait for player, load comments and continue
-                that.getMediaElementComments({id : that.model.id});
                 ViddlerPlayer.vent.once('playerReady', function () {
                     that.onPlayerReady();
                 });
@@ -412,41 +413,6 @@ ie8 = function () {
             }
         },
         
-        timelineInit : function (stepOpts) {
-            var that = this;
-            stepOpts.init = true;
-            window.vplm.stepStop = stepOpts.stop;
-        
-            this.vP.setMedia({
-                type : stepOpts.mediaEl.elementType,
-                url : stepOpts.mediaEl.elementURL
-            });
-            
-            // @@ REFACTOR so this isn't repeate here and in timelinestep
-            // set media and go
-            ViddlerPlayer.vent.once("mediaReady", function () {
-                if (DEBUG) console.log("[Player] Media ready");
-                that.vP.runTimeListener();
-                that.vP.runStopListener();
-            });
-
-            // load step comments
-            stepComments = this.getStepComments({id : stepOpts.mediaEl.id});
-            this.commentsView = new CommentsListView({comments : stepComments});
-            this.commentsView.render();
-            
-            $('#play-overlay-button').show();
-            // ios needs user initiated action to enable timeline js behaviors
-            $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
-                e.stopImmediatePropagation();
-                e.preventDefault();
-                that.timelineStep(stepOpts);
-                $('#play-overlay-button').hide();
-                $('.jp-play').unbind('click.init');
-                return false;
-            });
-        },
-        
         timelineStep : function (opts) {
             var that = this;
             if (DEBUG) console.log("[Player] Timeline step: "+window.vplm.tlStep);
@@ -491,11 +457,41 @@ ie8 = function () {
             }
             
             // load step comments
-            stepComments = this.getStepComments({id : opts.mediaEl.id});
-            this.commentsView = new CommentsListView({comments : stepComments});
-            this.commentsView.render();
+            this.getMediaElementComments({id : opts.mediaEl.id});
         },
         
+        timelineInit : function (stepOpts) {
+            var that = this;
+            stepOpts.init = true;
+            window.vplm.stepStop = stepOpts.stop;
+        
+            this.vP.setMedia({
+                type : stepOpts.mediaEl.elementType,
+                url : stepOpts.mediaEl.elementURL
+            });
+            
+            // @@ REFACTOR so this isn't repeate here and in timelinestep
+            // set media and go
+            ViddlerPlayer.vent.once("mediaReady", function () {
+                if (DEBUG) console.log("[Player] Media ready");
+                that.vP.runTimeListener();
+                that.vP.runStopListener();
+            });
+
+            // load step comments
+            this.getMediaElementComments({id : stepOpts.mediaEl.id});
+            
+            $('#play-overlay-button').show();
+            // ios needs user initiated action to enable timeline js behaviors
+            $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                that.timelineStep(stepOpts);
+                $('#play-overlay-button').hide();
+                $('.jp-play').unbind('click.init');
+                return false;
+            });
+        },
         // Set total  time for elsapsed mediaElements to global object
         getElapsedTime : function () {
             els = that.timeline.mediaElements;
