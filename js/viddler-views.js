@@ -750,15 +750,18 @@ ie8 = function () {
             e.preventDefault();
             console.log(e); 
             console.log(e.target.dataset.page);
-            this.curPage = parseInt(e.target.dataset.page);
+            this.curPage = parseInt(e.target.dataset.page,10);
             this.render();
         },
         
         render : function () {
-            var data = {};
-            data.items = this.comments.slice(this.curPage, this.curPage+this.perPage);
+            var data = {},
+                elsStart = this.curPage*this.perPage,
+                elsStop = elsStart+this.perPage;
+                
+            data.items = this.comments.slice(elsStart, elsStop);
             data.total = this.collection.length;
-            console.log(this.curPage, this.curPage+this.perPage, data)
+            console.log(this.curPage, elsStart, elsStop, data)
             this.$el.html(this.template(data));
             this.renderPager();
         },
@@ -766,6 +769,9 @@ ie8 = function () {
         renderPager : function () {
             var data = {};
             data.els = Math.floor(this.collection.length/this.perPage);
+            data.first = (parseInt(this.curPage) === 0);
+            data.last = (this.curPage === this.numPages-1);
+            console.log(data);
             this.$('#comments-pager-container').html(_.template($("#tmp-comments-pager").html(), data));
         },
         

@@ -116,11 +116,15 @@
 
 <script type="text/template" id="tmp-comments-pager">
     <div id="comment-pager" class="vid-pager">
-        <div class="page-prev pager-el cursor"><</div>
+        <% if (!first) { %>
+            <div class="page-prev pager-el cursor"><</div>
+        <% } %>
             <% for (i = 0; i < els; i++ ) { %>
                 <span class="pager-el page-number cursor" data-page="<%= i %>"><%= i+1 %></span>
             <% } %>
-        <div class="page-next pager-el cursor">></div>
+         <% if (!last) { %>
+         <div class="page-next pager-el cursor">></div>
+        <% } %>
     </div>
 </script>
 
