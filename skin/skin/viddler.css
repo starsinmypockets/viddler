@@ -1631,6 +1631,7 @@ a.jp-play:hover {
 }
 a.jp-pause {
 	background: url("../img/mobile/pause.png") no-repeat;
+	display: none;
 }
 a.jp-pause:hover {
 	background: url("../img/mobile/pausehover.png") no-repeat;
@@ -1640,52 +1641,98 @@ div.jp-play-bar {
 }
 a.jp-mute {
 	background: url("../img/mobile/volume.png") no-repeat;
+		display:none !important;
 }
 a.jp-mute:hover {
 	background: url("../img/volumehover.png") no-repeat;
+		display:none !important;
 }
 a.jp-unmute {
 	background: url("../img/mute.png")no-repeat;
+		display:none !important;
 }
 a.jp-unmute:hover {
 	background: url("../img/mobile/mutehover.png")no-repeat;
+		display:none !important;
 }
 div.jp-video a.jp-volume-max {
 	background: url("../img/mobile/maxvolume.png") no-repeat;
+		display:none !important;
 }
 div.jp-video a.jp-volume-max:hover {
 	background: url("../img/mobile/maxvolumehover.png") no-repeat;
+	display:none !important;
 }
 
 div.jp-volume-bar {
 	background: url("../img/mobile/level2.png") repeat-x;
+		display:none !important;
 }
 div.jp-volume-bar-value {
 	background: url("../img/mobile/level.png") repeat-x;
+		display:none !important;
 }
 
 a.jp-hd{
 	background: url(../img/mobile/hd.png) no-repeat;
+	-webkit-background-size: 33px;
+	background-size: 33px;
+	width: 33px !important;
+	height: 23px !important;
+	position: relative;
+	left: -5px;
 }
 a.jp-hd:hover{
 	background: url(../img/mobile/hdhover.png) no-repeat;
+	-webkit-background-size: 33px;
+	background-size: 33px;
+	width: 33px !important;
+	height: 23px !important;
+	position: relative;
+	left: -5px;
 }
 a.jp-comment{
 	background: url('../img/mobile/comment.png');
+	-webkit-background-size: 24px;
+	background-size: 24px;
+	width: 24px !important;
+	height: 23px !important;
+	position: relative;
+	top: 6px;
 }
 
 a.jp-comment:hover{
 	background: url('../img/mobile/commenthover.png');
+	-webkit-background-size: 24px;
+	background-size: 24px;
+	width: 24px !important;
+	height: 23px !important;
+	position: relative;
 }
 
 a.jp-cc {
+	height:23px !important;
+	width: 27px !important;
 	background: url("../img/mobile/cc.png") no-repeat;
+	-webkit-background-size: 27px;
+	background-size: 27px;
+	position: relative;
+	left: 5px;
+	top: 1px;
 }
 a.jp-cc:hover {
+	height:23px !important;
+	width: 27px !important;
 	background: url("../img/mobile/cchover.png") no-repeat;
+	-webkit-background-size: 27px;
+	background-size: 27px;
 }
 a.jp-ccOff {
 	background: url("../img/mobile/ccOff.png")no-repeat;
+	display: none;
+	height: 22px !important;
+	width: 23px !important;
+	display:none !important;
 }
 a.jp-ccOff:hover {
 	background: url("../img/mobile/ccOffhover.png")no-repeat;
@@ -1694,17 +1741,42 @@ a.jp-ccOff:hover {
 
 a.jp-full-screen {
 	background: url("../img/mobile/fullscreen.png") no-repeat;
+	-webkit-background-size: 23px;
+	background-size: 23px;
+	height: 23px !important;
+	width: 23px !important;
+	position: relative;
+	left: 5px;
 }
 
 a.jp-full-screen:hover {
 	background: url("../img/mobile/fullscreenhover.png") no-repeat;
+	-webkit-background-size: 23px;
+	background-size: 23px;
+	height: 23px !important;
+	width: 23px !important;
+	position: relative;
+	left: 5px;
 }
 a.jp-doohickey{
 	background: url(../img/mobile/doohickey.png) no-repeat;
+	-webkit-background-size: 19px;
+	background-size: 19px;
+	width: 19px !important;
+	height: 23px !important;
+	position: relative;
+	left: -12px;
 }
 a.jp-doohickey:hover{
 	background: url(../img/mobile/doohickeyhover.png) no-repeat;
+		-webkit-background-size: 19px;
+	background-size: 19px;
+	width: 19px !important;
+	height: 23px !important;
+	position: relative;
+	left: -12px;
 }
+
 }
 
 
