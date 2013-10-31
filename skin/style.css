@@ -73,6 +73,7 @@ video#jp_video_0, img#jp_poster_0, #jquery_jplayer_1{
 /* account */
 /* #account-container {margin:2em; position: absolute; z-index: 99999999; top: 0px; left: -250px;} */
 
+#load-wait {position:absolute; top:44%; left:50%; z-index:10000}
 
 /* Sprites */
 .sprite {font-weight:bold; background-color:#E2F5AB; padding:.4em; border-radius:2em; opacity:0.4;
@@ -180,6 +181,4 @@ filter:alpha(opacity=40);}
 	top: -10px;
 	right: -10px;
 	float:right;
-}
-
 }

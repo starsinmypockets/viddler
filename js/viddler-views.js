@@ -190,6 +190,7 @@ ie8 = function () {
         
          // Player controls 
          setMedia : function (opts) {
+             $('#load-wait').show();
              var data = {},
                 that = this;
              data[opts.type] = opts.url;
@@ -197,6 +198,7 @@ ie8 = function () {
              // @@ this doesn't work in IE8
              this.$el.on(($.jPlayer.event.canplay), function () {
                  if (DEBUG) console.log("JPLAYER EVENT: canplay");
+                 $('#load-wait').hide();
                  ViddlerPlayer.vent.trigger('mediaReady');
              });
          },
