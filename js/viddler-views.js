@@ -464,7 +464,6 @@ ie8 = function () {
                     if (DEBUG) console.log("[Player] Media ready");
                     that.vP.runTimeListener();
                     that.vP.runStopListener();
-                    that.vP.play({start : opts.start/1000});
                 });
                 this.vP.setMedia({
                     type : opts.mediaEl.elementType,
