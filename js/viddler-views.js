@@ -211,17 +211,18 @@ ie8 = function () {
         
          // Player controls 
          setMedia : function (opts) {
-             if (!this.ie8) {
+            var data = {},
+                that = this;
+                
+            if (!this.ie8) {
                  $('#load-wait').show();
              }
-             var data = {},
-                that = this;
              data[opts.type] = opts.url;
              this.$el.jPlayer("setMedia", data);
              // @@ this doesn't work in IE8
-             this.$('video').attr('oncanplay', "console.log('CANNNNN'); $('#load-wait').hide(); ViddlerPlayer.vent.trigger('mediaReady');");
+             //this.$('video').attr('oncanplay', "console.log('CANNNNN'); $('#load-wait').hide(); ViddlerPlayer.vent.trigger('mediaReady');");
              
-             if (!ie8) {
+             if (!this.ie8) {
                  this.$el.on(($.jPlayer.event.canplay), function () {
                      if (DEBUG) console.log("JPLAYER EVENT: canplay");
                      $('#load-wait').hide();
@@ -406,16 +407,9 @@ ie8 = function () {
             if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
             markers = new CommentMarkerView();
             markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
-            that.timelinePlay();
+            this.timelinePlay();
             $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
-            that.vP.clearGuiTime();
-/*
-            setPlayerHeight();
-            this.$el.onresize = function(){
-                if(timeOut != null) clearTimeout(timeOut);
-                timeOut = setTimeout(setPlayerHeight, 100);
-            }
-*/
+            this.vP.clearGuiTime();
         },
         
         // do timeline step queue-ing
@@ -465,8 +459,6 @@ ie8 = function () {
             
             this.vP.setMediaEl(opts.mediaEl);
             
-            // @@ REFACTOR - this is ugly - need to abstract this mediaready stuff
-            // on first step media is preloaded and user initiates click
             if (!opts.init) {
                 // set media and go
                 ViddlerPlayer.vent.once("mediaReady", function () {
@@ -484,12 +476,7 @@ ie8 = function () {
             }
             
             if (opts.mediaEl.subtitleSrc && !ie8) {
-                // clear popcorn events from previous step
-                if (that.pop.hasOwnProperty('destroy')) {
-                    that.pop.destroy();
-                }
-                // add subtitles
-                that.pop.parseSRT(opts.mediaEl.subtitleSrc);
+                this.doSubtitles(opts.mediaEl.subtitleSrc);
             }
             
             // load step comments
@@ -528,6 +515,18 @@ ie8 = function () {
                 return false;
             });
         },
+        
+        doSubtitles : function (subtitleSrc) {
+            if (!this.ie8) {
+                // clear popcorn events from previous step
+                if (this.pop.hasOwnProperty('destroy')) {
+                    this.pop.destroy();
+                }
+                // add subtitles
+                this.pop.parseSRT(subtitleSrc);
+            }
+        },
+        
         // Set total  time for elsapsed mediaElements to global object
         getElapsedTime : function () {
             els = that.timeline.mediaElements;
