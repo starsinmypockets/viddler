@@ -221,11 +221,16 @@ ie8 = function () {
              // @@ this doesn't work in IE8
              this.$('video').attr('oncanplay', "console.log('CANNNNN'); $('#load-wait').hide(); ViddlerPlayer.vent.trigger('mediaReady');");
              
-             this.$el.on(($.jPlayer.event.canplay), function () {
-                 if (DEBUG) console.log("JPLAYER EVENT: canplay");
-                 $('#load-wait').hide();
+             if (!ie8) {
+                 this.$el.on(($.jPlayer.event.canplay), function () {
+                     if (DEBUG) console.log("JPLAYER EVENT: canplay");
+                     $('#load-wait').hide();
+                     ViddlerPlayer.vent.trigger('mediaReady');
+                 });
+             } else {
+                 if (DEBUG) console.log("IE8 / FF setMedia");
                  ViddlerPlayer.vent.trigger('mediaReady');
-             });
+             }
          },
          
          play : function (opts) {
