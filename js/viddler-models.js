@@ -39,7 +39,16 @@
         },
 
         url : function () {
+            //return '../json-examples/playlists/needloginresponse.json';
             return '../json-examples/playlists/playlistexample2.json';
+        },
+        parse : function (response, options) {
+            var that = this;
+            console.log(response);
+            if (response.gate) {
+                that.gate = response.gate;
+            }
+            return response;
         },
         
         addComment : function (opts) {

@@ -10,7 +10,7 @@ ie8 = function () {
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
 (function ($) {
-    var DEBUG = false,
+    var DEBUG = true,
         // output clock data:
         tDEBUG = false;
     /* Abstract */
@@ -29,7 +29,15 @@ ie8 = function () {
             this.vent = opts.vent; 
         },
         
+        ie8 : function () {
+            var bad = false;
+            if (ViddlerPlayer.browser[0] === "Firefox") bad = true;
+            if (ViddlerPlayer.browser[0] === "MSIE" && ViddlerPlayer.browser[1].indexOf(8) === 0) bad = true;
+            return bad;
+        }(),
+        
         initialize : function (opts) {
+            if (DEBUG) console.log('IE8 :', this.ie8)
             this.__init(opts);
         },
         
@@ -151,23 +159,36 @@ ie8 = function () {
         },
         
         loadVPlayer : function (opts) {
-            var that = this;
-            this.$el.jPlayer({
-                ready: function () {
-                    // bind events once player is ready
-                    if (DEBUG) {
-                        $('#inspector').jPlayerInspector({
-                            jPlayer : $("#jquery_jplayer_1")
-                        });
-                    }
-                    ViddlerPlayer.vent.trigger("playerReady");
+            var that = this,
+                jPData = {
+                    ready: function () {
+                        // bind events once player is ready
+                        if (DEBUG) {
+                            $('#inspector').jPlayerInspector({
+                                jPlayer : $("#jquery_jplayer_1")
+                            });
+                        }
+                        ViddlerPlayer.vent.trigger("playerReady");
+                    },
+                    swfPath: "../js/vendor/",
+                    supplied: "m4v",
+                    backgroundColor: '#grey',
+                    errorAlerts : true,
+                    solution : "html, flash",
                 },
-                swfPath: "../js/vendor/",
-                supplied: "m4v",
-                backgroundColor: '#ABCDEE',
-                errorAlerts : true,
-                solution : "html, flash"
-            });
+                width,
+                height;
+
+                
+            if (this.ie8) {
+                width = this.$el.width();
+                height = this.$el.height();
+                jPData.size = {
+                    width : width,
+                    height : height
+                };
+            }
+            this.$el.jPlayer(jPData);
             $('.jp-comment').unbind();
             $('.jp-comment').on('click', function (e) {
                 e.preventDefault();
@@ -190,12 +211,16 @@ ie8 = function () {
         
          // Player controls 
          setMedia : function (opts) {
-             $('#load-wait').show();
+             if (!this.ie8) {
+                 $('#load-wait').show();
+             }
              var data = {},
                 that = this;
              data[opts.type] = opts.url;
              this.$el.jPlayer("setMedia", data);
              // @@ this doesn't work in IE8
+             this.$('video').attr('oncanplay', "console.log('CANNNNN'); $('#load-wait').hide(); ViddlerPlayer.vent.trigger('mediaReady');");
+             
              this.$el.on(($.jPlayer.event.canplay), function () {
                  if (DEBUG) console.log("JPLAYER EVENT: canplay");
                  $('#load-wait').hide();
@@ -296,10 +321,21 @@ ie8 = function () {
             var that = this;
             this.model.fetch({
                 success : function (model, response, opts) {
-                    that.timeline = model.get("timeline");
-                    that.onModelReady();
+                    console.log(model);
+                    if (model.gate) {
+                        gate = new GateView({
+                            tmp : '#tmp-gate-form',
+                            message : model.gate.message,
+                            gateForm : model.gate.gateForm
+                        });
+                        gate.render();
+                    } else {
+                        that.timeline = model.get("timeline");
+                        that.onModelReady();
+                    }
                 },
                 error : function (model, response) {
+                    console.log(response.error());
                     error = new ErrorMsgView({
                         errorType : "server",
                         errorMsg : "Error retrieving playlist data from server"
@@ -520,7 +556,7 @@ ie8 = function () {
             
             // drag events for progress bar
             $('#time').mousedown(function (e) {
-                e.preventDefault();
+               e.preventDefault();
                window.vDrags = true
                console.log('mouseDown', e);
             });
@@ -549,7 +585,7 @@ ie8 = function () {
                     width;
                 
                 e.preventDefault();
-                event.stopImmediatePropagation();
+                e.stopImmediatePropagation();
                 if (window.vDrags) {
                     console.log('mouseUp drag event');
                     if (e.target.id === "time") {
@@ -771,6 +807,7 @@ ie8 = function () {
             data.els = Math.floor(this.collection.length/this.perPage);
             data.first = (parseInt(this.curPage) === 0);
             data.last = (this.curPage === this.numPages-1);
+            data.current = this.curPage;
             console.log(data);
             this.$('#comments-pager-container').html(_.template($("#tmp-comments-pager").html(), data));
         },
@@ -856,6 +893,25 @@ ie8 = function () {
             this.__render(data);
         }
     });
+    
+    // @@ We'll need a generic submit for these?
+    GateView = ModalView.extend({
+        message : '',
+        gateForm : '',
+        
+        initialize : function (opts) {
+            this.message = opts.message;
+            this.gateForm = opts.gateForm;
+            this.__init(opts);
+        },
+        
+        render : function () {
+            var data = {};
+            data.modalHeader = this.message;
+            data.gateForm = this.gateForm;
+            this.__render(data);
+        }
+    }); 
     
     UserSignupView = ModalView.extend({
        events : {

@@ -70,7 +70,7 @@
                         To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
                 </div>
                 <div id="iframe-container"></div>
-                <div id="load-wait" style="displaye:none"><img src="img/ajax-loader.gif" alt="loading"/></div>
+                <div id="load-wait" style="display:none"><img src="img/ajax-loader.gif" alt="loading"/></div>
             </div> <!-- jp-type-single -->
             <div id="map-container"></div>
             <div class="jp-gui"></div>
@@ -120,7 +120,11 @@
             <div class="page-prev pager-el cursor"><</div>
         <% } %>
             <% for (i = 0; i < els; i++ ) { %>
-                <span class="pager-el page-number cursor" data-page="<%= i %>"><%= i+1 %></span>
+                <% if (i === current) { %>
+                    <span class="pager-el page-number cursor pager-current-page" data-page="<%= i %>"><%= i+1 %></span>
+                <% } else { %>
+                    <span class="pager-el page-number cursor" data-page="<%= i %>"><%= i+1 %></span>            
+                <% } %>
             <% } %>
          <% if (!last) { %>
          <div class="page-next pager-el cursor">></div>
@@ -203,6 +207,16 @@
     <div class="vid-error-msg <%= type %>">
         <span><%= msg %></span>
     </div>
+</script>
+
+<script type="text/template" id="tmp-gate-form">
+    <span class="closetwo modal-close cursor"><img src="img/orangex.png" id="orangex" alt="close modal"></span>
+    <header><%= modalHeader %></header>
+    <section id="modalbody">
+        <div class="gate-form">
+            <%= gateForm %>
+        </div>
+    </section>
 </script>
 
 <script type="text/template" id="tmp-user-signup-form">

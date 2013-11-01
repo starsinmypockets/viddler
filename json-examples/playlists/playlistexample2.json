@@ -10,7 +10,7 @@
         "title": "h264 video of week",
         "position": 0,
         "zLayer": 0,
-        "playheadStart": 70000,
+        "playheadStart": 0,
         "playheadStop": 80000,
         "length": 80000,
         "elementType": "m4v",
@@ -60,7 +60,7 @@
         }
       }
     ],
-    "tlCommentMarkerPos": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28]
+    "tlCommentMarkerPos": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,47,58,90]
   },
   "knownUserAgent": [
     "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)",
