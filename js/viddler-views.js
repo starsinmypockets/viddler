@@ -221,7 +221,6 @@ ie8 = function () {
              this.$el.jPlayer("setMedia", data);
              // @@ this doesn't work in IE8
              //this.$('video').attr('oncanplay', "console.log('CANNNNN'); $('#load-wait').hide(); ViddlerPlayer.vent.trigger('mediaReady');");
-             
              if (!this.ie8) {
                  this.$el.on(($.jPlayer.event.canplay), function () {
                      if (DEBUG) console.log("JPLAYER EVENT: canplay");
@@ -471,13 +470,12 @@ ie8 = function () {
                     type : opts.mediaEl.elementType,
                     url : opts.mediaEl.elementURL
                 });
-            } else {
-                this.vP.play({start : opts.start/1000});
             }
-            
             if (opts.mediaEl.subtitleSrc && !ie8) {
                 this.doSubtitles(opts.mediaEl.subtitleSrc);
             }
+
+            this.vP.play({start : opts.start/1000});
             
             // load step comments
             this.getMediaElementComments({id : opts.mediaEl.id});
@@ -487,20 +485,18 @@ ie8 = function () {
             var that = this;
             stepOpts.init = true;
             window.vplm.stepStop = stepOpts.stop;
-        
-            this.vP.setMedia({
-                type : stepOpts.mediaEl.elementType,
-                url : stepOpts.mediaEl.elementURL
-            });
             
-            // @@ REFACTOR so this isn't repeate here and in timelinestep
-            // set media and go
             ViddlerPlayer.vent.once("mediaReady", function () {
                 if (DEBUG) console.log("[Player] Media ready");
                 that.vP.runTimeListener();
                 that.vP.runStopListener();
             });
-
+            
+            this.vP.setMedia({
+                type : stepOpts.mediaEl.elementType,
+                url : stepOpts.mediaEl.elementURL
+            });
+            
             // load step comments
             this.getMediaElementComments({id : stepOpts.mediaEl.id});
             
@@ -509,6 +505,7 @@ ie8 = function () {
             $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
                 e.stopImmediatePropagation();
                 e.preventDefault();
+                console.log("Click init timeline");
                 that.timelineStep(stepOpts);
                 $('#play-overlay-button').hide();
                 $('.jp-play').unbind('click.init');
