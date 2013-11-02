@@ -525,7 +525,7 @@ ie8 = function () {
         
         // Set total  time for elsapsed mediaElements to global object
         getElapsedTime : function () {
-            els = that.timeline.mediaElements;
+            els = this.timeline.mediaElements;
             window.vplm.tlElapsed = 0;
             for (i = 0; i < window.vplm.tlStep; i++) {
                 function func (i) {
@@ -539,16 +539,18 @@ ie8 = function () {
         // index timeline elements for seek events
         initTlIndex : function () {
             var mediaEls = this.timeline.mediaElements,
-                tlSteps = mediaEls.length;
+                tlSteps = mediaEls.length,
                 tlIndex = [],
                 that = this;
             
             // bind seek behavior to progress bar
             $('.bar .jp-progress').on('click', function (e) {
+                var clickX;
                 if (window.vDrags) return false; // don't do click if we're dragging the scrubber
-                console.log('this');
                 e.preventDefault();
-                var seekPerc = e.offsetX/($(e.currentTarget).width()),
+                clickX = e.clientX - $(this).offset().left;
+                var seekPerc = clickX/($(e.currentTarget).width()),
+//                var seekPerc = e.offsetX/($(e.currentTarget).width()),
                     tlMs = seekPerc*window.vplm.tlLength;
                 that.seekTo(tlMs);
                 return false;
@@ -562,21 +564,16 @@ ie8 = function () {
             });
             
             $(document).mousemove(function (e) {
+                var barCurWidth, playbarLeft;
                 e.preventDefault();
                 // make sure we're dragging, and we're targeting appropriate elements
                 if (!window.vDrags) return;
                 if (e.target.className !== "jp-progress" && e.target.className !== "jp-mega-play-bar") return;
-                if (e.target.className === "jp-progress") {
-                    width = (e.offsetX+'px');
-                }
-                if (e.target.className === "jp-mega-play-bar") {
-                    width = (e.offsetX+'px');        
-                }
+                playbarLeft = $(".jp-progress").offset().left;
                 console.log('UP', window.vDrags);
                 console.log(e);
-                console.log(width);
                 $('.jp-mega-play-bar').css({
-                    width : e.offsetX+'px'
+                    width : ((e.clientX - playbarLeft)+'px')
                 });
             });
             
@@ -623,7 +620,9 @@ ie8 = function () {
                 seekInf = {},
                 tlIndex = window.vplm.tlIndex,  // timeline start & stop by element
                 elapsed = 0;
-
+            // yes
+            console.log(mediaEls, tlMs);
+            $("#play-overlay-button").hide();
             function func (i) {
                 if (tlMs >= tlIndex[i].start && tlMs < tlIndex[i].stop) {
                     seekInf['step'] = i;
