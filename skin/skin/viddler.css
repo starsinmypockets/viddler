@@ -1617,6 +1617,9 @@ span.number{
 .loginmodal section#modalbody form input{
 	max-width: 85%;
 }
+#play-overlay-button {
+	display:none; !important;
+}
 }
 
 
@@ -1776,9 +1779,7 @@ a.jp-doohickey:hover{
 	position: relative;
 	left: -12px;
 }
-#play-overlay-button {
-	display:none; !important;
-}
+
 }
 
 
