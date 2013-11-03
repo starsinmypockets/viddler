@@ -8,7 +8,7 @@
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "2"
+        "time" : "10"
 },{
         "id" : 2,
         "media_element" : 123,
@@ -19,7 +19,7 @@
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "12"
+        "time" : "11"
 },{
         "id" : 3,
         "media_element" : 123,
@@ -30,7 +30,7 @@
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "2"
+        "time" : "12"
 },{
         "id" : 4,
         "media_element" : 123,
@@ -41,7 +41,7 @@
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "12"
+        "time" : "13"
 },{
         "id" : 5,
         "media_element" : 123,
@@ -52,7 +52,7 @@
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "2"
+        "time" : "14"
 },{
         "id" : 6,
         "media_element" : 123,
@@ -63,7 +63,7 @@
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "12"
+        "time" : "15"
 },{
         "id" : 7,
         "media_element" : 123,
@@ -74,7 +74,7 @@
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "2"
+        "time" : "16"
 },{
         "id" : 8,
         "media_element" : 123,
@@ -85,7 +85,7 @@
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "12"
+        "time" : "16"
 },{
         "id" : 9,
         "media_element" : 123,
@@ -96,7 +96,7 @@
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "2"
+        "time" : "17"
 },{
         "id" : 10,
         "media_element" : 123,
@@ -107,379 +107,38 @@
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 678,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
+        "time" : "18"
 },{
         "id" : 11,
         "media_element" : 123,
         "playListId" : 2342213,
         "title": "Comment Title 2",
-        "commentText": "Comment 2",
+        "commentText": "Comment 1",
         "thumbnail": "http://placekitten.com/75/75",
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "12"
+        "time" : "19"
 },{
         "id" : 12,
         "media_element" : 123,
         "playListId" : 2342213,
         "title": "Comment Title 2",
-        "commentText": "Comment 1",
+        "commentText": "Comment 2",
         "thumbnail": "http://placekitten.com/75/75",
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "2"
+        "time" : "20"
 },{
         "id" : 13,
         "media_element" : 123,
         "playListId" : 2342213,
         "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 678,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
         "commentText": "Comment 1",
         "thumbnail": "http://placekitten.com/75/75",
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 14,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 15,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 16,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 17,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 18,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 19,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 20,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 21,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 22,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 678,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 23,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 678,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 679,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 24,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 25,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 26,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 27,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 678,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 28,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 29,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 30,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 31,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 32,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 33,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 34,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 35,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 36,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
-},{
-        "id" : 37,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 1",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "2"
-},{
-        "id" : 38,
-        "media_element" : 123,
-        "playListId" : 2342213,
-        "title": "Comment Title 2",
-        "commentText": "Comment 2",
-        "thumbnail": "http://placekitten.com/75/75",
-        "replyUrl": "http://api.viddler.com/comment/reply/someid",
-        "userName" : "JP Slim",
-        "daysAgo" : "Today",
-        "time" : "12"
+        "time" : "22"
 }]

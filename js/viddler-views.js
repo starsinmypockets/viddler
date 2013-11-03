@@ -312,7 +312,7 @@ ie8 = function () {
             commentCollection = new CommentCollection([], {media_element : opts.id});
             commentCollection.fetch({
                 success : function (collection, response) {
-                    commentsView = new CommentsListView({collection : collection});
+                    commentsView = new CommentListView({collection : collection});
                     commentsView.render();
                 },
                 error : function (collection, response) {
@@ -545,13 +545,14 @@ ie8 = function () {
             
             // bind seek behavior to progress bar
             $('.bar .jp-progress').on('click', function (e) {
-                var clickX;
+                var clickX,
+                    seekPerc,
+                    tlMs;
                 if (window.vDrags) return false; // don't do click if we're dragging the scrubber
                 e.preventDefault();
                 clickX = e.clientX - $(this).offset().left;
-                var seekPerc = clickX/($(e.currentTarget).width()),
-//                var seekPerc = e.offsetX/($(e.currentTarget).width()),
-                    tlMs = seekPerc*window.vplm.tlLength;
+                seekPerc = clickX/($(e.currentTarget).width());
+                tlMs = seekPerc*window.vplm.tlLength;
                 that.seekTo(tlMs);
                 return false;
             });
@@ -754,9 +755,9 @@ ie8 = function () {
         }
     });
     
-    CommentsListView = BaseView.extend({
+    CommentListView = BaseView.extend({
         el : "#comments-container",
-        comments : {}, // @@DEPRECATE
+        comments : {},
         collection : {},
         curPage : 0,
         numPages : 0,
@@ -771,9 +772,12 @@ ie8 = function () {
             opts = opts || {};
             opts.tmp = opts.tmp || "#tmp-comments";
             this.collection = opts.collection;
-            this.collection.getByTimeRange({start : 0, stop : 3});
-            this.comments = this.collection.toJSON();
-            this.numPages = this.collection.length / this.perPage;
+            if (opts.start) {
+                this.comments = this.collection.getByTimeRange({start : 0, stop : 3});
+            } else {
+                this.comments = this.collection.toJSON();
+            }
+            this.numPages = this.comments.length / this.perPage;
             this.__init(opts);
         },
         
