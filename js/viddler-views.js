@@ -20,6 +20,7 @@ ie8 = function () {
         tag : 'div',
         el : '<br/>',
         vent : {},  // backbone event aggregator
+        vpm : ViddlerPlayer.manager, //
         
         __init : function (opts) {
             opts = opts || {};
@@ -679,13 +680,16 @@ ie8 = function () {
             
             // @@ TODO comment markers need stepMedia ID from manager then GO
             $('.orangearrow').on('click', function (e) {
-                var data = $(this).data();
+                // gives us tl data
+                var data = $(this).data(),
+                    // get data relative to mediaEl
+                    elData = that.vpm.getElTime(data.start*1000);
+                
                 that.getMediaElementComments({
                     id : data.mediaid,
-                    start : data.start,
-                    stop : data.stop
+                    start : elData.time/1000,
+                    stop : data.stop - data.start + elData.time/1000
                 });
-                console.log($(this).data());
             });
         }
     });
@@ -758,9 +762,10 @@ ie8 = function () {
         },
     });
     
+    //@@ TODO should proba attach the media_el id duh
     CommentListView = BaseView.extend({
         el : "#comments-container",
-        comments : {},
+        comments : [],
         collection : {},
         curPage : 0,
         numPages : 0,
@@ -772,11 +777,19 @@ ie8 = function () {
         },
         
         initialize : function (opts) {
-            opts = opts || {};
+            var that = this,
+                opts = opts || {},
+                comments;
             opts.tmp = opts.tmp || "#tmp-comments";
             this.collection = opts.collection;
             if (opts.start) {
-                this.comments = this.collection.getByTimeRange({start : opts.start, stop : opts.stop});
+                that.comments = [];
+                comments = this.collection.getByTimeRange({start : opts.start, stop : opts.stop});
+                _.each(comments, function (comment) {
+                    console.log(comment.toJSON());
+                    that.comments.push(comment.toJSON());
+                });
+                
             } else {
                 this.comments = this.collection.toJSON();
             }
@@ -793,7 +806,6 @@ ie8 = function () {
         },
         
         doPrev : function (e) {
-            e.preventDefault();
             if (this.curPage > 0) {
                 this.curPage --;
                 this.render();
@@ -802,20 +814,18 @@ ie8 = function () {
         
         doPage : function (e) {
             e.preventDefault();
-            console.log(e); 
-            console.log(e.target.dataset.page);
             this.curPage = parseInt(e.target.dataset.page,10);
             this.render();
         },
         
         render : function () {
             var data = {},
-                elsStart = this.curPage*this.perPage,
-                elsStop = elsStart+this.perPage;
+                pagerStart = this.curPage*this.perPage,
+                pagerStop = pagerStart+this.perPage;
                 
-            data.items = this.comments.slice(elsStart, elsStop);
-            data.total = this.collection.length;
-            console.log(this.curPage, elsStart, elsStop, data)
+            data.items = this.comments.slice(pagerStart, pagerStop);
+            data.total = this.comments.length;
+            console.log(this.curPage, pagerStart, pagerStop, data)
             this.$el.html(this.template(data));
             this.renderPager();
         },
@@ -829,14 +839,6 @@ ie8 = function () {
             console.log(data);
             this.$('#comments-pager-container').html(_.template($("#tmp-comments-pager").html(), data));
         },
-        
-        // bind events on subview with jQuery
-        bindEvents : function () {
-            var that = this;
-            ViddlerPlayer.vent.once('click .page-next', function (e) {
-                console.log('ugh');
-            })
-        }
     });
     
     ErrorMsgView = BaseView.extend({
