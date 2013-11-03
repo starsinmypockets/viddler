@@ -1,7 +1,6 @@
 /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
-   hi
 */
 
 html, body, div, span, applet, object, iframe,
@@ -79,6 +78,7 @@ video#jp_video_0, img#jp_poster_0, #jquery_jplayer_1{
 /* Sprites */
 .sprite {font-weight:bold; background-color:#E2F5AB; padding:.4em; border-radius:2em; opacity:0.4;
 filter:alpha(opacity=40);}
+.viddlerSubtitle {display:block; position:absolute; left:0 !important}
 
 /* pager */
 #comment-pager {margin:10px}
