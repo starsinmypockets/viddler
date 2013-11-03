@@ -16,6 +16,9 @@
 body{
 	background: #464c54;
 	padding: 20px 0px 20px 0px;
+	/*zoom: 200%;
+  -moz-transform: scale(2);
+  -moz-transform-origin: 0 0; (chrome retina simulator for testing)*/
 }
 *:focus{
 	background: none;
@@ -1623,11 +1626,11 @@ span.number{
 }
 
 
-
-
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
 a.jp-play {
-	background: url("../img/mobile/play.png") no-repeat;
+	background: url("../img/mobile/play.png") no-repeat; 
+	-webkit-background-size: 22px; 
+	background-size: 22px;
 }
 a.jp-play:hover {
 	background: url("../img/mobile/playhover.png") no-repeat;
