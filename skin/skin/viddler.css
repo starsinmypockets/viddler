@@ -1617,6 +1617,9 @@ span.number{
 .loginmodal section#modalbody form input{
 	max-width: 85%;
 }
+#play-overlay-button {
+	display:none; !important;
+}
 }
 
 
