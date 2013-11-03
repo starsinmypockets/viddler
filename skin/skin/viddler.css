@@ -1629,18 +1629,24 @@ span.number{
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
 a.jp-play {
 	background: url("../img/mobile/play.png") no-repeat; 
-	-webkit-background-size: 18px; 
+	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button*/
 	background-size: 18px;
 }
 a.jp-play:hover {
 	background: url("../img/mobile/playhover.png") no-repeat;
+	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button*/
+	background-size: 18px;
 }
 a.jp-pause {
 	background: url("../img/mobile/pause.png") no-repeat;
+	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button*/
+	background-size: 18px;
 	display: none;
 }
 a.jp-pause:hover {
 	background: url("../img/mobile/pausehover.png") no-repeat;
+	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button*/
+	background-size: 18px;
 }
 div.jp-play-bar {
 	background: url("../img/mobile/progress.jpg") repeat-x;
