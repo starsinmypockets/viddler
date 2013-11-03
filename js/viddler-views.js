@@ -543,6 +543,23 @@ ie8 = function () {
                 tlIndex = [],
                 that = this;
             
+            this.bindSeekEvents();
+            for (var i = 0; i < tlSteps; i++) {
+                function func (i) {
+                    tlIndex[i] = {};
+                    tlIndex[i]['start'] = (i === 0) ? 0 : tlIndex[i-1]['stop'];
+                    tlIndex[i]['stop'] = tlIndex[i]['start'] + mediaEls[i]['playheadStop'] - mediaEls[i]['playheadStart'];
+                }
+                
+                func(i);
+            }
+            
+            return tlIndex;
+        },
+        
+        bindSeekEvents : function () {
+            var that = this;
+            
             // bind seek behavior to progress bar
             $('.bar .jp-progress').on('click', function (e) {
                 var clickX,
@@ -600,18 +617,6 @@ ie8 = function () {
                 } 
                 return false;
              });
-            
-            for (var i = 0; i < tlSteps; i++) {
-                function func (i) {
-                    tlIndex[i] = {};
-                    tlIndex[i]['start'] = (i === 0) ? 0 : tlIndex[i-1]['stop'];
-                    tlIndex[i]['stop'] = tlIndex[i]['start'] + mediaEls[i]['playheadStop'] - mediaEls[i]['playheadStart'];
-                }
-                
-                func(i);
-            }
-            
-            return tlIndex;
         },
         
         // reinitialize and play timeline from seek point
@@ -646,14 +651,6 @@ ie8 = function () {
             this.timelinePlay({seek : true, start : seekInf.seekTo});
         },
         
-        getStepSubtitles : function (opts) {
-            // tba
-        },
-        
-        getStepSprites : function (opts) {
-            // tba
-        },
-        
         getStepComments : function (opts) {
             var stepComments = [];
             _.each(this.comments, function (comment) {
@@ -664,7 +661,6 @@ ie8 = function () {
             return stepComments;
         },
         
-        // 
         doEnd : function (opts) {
             var that = this;
 
