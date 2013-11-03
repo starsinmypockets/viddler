@@ -1783,6 +1783,10 @@ a.jp-doohickey:hover{
 	left: -12px;
 }
 
+ul.jp-toggles {
+	width:230px;/*fix toggle justify right issue*/
+	}
+
 }
 
 
