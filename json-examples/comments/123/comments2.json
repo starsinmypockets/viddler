@@ -41,7 +41,7 @@
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "13"
+        "time" : "12"
 },{
         "id" : 5,
         "media_element" : 123,
@@ -52,7 +52,7 @@
         "replyUrl": "http://api.viddler.com/comment/reply/someid",
         "userName" : "JP Slim",
         "daysAgo" : "Today",
-        "time" : "14"
+        "time" : "13"
 },{
         "id" : 6,
         "media_element" : 123,

@@ -356,6 +356,7 @@ ie8 = function () {
             ViddlerPlayer.manager.tlStep = 0;
             ViddlerPlayer.manager.tlSteps = mediaEls.length;
             ViddlerPlayer.manager.tlLength = tlLength;           this.vPG = new VPlayerGuiView();
+            ViddlerPlayer.manager.mediaEls = mediaEls;
             this.vPG.render({mediaElements : mediaEls}); 
             
             // set Index info on manager
@@ -543,6 +544,7 @@ ie8 = function () {
         },
         
         // index timeline elements for seek events
+        // @@ put this in the manager?
         initTlIndex : function () {
             var mediaEls = this.timeline.mediaElements,
                 tlSteps = mediaEls.length,
@@ -575,26 +577,14 @@ ie8 = function () {
             // yes
             console.log(mediaEls, tlMs);
             $("#play-overlay-button").hide();
-            function func (i) {
-                if (tlMs >= tlIndex[i].start && tlMs < tlIndex[i].stop) {
-                    seekInf['step'] = i;
-                    seekInf['seekTo'] =  tlMs - elapsed + mediaEls[i].playheadStart;
-                    return;
-                }
-                elapsed += tlIndex[i].stop - tlIndex[i].start;
-            }
-        
-            for (var i = 0; i < tlIndex.length; i++) {
-                func(i);
-            }
-
-            console.log(seekInf);
+            seekInfo = ViddlerPlayer.manager.getElTime(tlMs);
+            console.log(seekInfo);
             
             // update the global tlStep
-            ViddlerPlayer.manager.tlStep = seekInf.step;
+            ViddlerPlayer.manager.tlStep = seekInfo.step;
             ViddlerPlayer.vent.off("stopListenerStop");
             clearInterval(this.timeListenerIntv);
-            this.timelinePlay({seek : true, start : seekInf.seekTo});
+            this.timelinePlay({seek : true, start : seekInfo.time});
         },
         
         getStepComments : function (opts) {
@@ -687,6 +677,7 @@ ie8 = function () {
         bindCommentMarkerEvents : function () {
             var that = this;
             
+            // @@ TODO comment markers need stepMedia ID from manager then GO
             $('.orangearrow').on('click', function (e) {
                 var data = $(this).data();
                 that.getMediaElementComments({
@@ -721,7 +712,7 @@ ie8 = function () {
             markerArray[0] = {};                
             markerArray[0].start = 0;
             markerArray[0].stop = markerSecs;            
-
+            console.log(ViddlerPlayer.manager);
             for (var i = 1; i < numbMarkers; i++) {
                 function funcs(i) {
                     markerArray[i] = {};
@@ -754,15 +745,13 @@ ie8 = function () {
                         markers[j] = {};
                         markers[j].start = Math.floor(spot.start/1000);
                         markers[j].stop = Math.floor(spot.stop/1000);
-                        markers[j].pos = pos;
+                        markers[j].mediaid = ViddlerPlayer.manager.getCurrentMedia().id;
                         markers[j].left = ((100/numbMarkers)*pos)-(100/numbMarkers); // express the left value as a percent - subtract one width
                         j++;
                     }
                 });
                 pos++; // keep track of which position we're in
             });
-            console.log(markers);
-            // now render this nonsense 
             data.markers = markers;
             if (DEBUG) console.log(data);
             $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));
@@ -787,7 +776,7 @@ ie8 = function () {
             opts.tmp = opts.tmp || "#tmp-comments";
             this.collection = opts.collection;
             if (opts.start) {
-                this.comments = this.collection.getByTimeRange({start : 0, stop : 3});
+                this.comments = this.collection.getByTimeRange({start : opts.start, stop : opts.stop});
             } else {
                 this.comments = this.collection.toJSON();
             }

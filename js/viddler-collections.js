@@ -24,6 +24,7 @@
                 }
             });
             console.log(models);
+            return models;
         }
     });
 })(jQuery);
