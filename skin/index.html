@@ -199,7 +199,7 @@
 
 <script type="text/template" id="tmp-comment-markers">
     <% _.each(markers, function (marker) { %>
-        <img class="orangearrow" src="img/orangearrow.png" style="left: <%= marker.left %>%; position : absolute"/>
+        <img class="orangearrow cursor" src="img/orangearrow.png" data-start="<%= marker.start %>" data-stop="<%= marker.stop %>" style="left: <%= marker.left %>%; position : absolute"/>
     <% }); %>
 </script>
 

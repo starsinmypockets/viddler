@@ -679,6 +679,14 @@ ie8 = function () {
     
     // orange comment markers
     CommentMarkerView = BaseView.extend({
+        events : {
+            'click .orangearrow' : 'doClick'
+        },
+        
+        doClick : function (e) {
+            alert('click');
+        },
+        
         _calcMarkerPos : function () {
             var markerArray, numbMarkers, markerSecs,
                 that=this,
@@ -688,12 +696,11 @@ ie8 = function () {
             
             // build array of marker-points with start / stop attrs
             markerArray = []; 
-            
-            for (var i = 1; i <+ numbMarkers; i++) {
-                markerArray[0] = {};                
-                markerArray[0].start = 0;
-                markerArray[0].stop = markerSecs;
-            
+            markerArray[0] = {};                
+            markerArray[0].start = 0;
+            markerArray[0].stop = markerSecs;            
+
+            for (var i = 1; i < numbMarkers; i++) {
                 function funcs(i) {
                     markerArray[i] = {};
                     markerArray[i].start = markerArray[i-1].stop + 1;
@@ -701,6 +708,7 @@ ie8 = function () {
                 }
                 funcs(i);
             }
+            console.log(markerArray);
             return { markerArray : markerArray, numbMarkers : numbMarkers};
         },
         
@@ -715,19 +723,15 @@ ie8 = function () {
                 j = 0,
                 pos = 1,
                 data = {};
-                
+            
+            console.log(commentSpots);
             // now build array of populated marker positions for rendering
-            if (DEBUG) {
-                console.log('commentSpots:', commentSpots);
-                console.log('markerArray:', markerArray);
-                console.log(opts);                
-            }
             _.each(markerArray, function(spot) {
                 _.each(commentSpots, function (cPos) {
                     if (cPos*1000 >= spot.start && cPos*1000 <= spot.stop) {
                         markers[j] = {};
-                        markers[j].start = spot.start;
-                        markers[j].stop = spot.stop;
+                        markers[j].start = Math.floor(spot.start/1000);
+                        markers[j].stop = Math.floor(spot.stop/1000);
                         markers[j].pos = pos;
                         markers[j].left = ((100/numbMarkers)*pos)-(100/numbMarkers); // express the left value as a percent - subtract one width
                         j++;
@@ -735,12 +739,19 @@ ie8 = function () {
                 });
                 pos++; // keep track of which position we're in
             });
-            
+            console.log(markers);
             // now render this nonsense 
             data.markers = markers;
             if (DEBUG) console.log(data);
             $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));
+            this.bindEvents();
         },
+        
+        bindEvents : function () {
+            $('.orangearrow').on('click', function (e) {
+                console.log($(this).data());
+            });
+        }
     });
     
     CommentsListView = BaseView.extend({
@@ -760,6 +771,7 @@ ie8 = function () {
             opts = opts || {};
             opts.tmp = opts.tmp || "#tmp-comments";
             this.collection = opts.collection;
+            this.collection.getByTimeRange({start : 0, stop : 3});
             this.comments = this.collection.toJSON();
             this.numPages = this.collection.length / this.perPage;
             this.__init(opts);
