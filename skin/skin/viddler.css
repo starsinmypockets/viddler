@@ -1629,8 +1629,8 @@ span.number{
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
 a.jp-play {
 	background: url("../img/mobile/play.png") no-repeat; 
-	-webkit-background-size: 22px; 
-	background-size: 22px;
+	-webkit-background-size: 18px; 
+	background-size: 18px;
 }
 a.jp-play:hover {
 	background: url("../img/mobile/playhover.png") no-repeat;
