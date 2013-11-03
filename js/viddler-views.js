@@ -406,6 +406,7 @@ ie8 = function () {
             if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
             markers = new CommentMarkerView();
             markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
+            this.bindCommentMarkerEvents();
             this.timelinePlay();
             $('.viddler-duration').html(that.vP.secs2time(Math.floor(window.vplm.tlLength/1000)));
             this.vP.clearGuiTime();
@@ -557,6 +558,63 @@ ie8 = function () {
             return tlIndex;
         },
         
+        // reinitialize and play timeline from seek point
+        seekTo : function (tlMs) {
+            console.log("SEEK EVENT >>>>>>>>>>>>>>>>");
+            var mediaEls = this.timeline.mediaElements,
+                seekInf = {},
+                tlIndex = window.vplm.tlIndex,  // timeline start & stop by element
+                elapsed = 0;
+            // yes
+            console.log(mediaEls, tlMs);
+            $("#play-overlay-button").hide();
+            function func (i) {
+                if (tlMs >= tlIndex[i].start && tlMs < tlIndex[i].stop) {
+                    seekInf['step'] = i;
+                    seekInf['seekTo'] =  tlMs - elapsed + mediaEls[i].playheadStart;
+                    return;
+                }
+                elapsed += tlIndex[i].stop - tlIndex[i].start;
+            }
+        
+            for (var i = 0; i < tlIndex.length; i++) {
+                func(i);
+            }
+
+            console.log(seekInf);
+            
+            // update the global tlStep
+            window.vplm.tlStep = seekInf.step;
+            ViddlerPlayer.vent.off("stopListenerStop");
+            clearInterval(this.timeListenerIntv);
+            this.timelinePlay({seek : true, start : seekInf.seekTo});
+        },
+        
+        getStepComments : function (opts) {
+            var stepComments = [];
+            _.each(this.comments, function (comment) {
+                if (comment.media_element === opts.id) {
+                    stepComments.push(comment);
+                }
+            });
+            return stepComments;
+        },
+        
+        doEnd : function (opts) {
+            var that = this;
+
+            if (DEBUG) console.log("Do end handler");
+            this.vP.pause();
+            ViddlerPlayer.vent.off("stopListenerStop");
+
+            // reset global player data
+            window.vplm.tlReset();
+            that.timelinePlay();
+        },
+        
+        /**
+         * Playlist event bindings
+         **/
         bindSeekEvents : function () {
             var that = this;
             
@@ -619,59 +677,11 @@ ie8 = function () {
              });
         },
         
-        // reinitialize and play timeline from seek point
-        seekTo : function (tlMs) {
-            console.log("SEEK EVENT >>>>>>>>>>>>>>>>");
-            var mediaEls = this.timeline.mediaElements,
-                seekInf = {},
-                tlIndex = window.vplm.tlIndex,  // timeline start & stop by element
-                elapsed = 0;
-            // yes
-            console.log(mediaEls, tlMs);
-            $("#play-overlay-button").hide();
-            function func (i) {
-                if (tlMs >= tlIndex[i].start && tlMs < tlIndex[i].stop) {
-                    seekInf['step'] = i;
-                    seekInf['seekTo'] =  tlMs - elapsed + mediaEls[i].playheadStart;
-                    return;
-                }
-                elapsed += tlIndex[i].stop - tlIndex[i].start;
-            }
-        
-            for (var i = 0; i < tlIndex.length; i++) {
-                func(i);
-            }
-
-            console.log(seekInf);
-            
-            // update the global tlStep
-            window.vplm.tlStep = seekInf.step;
-            ViddlerPlayer.vent.off("stopListenerStop");
-            clearInterval(this.timeListenerIntv);
-            this.timelinePlay({seek : true, start : seekInf.seekTo});
-        },
-        
-        getStepComments : function (opts) {
-            var stepComments = [];
-            _.each(this.comments, function (comment) {
-                if (comment.media_element === opts.id) {
-                    stepComments.push(comment);
-                }
+        bindCommentMarkerEvents : function () {
+            $('.orangearrow').on('click', function (e) {
+                console.log($(this).data());
             });
-            return stepComments;
-        },
-        
-        doEnd : function (opts) {
-            var that = this;
-
-            if (DEBUG) console.log("Do end handler");
-            this.vP.pause();
-            ViddlerPlayer.vent.off("stopListenerStop");
-
-            // reset global player data
-            window.vplm.tlReset();
-            that.timelinePlay();
-        },
+        }
     });
     
     // orange comment markers
@@ -741,14 +751,7 @@ ie8 = function () {
             data.markers = markers;
             if (DEBUG) console.log(data);
             $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));
-            this.bindEvents();
         },
-        
-        bindEvents : function () {
-            $('.orangearrow').on('click', function (e) {
-                console.log($(this).data());
-            });
-        }
     });
     
     CommentListView = BaseView.extend({
