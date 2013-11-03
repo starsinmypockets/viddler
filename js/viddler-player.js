@@ -21,8 +21,11 @@
     }
 }());
 
+    
+var ViddlerPlayer = ViddlerPlayer || {};
+
 // manage global timeline events
-window.vplm = window.vplm || {
+ViddlerPlayer.manager = ViddlerPlayer.manager || {
         tlStep : 0,
         tlSteps :0,
         tlLength : 0,
@@ -30,6 +33,7 @@ window.vplm = window.vplm || {
         tlNow : 0,
         timeline : {},
         stepMedia : {},
+        stepMediaId: '',
         tlComments : {},
         
         destroy : function () {
@@ -40,6 +44,7 @@ window.vplm = window.vplm || {
             this.tlNow = 0;
             this.timeline = {};
             this.stepMedia = {};
+            this.stepMediaId = '';
             this.tlComments = {};
         },
         
@@ -49,10 +54,8 @@ window.vplm = window.vplm || {
             this.tlElapsed = 0;
             this.tlNow = 0;
         } 
-    };        
+    };
     
-var ViddlerPlayer = ViddlerPlayer || {};
-
 ( function ($) {
 
 /* Events aggregator */
