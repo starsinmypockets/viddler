@@ -827,16 +827,17 @@ ie8 = function () {
             data.total = this.comments.length;
             console.log(this.curPage, pagerStart, pagerStop, data)
             this.$el.html(this.template(data));
-            this.renderPager();
+            if (this.comments.length > this.perPage) {
+                this.renderPager();
+            }
         },
         
         renderPager : function () {
             var data = {};
-            data.els = Math.floor(this.collection.length/this.perPage);
+            data.els = Math.ceil(this.comments.length/this.perPage);
             data.first = (parseInt(this.curPage) === 0);
             data.last = (this.curPage === this.numPages-1);
             data.current = this.curPage;
-            console.log(data);
             this.$('#comments-pager-container').html(_.template($("#tmp-comments-pager").html(), data));
         },
     });
