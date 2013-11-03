@@ -221,8 +221,6 @@ ie8 = function () {
              }
              data[opts.type] = opts.url;
              this.$el.jPlayer("setMedia", data);
-             // @@ this doesn't work in IE8
-             //this.$('video').attr('oncanplay', "console.log('CANNNNN'); $('#load-wait').hide(); ViddlerPlayer.vent.trigger('mediaReady');");
              if (!this.ie8) {
                  this.$el.on(($.jPlayer.event.canplay), function () {
                      if (DEBUG) console.log("JPLAYER EVENT: canplay");
@@ -312,7 +310,6 @@ ie8 = function () {
             var that = this;
             this.model.fetch({
                 success : function (model, response, opts) {
-                    console.log(model);
                     if (model.gate) {
                         gate = new GateView({
                             tmp : '#tmp-gate-form',
@@ -326,7 +323,6 @@ ie8 = function () {
                     }
                 },
                 error : function (model, response) {
-                    console.log(response.error());
                     error = new ErrorMsgView({
                         errorType : "server",
                         errorMsg : "Error retrieving playlist data from server"
@@ -494,7 +490,6 @@ ie8 = function () {
             $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
                 e.stopImmediatePropagation();
                 e.preventDefault();
-                console.log("Click init timeline");
                 that.timelineStep(stepOpts);
                 $('#play-overlay-button').hide();
                 $('.jp-play').unbind('click.init');
@@ -563,23 +558,20 @@ ie8 = function () {
                 
                 func(i);
             }
-            console.log(tlIndex);
             ViddlerPlayer.manager.setTlIndex(tlIndex);
-//            return tlIndex;
         },
         
         // reinitialize and play timeline from seek point
         seekTo : function (tlMs) {
-            console.log("SEEK EVENT >>>>>>>>>>>>>>>>");
+            if (DEBUG) console.log("SEEK EVENT >>>>>>>>>>>>>>>>");
             var mediaEls = this.timeline.mediaElements,
                 seekInf = {},
                 tlIndex = ViddlerPlayer.manager.tlIndex,  // timeline start & stop by element
                 elapsed = 0;
             // yes
-            console.log(mediaEls, tlMs);
             $("#play-overlay-button").hide();
             seekInfo = ViddlerPlayer.manager.getElTime(tlMs);
-            console.log(seekInfo);
+            if (DEBUG) console.log(seekInfo);
             
             // update the global tlStep
             ViddlerPlayer.manager.tlStep = seekInfo.step;
@@ -634,7 +626,6 @@ ie8 = function () {
             $('#time').mousedown(function (e) {
                e.preventDefault();
                window.vDrags = true
-               console.log('mouseDown', e);
             });
             
             $(document).mousemove(function (e) {
@@ -644,8 +635,6 @@ ie8 = function () {
                 if (!window.vDrags) return;
                 if (e.target.className !== "jp-progress" && e.target.className !== "jp-mega-play-bar") return;
                 playbarLeft = $(".jp-progress").offset().left;
-                console.log('UP', window.vDrags);
-                console.log(e);
                 $('.jp-mega-play-bar').css({
                     width : ((e.clientX - playbarLeft)+'px')
                 });
@@ -658,12 +647,10 @@ ie8 = function () {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 if (window.vDrags) {
-                    console.log('mouseUp drag event');
                     if (e.target.id === "time") {
                         // play the segment on mouseup
                         seekPerc = $('.jp-mega-play-bar').width()/$('.bar .jp-progress').width();
                         tlMs = seekPerc*ViddlerPlayer.manager.tlLength;
-                        console.log('mouseup', seekPerc, tlMs);
                         that.seekTo(tlMs);
                     }
                     setTimeout(function () {
@@ -716,7 +703,6 @@ ie8 = function () {
             markerArray[0] = {};                
             markerArray[0].start = 0;
             markerArray[0].stop = markerSecs;            
-            console.log(ViddlerPlayer.manager);
             for (var i = 1; i < numbMarkers; i++) {
                 function funcs(i) {
                     markerArray[i] = {};
@@ -725,7 +711,6 @@ ie8 = function () {
                 }
                 funcs(i);
             }
-            console.log(markerArray);
             return { markerArray : markerArray, numbMarkers : numbMarkers};
         },
         
@@ -786,7 +771,6 @@ ie8 = function () {
                 that.comments = [];
                 comments = this.collection.getByTimeRange({start : opts.start, stop : opts.stop});
                 _.each(comments, function (comment) {
-                    console.log(comment.toJSON());
                     that.comments.push(comment.toJSON());
                 });
                 
@@ -825,7 +809,6 @@ ie8 = function () {
                 
             data.items = this.comments.slice(pagerStart, pagerStop);
             data.total = this.comments.length;
-            console.log(this.curPage, pagerStart, pagerStop, data)
             this.$el.html(this.template(data));
             if (this.comments.length > this.perPage) {
                 this.renderPager();
