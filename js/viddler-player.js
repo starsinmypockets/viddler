@@ -35,6 +35,7 @@ ViddlerPlayer.manager = ViddlerPlayer.manager || {
         stepMedia : {},
         stepMediaId: '',
         tlComments : {},
+        tlIndex : {},
         
         destroy : function () {
             this.tlStep = 0;
@@ -46,6 +47,7 @@ ViddlerPlayer.manager = ViddlerPlayer.manager || {
             this.stepMedia = {};
             this.stepMediaId = '';
             this.tlComments = {};
+            this.tlIndex = {};
         },
         
         // reinitialize timeline
@@ -53,7 +55,11 @@ ViddlerPlayer.manager = ViddlerPlayer.manager || {
             this.tlStep = 0;
             this.tlElapsed = 0;
             this.tlNow = 0;
-        } 
+        },
+        
+        setTlIndex : function (index) {
+            this.tlIndex = index;
+        }
     };
     
 ( function ($) {

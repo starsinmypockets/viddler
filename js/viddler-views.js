@@ -358,8 +358,8 @@ ie8 = function () {
             ViddlerPlayer.manager.tlLength = tlLength;           this.vPG = new VPlayerGuiView();
             this.vPG.render({mediaElements : mediaEls}); 
             
-            // gui ready update index for seek events
-            ViddlerPlayer.manager.tlIndex = this.initTlIndex();  //initTlIndex also binds dom seek events
+            // set Index info on manager
+            this.initTlIndex();  //initTlIndex also binds dom seek events
             
             // add play button overlay
             $('#play-overlay-button').show();
@@ -431,7 +431,8 @@ ie8 = function () {
         timelineStep : function (opts) {
             var that = this;
             if (DEBUG) console.log("[Player] Timeline step: "+ViddlerPlayer.manager.tlStep);
-
+            
+            ViddlerPlayer.manager.mediaElId = opts.mediaEl.id;
             ViddlerPlayer.manager.stepStop = opts.stop;
             that.getElapsedTime();
             
@@ -470,6 +471,7 @@ ie8 = function () {
             var that = this;
             stepOpts.init = true;
             ViddlerPlayer.manager.stepStop = stepOpts.stop;
+            ViddlerPlayer.manager.stepMediaId = stepOpts.mediaEl.id;
             
             ViddlerPlayer.vent.once("mediaReady", function () {
                 if (DEBUG) console.log("[Player] Media ready");
@@ -551,14 +553,16 @@ ie8 = function () {
             for (var i = 0; i < tlSteps; i++) {
                 function func (i) {
                     tlIndex[i] = {};
-                    tlIndex[i]['start'] = (i === 0) ? 0 : tlIndex[i-1]['stop'];
-                    tlIndex[i]['stop'] = tlIndex[i]['start'] + mediaEls[i]['playheadStop'] - mediaEls[i]['playheadStart'];
+                    tlIndex[i].mediaElId = mediaEls[i].id;
+                    tlIndex[i].start = (i === 0) ? 0 : tlIndex[i-1]['stop'];
+                    tlIndex[i].stop = tlIndex[i]['start'] + mediaEls[i]['playheadStop'] - mediaEls[i]['playheadStart'];
                 }
                 
                 func(i);
             }
-            
-            return tlIndex;
+            console.log(tlIndex);
+            ViddlerPlayer.manager.setTlIndex(tlIndex);
+//            return tlIndex;
         },
         
         // reinitialize and play timeline from seek point
