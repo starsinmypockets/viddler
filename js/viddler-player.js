@@ -90,6 +90,26 @@ ViddlerPlayer.manager = ViddlerPlayer.manager || {
             this.tlIndex = index;
         },
         
+        secs2time : function(seconds) {
+            var hours   = Math.floor(seconds / 3600);
+            var minutes = Math.floor((seconds - (hours * 3600)) / 60);
+            var seconds = seconds - (hours * 3600) - (minutes * 60);
+            var time = "";
+        
+            (hours !== 0) ? time = hours+":" : time = hours+":";
+            if (minutes != 0 || time !== "") {
+              minutes = (minutes < 10 && time !== "") ? "0"+minutes : String(minutes);
+            } else {
+                minutes = "00:";
+            }  
+            time += minutes+":";
+            if (seconds === 0) { 
+                time+="00";
+            } else {
+                time += (seconds < 10) ? "0"+seconds : String(seconds);
+            }
+            return time;
+        }
     };
     
 ( function ($) {
