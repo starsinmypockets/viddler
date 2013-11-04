@@ -911,8 +911,11 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         },
         
         render : function (opts) {
-            var data = {};
-            data.time = Util.secs2time(Math.floor(ViddlerManager.tlNow/1000));
+            var data = {},
+                t;
+            (ViddlerManager.tlNow < 0) ? t = 0 : t = ViddlerManager.tlNow;
+            data.time = Util.secs2time(Math.floor(t/1000));
+//            data.time = Util.secs2time(Math.floor(ViddlerManager.tlNow/1000));
             if (data.time < 0) data.time = 0;
             this.setElement('#modal-container');
             //this.$el.html(this.template({time : ViddlerManager.tlNow}));
