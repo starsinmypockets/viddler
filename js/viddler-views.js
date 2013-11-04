@@ -10,7 +10,7 @@ ie8 = function () {
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
 (function ($) {
-    var DEBUG = true,
+    var DEBUG = false,
         // output clock data:
         tDEBUG = false;
         
@@ -65,6 +65,7 @@ ie8 = function () {
     VPlayerView = BaseView.extend({
         timeListenerIntv : {},
         stopListenerIntv : {},
+        
         el : '#jquery_jplayer_1',
         mediaEl : {}, // the currently loaded media element
         initialize : function (opts) {
@@ -73,7 +74,7 @@ ie8 = function () {
         },
         
         clearGuiTime : function () {
-            $('.viddler-current-time').html(this.secs2time(Math.floor(0)));  
+            $('.viddler-current-time').html(this.vpm.secs2time(Math.floor(0)));  
         },
         
         setMediaEl : function (mediaEl) {
@@ -384,7 +385,7 @@ ie8 = function () {
                         minHeight : that.$el.width()/7
                     });
                 };
-            
+            console.log('playerready');
             if (DEBUG) console.log('[Player] Player ready');
             if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
             markers = new CommentMarkerView();
@@ -692,6 +693,7 @@ ie8 = function () {
         },
         
         _calcMarkerPos : function () {
+            console.log('hit');
             var markerArray, numbMarkers, markerSecs,
                 that=this,
             
@@ -804,10 +806,15 @@ ie8 = function () {
         
         render : function () {
             var data = {},
+                that = this,
                 pagerStart = this.curPage*this.perPage,
                 pagerStop = pagerStart+this.perPage;
                 
             data.items = this.comments.slice(pagerStart, pagerStop);
+            console.log(data.items);
+            _.each(data.items, function (item) {
+                item.time = that.vpm.secs2time(item.time);
+            });
             data.total = this.comments.length;
             this.$el.html(this.template(data));
             if (this.comments.length > this.perPage) {
@@ -1003,28 +1010,4 @@ ie8 = function () {
         
         render : function () {}
     });
-    
-    /**
-     * Utility
-     **/
-    var secs2time = function(seconds) {
-            var hours   = Math.floor(seconds / 3600);
-            var minutes = Math.floor((seconds - (hours * 3600)) / 60);
-            var seconds = seconds - (hours * 3600) - (minutes * 60);
-            var time = "";
-        
-            (hours !== 0) ? time = hours+":" : time = hours+":";
-            if (minutes != 0 || time !== "") {
-              minutes = (minutes < 10 && time !== "") ? "0"+minutes : String(minutes);
-            } else {
-                minutes = "00:";
-            }  
-            time += minutes+":";
-            if (seconds === 0) { 
-                time+="00";
-            } else {
-                time += (seconds < 10) ? "0"+seconds : String(seconds);
-            }
-            return time;
-        }
 })(jQuery);
