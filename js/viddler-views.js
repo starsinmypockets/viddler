@@ -205,7 +205,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         
         loadCommentPopUp : function (opts) {
             var data = {},
-            commentModal = new CreateCommentView({
+            commentModal = new Views.CreateCommentView({
                 tmp : "#tmp-comment-popup"
             });
             commentModal.render();
