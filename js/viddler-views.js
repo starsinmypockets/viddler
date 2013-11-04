@@ -724,7 +724,9 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             } else {
                 this.comments = this.collection.toJSON();
             }
-            console.log(this.comments);
+            _.each(this.comments, function (item) {
+                item.time = Util.secs2time(item.time);
+            });
             this.numPages = Math.ceil(this.comments.length / this.perPage);
             this.__init(opts);
         },
@@ -757,10 +759,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 pagerStop = pagerStart+this.perPage;
                 
             data.items = this.comments.slice(pagerStart, pagerStop);
-            console.log(data.items);
-            _.each(data.items, function (item) {
-                item.time = Util.secs2time(item.time);
-            });
             data.total = this.comments.length;
             this.$el.html(this.template(data));
             if (this.comments.length > this.perPage) {
@@ -919,10 +917,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 t;
             (ViddlerManager.tlNow < 0) ? t = 0 : t = ViddlerManager.tlNow;
             data.time = Util.secs2time(Math.floor(t/1000));
-//            data.time = Util.secs2time(Math.floor(ViddlerManager.tlNow/1000));
             if (data.time < 0) data.time = 0;
-            this.setElement('#modal-container');
-            //this.$el.html(this.template({time : ViddlerManager.tlNow}));
             this.$el.html(_.template($("#tmp-comment-popup").html(), data));
             $('.comment-close').on('click', function (e) {
                 e.preventDefault();
