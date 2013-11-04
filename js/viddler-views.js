@@ -720,7 +720,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             } else {
                 this.comments = this.collection.toJSON();
             }
-            this.numPages = this.comments.length / this.perPage;
+            this.numPages = Math.ceil(this.comments.length / this.perPage);
             this.__init(opts);
         },
         
