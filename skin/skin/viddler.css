@@ -1514,7 +1514,7 @@ a img.searchimg{
 	top: 32px;
 	margin-top: -20px;
 	width: 23px;
-	display:block;
+	display:none;/*change to display:block; if zoom capabilities enabled or erase entire class*/
 	position: relative;
 	left: -10px;
 }
