@@ -187,3 +187,17 @@ filter:alpha(opacity=40);}
 	right: -10px;
 	float:right;
 }
+
+/*iPhone < 5:*/
+@media screen and (device-aspect-ratio: 2/3) {
+	#play-overlay-button{
+		z-index:-100000;
+		}
+}
+
+/*iPhone 5:*/
+@media screen and (device-aspect-ratio: 40/71) {
+	#play-overlay-button{
+		z-index:-100000;
+		}
+}
