@@ -1580,7 +1580,6 @@ span.number{
 .logo{
 	float:right;
 	margin-top: 0px;
-	width: 100px;
 }
 }
 
@@ -1653,7 +1652,7 @@ span.number{
 	position: absolute;
 	top:1%;
 	z-index: 99999999;
-	border-radius: 15px;
+	border-radius: 10px;
 	border: #fb9600 solid thick;
 }
 .loginmodal header{
