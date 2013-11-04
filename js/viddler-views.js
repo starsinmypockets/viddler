@@ -251,7 +251,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             this.model.fetch({
                 success : function (model, response, opts) {
                     if (model.gate) {
-                        gate = new GateView({
+                        gate = new Views.GateView({
                             tmp : '#tmp-gate-form',
                             message : model.gate.message,
                             gateForm : model.gate.gateForm
@@ -263,7 +263,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     }
                 },
                 error : function (model, response) {
-                    error = new ErrorMsgView({
+                    error = new Views.ErrorMsgView({
                         errorType : "server",
                         errorMsg : "Error retrieving playlist data from server"
                     }).set();
@@ -720,7 +720,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             } else {
                 this.comments = this.collection.toJSON();
             }
-            this.numPages = this.comments.length / this.perPage;
+            console.log(this.comments);
+            this.numPages = Math.ceil(this.comments.length / this.perPage);
             this.__init(opts);
         },
         
@@ -910,8 +911,11 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         },
         
         render : function (opts) {
-            var data = {};
-            data.time = Util.secs2time(Math.floor(ViddlerManager.tlNow/1000));
+            var data = {},
+                t;
+            (ViddlerManager.tlNow < 0) ? t = 0 : t = ViddlerManager.tlNow;
+            data.time = Util.secs2time(Math.floor(t/1000));
+//            data.time = Util.secs2time(Math.floor(ViddlerManager.tlNow/1000));
             if (data.time < 0) data.time = 0;
             this.setElement('#modal-container');
             //this.$el.html(this.template({time : ViddlerManager.tlNow}));
@@ -940,10 +944,10 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         el : "#jp_container_1",
 
         initialize : function (opts) {
-            this.vPG = new VPlayerGui();
+            this.vPG = new Views.VPlayerGui();
             this.vPG.render();
             
-            this.vP = new VPlayerView();
+            this.vP = new Views.VPlayerView();
             this.vP.loadVPlayer();
         },
         

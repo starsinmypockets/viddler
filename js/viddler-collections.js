@@ -18,14 +18,13 @@ define(['backbone', 'viddler-models'], function(Backbone, Models) {
         },
         
         getByTimeRange : function (opts) {
-            var models = [];
+            var items = [];
             _.each(this.models, function (model) {
-                if (model.attributes.time >= opts.start && model.attributes.time <= opts.stop) {
-                    models.push(model);
+                if (model.attributes.time >= opts.start && model.attributes.time < opts.stop) {
+                    items.push(model);
                 }
             });
-            console.log(models);
-            return models;
+            return items;
         }
     });
 
