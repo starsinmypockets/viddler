@@ -113,9 +113,9 @@ div.jp-audio-stream div.jp-type-single div.jp-interface {
 div.jp-interface {
 	background: #272d33;
 	-webkit-border-radius: 5px;
--moz-border-radius: 5px;
-border-radius: 5px;
-position: relative;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	position: relative;
 	width: 97%;
 	padding: 0px 15px 0px 15px;
 	height: 54px;
@@ -1242,7 +1242,6 @@ a.also{
 @media only screen and (max-width: 767px){
 
 div.jp-interface {
-	-webkit-border-radius: 0px; 
 	position: relative;
 	background-color:#272d33;
 	width: 100%;
