@@ -1254,7 +1254,7 @@ box-shadow: inset 1px 1px 2px rgba(1, 1, 1, .4);
 }
 div.jp-video ul.jp-controls,
 div.jp-interface ul.jp-controls li {
-	display:none;
+	display:none;/*remove this to view and fix issues with adding the play button to tablet view and launch the add*/
 	float:left;
 }
 a.jp-play,
@@ -1526,6 +1526,11 @@ a img.videoimg{
 	left: 15px;
 	display:block;
 	width: 60px;
+}
+#mega-markers-container {
+    position: relative;
+    top: 0;
+    width: 87%;
 }
 }
 @media only screen and (max-width: 640px){
