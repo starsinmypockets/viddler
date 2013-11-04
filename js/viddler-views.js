@@ -680,10 +680,11 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                         markers[j] = {};
                         markers[j].start = Math.floor(spot.start/1000);
                         markers[j].stop = Math.floor(spot.stop/1000);
-                        markers[j].mediaid = ViddlerManager.getCurrentMedia().id;
+                        markers[j].mediaid = ViddlerManager.getMediaElFromTlTIme(spot.start).id;
                         markers[j].left = ((100/numbMarkers)*pos)-(100/numbMarkers); // express the left value as a percent - subtract one width
                         j++;
                     }
+                   // console.log(ViddlerManager.getElTime(spot.start));
                 });
                 pos++; // keep track of which position we're in
             });

@@ -59,6 +59,11 @@ define([], function() {
                 
                 return el;
             },
+            
+            getMediaElFromTlTIme : function (tlMs) {
+                var el = this.getElTime(tlMs).step;
+                return this.mediaEls[el];
+            },
 
             // index timeline elements for seek events
             // @@ put this in the manager?
