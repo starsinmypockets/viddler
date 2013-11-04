@@ -21,6 +21,7 @@ require.config({
       },
 
       'davis': {
+        deps: ['jquery'],
         exports: 'Davis'
       },
       'davis.hashRouting' : ['davis'],
