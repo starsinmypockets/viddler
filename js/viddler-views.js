@@ -69,7 +69,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         },
         
         clearGuiTime : function () {
-            $('.viddler-current-time').html(this.vpm.secs2time(Math.floor(0)));  
+            $('.viddler-current-time').html(Util.secs2time(Math.floor(0)));  
         },
         
         setMediaEl : function (mediaEl) {
@@ -111,10 +111,10 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     
                     // don't update until we have good global data
                     if (ViddlerManager.tlNow > 0) {
-                        $('.viddler-current-time').html(that.secs2time(Math.floor(ViddlerManager.tlNow/1000)));
+                        $('.viddler-current-time').html(Util.secs2time(Math.floor(ViddlerManager.tlNow/1000)));
                     }
                     if (ViddlerManager.tlNow > ViddlerManager.tlLength) {
-                        $('.viddler-current-time').html(that.secs2time(Math.floor(ViddlerManager.tlLength/1000)));                        
+                        $('.viddler-current-time').html(Util.secs2time(Math.floor(ViddlerManager.tlLength/1000)));                        
                     }
                 },1000);  // run this faster in production
         },
@@ -132,28 +132,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                   Events.trigger('stopListenerStop');
                }
             },1000);
-        },
-        
-        // utility = convert seconds to 00:00:00 format
-        secs2time : function(seconds) {
-            var hours   = Math.floor(seconds / 3600);
-            var minutes = Math.floor((seconds - (hours * 3600)) / 60);
-            var seconds = seconds - (hours * 3600) - (minutes * 60);
-            var time = "";
-        
-            (hours !== 0) ? time = hours+":" : time = hours+":";
-            if (minutes != 0 || time !== "") {
-              minutes = (minutes < 10 && time !== "") ? "0"+minutes : String(minutes);
-            } else {
-                minutes = "00:";
-            }  
-            time += minutes+":";
-            if (seconds === 0) { 
-                time+="00";
-            } else {
-                time += (seconds < 10) ? "0"+seconds : String(seconds);
-            }
-            return time;
         },
         
         loadVPlayer : function (opts) {
@@ -187,24 +165,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 };
             }
             this.$el.jPlayer(jPData);
-            $('.jp-comment').unbind();
-            $('.jp-comment').on('click', function (e) {
-                e.preventDefault();
-                that.loadCommentPopUp();
-                return false;
-            });
-        },
-        
-       loadCommentPopUp : function (opts) {
-            var data = {},
-            playerData = this.$el.jPlayer().data().jPlayer.status;
-            data.time = secs2time(Math.floor(playerData.currentTime));
-            data.avatar = "http://placekitten.com/75/75";
-            commentModal = new CreateCommentView({
-                data : data,
-                tmp : "#tmp-comment-popup"
-            });
-            commentModal.render();
         },
         
          // Player controls 
@@ -242,26 +202,10 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
     
     Views.VPlayerGuiView = Backbone.View.extend({
         el : ".jp-gui",
-        vplm : ViddlerManager,
         
-        commentModal : function () {
-            data = {};
-            data.time = 123; // @@ Math.floor(playerData.currentTime);
-            data.avatar = "http://placekitten.com/75/75";
-            commentModal = new CreateCommentView({
-                data : data,
-                tmp : "#tmp-comment-popup"
-            });
-            commentModal.render();
-        },
-        
-        loadCommentPopUp : function (data) {
+        loadCommentPopUp : function (opts) {
             var data = {},
-            playerData = this.$el.jPlayer().data().jPlayer.status;
-            data.time = Math.floor(playerData.currentTime);
-            data.avatar = "http://placekitten.com/75/75";
             commentModal = new CreateCommentView({
-                data : data,
                 tmp : "#tmp-comment-popup"
             });
             commentModal.render();
@@ -389,7 +333,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
             this.bindCommentMarkerEvents();
             this.timelinePlay();
-            $('.viddler-duration').html(that.vP.secs2time(Math.floor(ViddlerManager.tlLength/1000)));
+            $('.viddler-duration').html(Util.secs2time(Math.floor(ViddlerManager.tlLength/1000)));
             this.vP.clearGuiTime();
         },
         
@@ -409,7 +353,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 stepOpts.stop = mediaEl.playheadStop;
             }
             
-            // a bit of basic routing here:
+            // routing for timeline step:
             if (opts.seek) {
                 this.timelineStep(stepOpts);
             } else if (tlStep === 0) {
@@ -810,7 +754,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             data.items = this.comments.slice(pagerStart, pagerStop);
             console.log(data.items);
             _.each(data.items, function (item) {
-                item.time = that.vpm.secs2time(item.time);
+                item.time = Util.secs2time(item.time);
             });
             data.total = this.comments.length;
             this.$el.html(this.template(data));
@@ -943,7 +887,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
     
     Views.CreateCommentView = Views.ModalView.extend({
         el : '#modal-container',
-        time : '123',
         events : {
             'click #comment-form-submit' : 'commentSubmit',
             'click .comment-close' : 'hide'
@@ -968,7 +911,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         
         render : function (opts) {
             var data = {};
-            data.time = Math.floor(ViddlerManager.tlNow/1000);
+            data.time = Util.secs2time(Math.floor(ViddlerManager.tlNow/1000));
             if (data.time < 0) data.time = 0;
             this.setElement('#modal-container');
             //this.$el.html(this.template({time : ViddlerManager.tlNow}));
@@ -993,7 +936,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
      * Simple player to test events etc
      *
      **/
-    
     Views.TestPlayerView = Backbone.View.extend({
         el : "#jp_container_1",
 
