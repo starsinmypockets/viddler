@@ -119,7 +119,7 @@ ie8 = function () {
                         $('.viddler-current-time').html(that.vpm.secs2time(Math.floor(ViddlerPlayer.manager.tlNow/1000)));
                     }
                     if (ViddlerPlayer.manager.tlNow > ViddlerPlayer.manager.tlLength) {
-                        $('.viddler-current-time').html(that.secs2time(Math.floor(ViddlerPlayer.manager.tlLength/1000)));                        
+                        $('.viddler-current-time').html(that.vpm.secs2time(Math.floor(ViddlerPlayer.manager.tlLength/1000)));                        
                     }
                 },1000);  // run this faster in production
         },
@@ -137,28 +137,6 @@ ie8 = function () {
                   ViddlerPlayer.vent.trigger('stopListenerStop');
                }
             },1000);
-        },
-        
-        // utility = convert seconds to 00:00:00 format
-        secs2time : function(seconds) {
-            var hours   = Math.floor(seconds / 3600);
-            var minutes = Math.floor((seconds - (hours * 3600)) / 60);
-            var seconds = seconds - (hours * 3600) - (minutes * 60);
-            var time = "";
-        
-            (hours !== 0) ? time = hours+":" : time = hours+":";
-            if (minutes != 0 || time !== "") {
-              minutes = (minutes < 10 && time !== "") ? "0"+minutes : String(minutes);
-            } else {
-                minutes = "00:";
-            }  
-            time += minutes+":";
-            if (seconds === 0) { 
-                time+="00";
-            } else {
-                time += (seconds < 10) ? "0"+seconds : String(seconds);
-            }
-            return time;
         },
         
         loadVPlayer : function (opts) {
@@ -192,24 +170,6 @@ ie8 = function () {
                 };
             }
             this.$el.jPlayer(jPData);
-            $('.jp-comment').unbind();
-            $('.jp-comment').on('click', function (e) {
-                e.preventDefault();
-                that.loadCommentPopUp();
-                return false;
-            });
-        },
-        
-       loadCommentPopUp : function (opts) {
-            var data = {},
-            playerData = this.$el.jPlayer().data().jPlayer.status;
-            data.time = this.vpm.secs2time(Math.floor(playerData.currentTime));
-            data.avatar = "http://placekitten.com/75/75";
-            commentModal = new CreateCommentView({
-                data : data,
-                tmp : "#tmp-comment-popup"
-            });
-            commentModal.render();
         },
         
          // Player controls 
@@ -247,26 +207,10 @@ ie8 = function () {
     
     VPlayerGuiView = Backbone.View.extend({
         el : ".jp-gui",
-        vplm : ViddlerPlayer.manager,
         
-        commentModal : function () {
-            data = {};
-            data.time = 123; // @@ Math.floor(playerData.currentTime);
-            data.avatar = "http://placekitten.com/75/75";
-            commentModal = new CreateCommentView({
-                data : data,
-                tmp : "#tmp-comment-popup"
-            });
-            commentModal.render();
-        },
-        
-        loadCommentPopUp : function (data) {
+        loadCommentPopUp : function (opts) {
             var data = {},
-            playerData = this.$el.jPlayer().data().jPlayer.status;
-            data.time = Math.floor(playerData.currentTime);
-            data.avatar = "http://placekitten.com/75/75";
             commentModal = new CreateCommentView({
-                data : data,
                 tmp : "#tmp-comment-popup"
             });
             commentModal.render();
@@ -392,7 +336,7 @@ ie8 = function () {
             markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
             this.bindCommentMarkerEvents();
             this.timelinePlay();
-            $('.viddler-duration').html(that.vP.secs2time(Math.floor(ViddlerPlayer.manager.tlLength/1000)));
+            $('.viddler-duration').html(this.vpm.secs2time(Math.floor(ViddlerPlayer.manager.tlLength/1000)));
             this.vP.clearGuiTime();
         },
         
@@ -412,7 +356,7 @@ ie8 = function () {
                 stepOpts.stop = mediaEl.playheadStop;
             }
             
-            // a bit of basic routing here:
+            // routing for timeline step:
             if (opts.seek) {
                 this.timelineStep(stepOpts);
             } else if (tlStep === 0) {
@@ -946,7 +890,6 @@ ie8 = function () {
     
     CreateCommentView = ModalView.extend({
         el : '#modal-container',
-        time : '123',
         events : {
             'click #comment-form-submit' : 'commentSubmit',
             'click .comment-close' : 'hide'
@@ -971,10 +914,9 @@ ie8 = function () {
         
         render : function (opts) {
             var data = {};
-            data.time = Math.floor(ViddlerPlayer.manager.tlNow/1000);
+            data.time = this.vpm.secs2time(Math.floor(this.vpm.tlNow/1000));
             if (data.time < 0) data.time = 0;
             this.setElement('#modal-container');
-            //this.$el.html(this.template({time : ViddlerPlayer.manager.tlNow}));
             this.$el.html(_.template($("#tmp-comment-popup").html(), data));
             $('.comment-close').on('click', function (e) {
                 e.preventDefault();
@@ -996,7 +938,6 @@ ie8 = function () {
      * Simple player to test events etc
      *
      **/
-    
     TestPlayerView = Backbone.View.extend({
         el : "#jp_container_1",
 
