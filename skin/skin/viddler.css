@@ -1241,8 +1241,7 @@ a.also{
 @media only screen and (max-width: 767px){
 
 div.jp-interface {
-	-webkit-border-radius: 0px;
-	border-radius: 0px; 
+	-webkit-border-radius: 0px; 
 	position: relative;
 	background-color:#272d33;
 	width: 100%;
