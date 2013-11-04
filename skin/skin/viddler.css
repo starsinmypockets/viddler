@@ -1050,7 +1050,7 @@ img#orangex{
 	margin-top: 10px;
 }
 .loginmodal form label{
-	margin-top: 30px;
+	margin-top: 10px;
 	display:block;
 	font-family:helvetica;
 }
@@ -1129,7 +1129,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c7c7c7', end
 
 a#user-signup-submit, a#user-login-submit{
 	display:inline-block;
-	margin-top: 60px;
+	margin-top: 20px;
 }
 
 a#user-signup-submit img, a#user-login-submit img{
@@ -1659,7 +1659,7 @@ span.number{
 	padding: 10px;
 }
 .loginmodal section#modalbody{
-	padding: 15px;
+	 padding: 0 15px 5px;
 }
 .loginmodal section#modalbody form input{
 	max-width: 85%;
