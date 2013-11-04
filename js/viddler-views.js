@@ -205,7 +205,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         
         loadCommentPopUp : function (opts) {
             var data = {},
-            commentModal = new CreateCommentView({
+            commentModal = new Views.CreateCommentView({
                 tmp : "#tmp-comment-popup"
             });
             commentModal.render();
@@ -251,7 +251,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             this.model.fetch({
                 success : function (model, response, opts) {
                     if (model.gate) {
-                        gate = new GateView({
+                        gate = new Views.GateView({
                             tmp : '#tmp-gate-form',
                             message : model.gate.message,
                             gateForm : model.gate.gateForm
@@ -263,7 +263,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     }
                 },
                 error : function (model, response) {
-                    error = new ErrorMsgView({
+                    error = new Views.ErrorMsgView({
                         errorType : "server",
                         errorMsg : "Error retrieving playlist data from server"
                     }).set();
@@ -940,10 +940,10 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         el : "#jp_container_1",
 
         initialize : function (opts) {
-            this.vPG = new VPlayerGui();
+            this.vPG = new Views.VPlayerGui();
             this.vPG.render();
             
-            this.vP = new VPlayerView();
+            this.vP = new Views.VPlayerView();
             this.vP.loadVPlayer();
         },
         
