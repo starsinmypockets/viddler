@@ -116,7 +116,7 @@ ie8 = function () {
                     
                     // don't update until we have good global data
                     if (ViddlerPlayer.manager.tlNow > 0) {
-                        $('.viddler-current-time').html(that.secs2time(Math.floor(ViddlerPlayer.manager.tlNow/1000)));
+                        $('.viddler-current-time').html(that.vpm.secs2time(Math.floor(ViddlerPlayer.manager.tlNow/1000)));
                     }
                     if (ViddlerPlayer.manager.tlNow > ViddlerPlayer.manager.tlLength) {
                         $('.viddler-current-time').html(that.secs2time(Math.floor(ViddlerPlayer.manager.tlLength/1000)));                        
@@ -203,7 +203,7 @@ ie8 = function () {
        loadCommentPopUp : function (opts) {
             var data = {},
             playerData = this.$el.jPlayer().data().jPlayer.status;
-            data.time = secs2time(Math.floor(playerData.currentTime));
+            data.time = this.vpm.secs2time(Math.floor(playerData.currentTime));
             data.avatar = "http://placekitten.com/75/75";
             commentModal = new CreateCommentView({
                 data : data,
