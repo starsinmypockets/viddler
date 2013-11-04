@@ -59,9 +59,25 @@ define([], function() {
                 
                 return el;
             },
-            
-            // really the code should go in here
-            setTlIndex : function (index) {
+
+            // index timeline elements for seek events
+            // @@ put this in the manager?
+            initTlIndex : function () {
+                var mediaEls = this.mediaEls,
+                    tlSteps = mediaEls.length,
+                    index = [],
+                    that = this;
+                
+                for (var i = 0; i < tlSteps; i++) {
+                    function func (i) {
+                        index[i] = {};
+                        index[i].mediaElId = mediaEls[i].id;
+                        index[i].start = (i === 0) ? 0 : index[i-1]['stop'];
+                        index[i].stop = index[i]['start'] + mediaEls[i]['playheadStop'] - mediaEls[i]['playheadStart'];
+                    }
+                    
+                    func(i);
+                }
                 this.tlIndex = index;
             }
             

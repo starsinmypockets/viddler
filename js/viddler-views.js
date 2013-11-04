@@ -311,8 +311,9 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             this.vPG.render({mediaElements : mediaEls}); 
             
             // set Index info on manager
-            this.initTlIndex();  //initTlIndex also binds dom seek events
-            
+            ViddlerManager.initTlIndex();  //initTlIndex also binds dom seek events
+            this.bindSeekEvents();
+
             // add play button overlay
             $('#play-overlay-button').show();
             
@@ -481,6 +482,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             }
         },
         
+/*
         // index timeline elements for seek events
         // @@ put this in the manager?
         initTlIndex : function () {
@@ -502,6 +504,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             }
             ViddlerManager.setTlIndex(tlIndex);
         },
+*/
         
         // reinitialize and play timeline from seek point
         seekTo : function (tlMs) {
