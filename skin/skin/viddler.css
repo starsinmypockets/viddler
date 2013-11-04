@@ -1254,7 +1254,7 @@ box-shadow: inset 1px 1px 2px rgba(1, 1, 1, .4);
 }
 div.jp-video ul.jp-controls,
 div.jp-interface ul.jp-controls li {
-/*	display:none;*/
+	display:none;
 	float:left;
 }
 a.jp-play,
@@ -1303,42 +1303,33 @@ ul.jp-toggles{
 }
 a.jp-play {
 	background: url("../img/mobile/play.png") no-repeat; 
-	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button*/
+	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button and add missing button to tablet view*/ 
 	background-size: 18px;
 	margin-left:10%;
+
 }
 a.jp-play:hover {
 	background: url("../img/mobile/playhover.png") no-repeat;
-	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button*/
+	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button and add missing button to tablet view */
 	background-size: 18px;
 	margin-left:10%;
+
 }
 a.jp-pause {
 	background: url("../img/mobile/pause.png") no-repeat;
-	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button*/
+	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button and add missing button to tablet view */
 	background-size: 18px;
 	display: none;
 	margin-left:10%;
 }
 a.jp-pause:hover {
 	background: url("../img/mobile/pausehover.png") no-repeat;
-	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button*/
+	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button and add missing button to tablet view */
 	background-size: 18px;
 	margin-left:10%;
 }
-/*a.jp-play {
-	background: url("../img/mobile/play.png") no-repeat;
-}
-a.jp-play:hover {
-	background: url("../img/mobile/playhover.png") no-repeat;
-}
-a.jp-pause {
-	background: url("../img/mobile/pause.png") no-repeat;
-	display: none;
-}
-a.jp-pause:hover {
-	background: url("../img/mobile/pausehover.png") no-repeat;
-}*/
+
+
 div.jp-play-bar {
 	background: url("../img/mobile/progress.jpg") repeat-x;
 }
