@@ -1,11 +1,14 @@
-(function ($) {
-    window.ViddlerModel = Backbone.Model.extend({
+define(['backbone'], function(Backbone) {
+
+    var Models = {};
+
+    Models.ViddlerModel = Backbone.Model.extend({
         parse : function (response) {
             return response;
         }   // no op
     });
     
-    window.UserModel = ViddlerModel.extend({
+    Models.UserModel = Models.ViddlerModel.extend({
         defaults : {
             id : ''
             
@@ -16,7 +19,7 @@
         }
     });
     
-    window.CommentModel = ViddlerModel.extend({
+    Models.CommentModel = Models.ViddlerModel.extend({
         defauls : {
             id : '',
             userId : '',
@@ -33,7 +36,7 @@
         }
     });
     
-    window.PlayListModel = ViddlerModel.extend({
+    Models.PlayListModel = Models.ViddlerModel.extend({
         defauls : {
             id : ''
         },
@@ -64,7 +67,7 @@
         }
     });
     
-    window.UserModel = ViddlerModel.extend({
+    Models.UserModel = Models.ViddlerModel.extend({
         defaults : {
             userName : '',
             email : '',
@@ -79,4 +82,6 @@
         }
     });
     
-})(jQuery);
+    return Models;
+
+});

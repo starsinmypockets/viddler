@@ -1,48 +1,36 @@
-// Loaded in the document <head> before app.js
-var App = App || {};
-App.Config = {};
+define(function() {
 
-// Define plugins to be used here
-// foldername : Display Name
-App.Config.plugins = {
-	
-	googleanalytics : function() {
-		// Google Analytics variables
-		App.Config.ga_account = "";
-	}
+  return {
 
-	/*
-	,sitecatalyst : function() {
-		// SiteCatalyst variables
-		App.Config.s_account = "";
-		App.Config.s_visitorNamespace = "";
-		App.Config.s_trackingServer = "";
-	}
-	*/
-	
-	,liverail : function() {
-		// LiveRail variables
-		// These will need to be populated by the api
-		App.Config.lr_video_id = "asdf1234";
-		App.Config.lr_title = "Big Buck Bunny";
+    extensions : {
+      'googleanalytics' : 'extensions/googleanalytics/googleanalytics-main',
+      'liverail' : 'extensions/liverail/liverail-main',
+      'sitecatalyst' : 'extensions/sitecatalyst/sitecatalyst-main'
+    },
 
-		// LiveRail pre-roll on all clips
-		App.Config.lr_preroll = true;
-	}
+    plugins : {
 
-	,plaincontent : function () {
-		// Plain content plugin
-		// Displays html in place of player
-	}
+      //'jplayer' : 'plugins/jplayer/jplayer-plugin',
+      //'comments' : 'plugins/comments/comments-plugin'
+      //'plaincontent' : 'plugins/plaincontent/plaincontent-plugin',
 
-	,popcornjs : function () {
-		
-	}
-};
+      'popcornjs' : 'plugins/popcornjs/popcornjs-main',
+    },
 
-// Davis Settings
-// http://olivernn.github.io/davis.js/docs/#settings
-App.Config.davis = {
-	raiseErrors : true,
-	generateRequestOnPageLoad : true
-};
+    ga_account : '',
+
+    // These will need to be populated by the api
+    lr_video_id : 'asdf1234',
+    lr_title : 'Big Buck Bunny',
+
+    // LiveRail pre-roll on all clips
+    lr_preroll : true,
+
+    davis : {
+      raiseErrors : true,
+      generateRequestOnPageLoad: true
+    }
+
+  };
+    
+});

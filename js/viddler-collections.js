@@ -1,6 +1,9 @@
-(function ($) {
-    window.CommentCollection = Backbone.Collection.extend({       
-        model: CommentModel,
+define(['backbone', 'viddler-models'], function(Backbone, Models) {
+
+    var Collections = {};
+
+    Collections.CommentCollection = Backbone.Collection.extend({       
+        model: Models.CommentModel,
         media_element : '',
         initialize : function(models, opts) {
             this.media_element = opts.media_element;
@@ -25,4 +28,7 @@
             return models;
         }
     });
-})(jQuery);
+
+    return Collections;
+
+});
