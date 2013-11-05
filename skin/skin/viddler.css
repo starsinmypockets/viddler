@@ -1008,7 +1008,7 @@ a.also{
 	top: 24%;
 	border:none; 
 	z-index:10000000;	
-	border-radius: 10px;
+	border-radius: 5px;
 	font-family: helvetica; 
 	font-weight:bold;
 	color: #585f68; 
@@ -1021,7 +1021,7 @@ a.also{
 	bottom: -12px;
 	width: 20px;
 	margin-left: -20px;
-	left: 50%;
+	left: 20%;
 }
 #modal-outer img#okbutton {
     float: right;
@@ -1679,7 +1679,7 @@ span.number{
 	top: 24%;
 	border:none; 
 	z-index:10000000;	
-	border-radius: 10px;
+	border-radius: 5px;
 	font-family: helvetica; 
 	font-weight:bold;
 	color: #585f68; 
