@@ -141,6 +141,7 @@ filter:alpha(opacity=40);}
 @media only screen and (max-width: 480px){
 	/* Modals */
 
+/*this was moved to viddler.css
 #modal-outer {
 	background-color:rgba(255,255,255,.9); 
 	width:280px;
@@ -185,7 +186,7 @@ filter:alpha(opacity=40);}
 	top: -10px;
 	right: -10px;
 	float:right;
-}
+}*/
 
 
 /*iPhone < 5:*/
