@@ -81,39 +81,34 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config', 'jplayer'], fu
           
           loadPlayer : function (opts) {
               var that = this,
-                  width,
-                  height,
                   jPData = {
                       ready: function () {
-                          var w;
+                          // bind events once player is ready
                           if (Config.DEBUG) {
                               $('#inspector').jPlayerInspector({
                                   jPlayer : $("#jquery_jplayer_1")
                               });
                           }
-                          w =  that.$el.width();
-                          that.$('video').css({
-                              'width' : w,
-                              'min-height' : w*.56
-                          });
                           Viddler.Events.trigger("playerReady");
                       },
-                      swfPath: "../swf/",
+                      swfPath: "../js/vendor/",
                       supplied: "m4v",
                       backgroundColor: '#grey',
                       errorAlerts : true,
                       solution : "html, flash",
-                  };
+                  },
+                  width,
+                  height;
+
+                  
+              if (Util.ie8) {
                   width = this.$el.width();
                   height = this.$el.height();
-                  jPData.size= {
-                      width: "100%",
-                      height: "auto"
-/*
+                  jPData.size = {
                       width : width,
                       height : height
-*/
-                  }
+                  };
+              }
               this.$el.jPlayer(jPData);
           },
           
@@ -126,7 +121,6 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config', 'jplayer'], fu
                    $('#load-wait').show();
                }
                data[opts.type] = opts.url;
-               if (opts.poster) data.poster = opts.poster;
                this.$el.jPlayer("setMedia", data);
                if (!Util.ie8) {
                    this.$el.on(($.jPlayer.event.canplay), function () {
