@@ -1675,12 +1675,10 @@ span.number{
 @media only screen and (max-width: 480px){
 #modal-outer {
 	background-color:#eeeeee; 
-	width:87%;
-	min-width:225px;
+	width:277px;
 	padding: .5em; 
 	position:absolute; 
-	top: 190px;
-	left: 10px;
+	top: 24%;
 	border:none; 
 	z-index:10000000;	
 	border-radius: 10px;
@@ -1688,6 +1686,7 @@ span.number{
 	font-weight:bold;
 	color: #585f68; 
 	font-size: 16px;
+ 	display:none; /* display:block; to display comment bubbles */
 }
 #modal-outer img#modaltriangle{
 	position: absolute;
