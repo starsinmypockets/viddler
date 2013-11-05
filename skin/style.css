@@ -102,9 +102,7 @@ filter:alpha(opacity=40);}
 	color: #585f68; 
 	font-size: 16px;
  	display:block;  (display:block; to display comment bubbles)
-}*/
-
-#modal-outer img#modaltriangle{
+}#modal-outer img#modaltriangle{
 	color:rgba(238, 238, 238, .9); 
 	position: absolute;
 	bottom: -12px;
@@ -134,7 +132,7 @@ filter:alpha(opacity=40);}
 	top: -10px;
 	right: -10px;
 	float:right;
-}
+}*/
 
 
 .cursor { cursor: pointer; }
