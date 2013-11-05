@@ -246,10 +246,15 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     url : opts.mediaEl.elementURL
                 });
             }
+            
             if (opts.mediaEl.subtitleSrc && !Util.ie8) {
                 this.doSubtitles(opts.mediaEl.subtitleSrc);
             }
-
+            
+            if (opts.mediaEl.sprites && !Util.ie8) {
+                this.doSprites(opts.mediaEl.sprites);
+            }
+            
             this.vP.play({start : opts.start/1000});
             
             // load step comments
@@ -315,6 +320,35 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 // add subtitles
                 this.pop.parseSRT(subtitleSrc);
             }
+        },
+        
+        doSprites : function (sprites) {
+            var that = this;
+            
+            function _renderSprite(html) {
+                that.$el.append(html).find('.sprite').css({
+                    position : "absolute",
+                    top : 10,
+                    left : 10
+                });
+            }
+            
+            function _destroySprite(id) {
+                $('*[data-sprite-id="'+id+'"]').remove();
+            }
+            _.each(sprites, function (sprite) {
+                    // @@ put in Util 
+                    var spriteId = Math.random().toString(36).substring(7);  // give the sprite a temp id
+                    that.pop.cue(sprite.start/1000, function () {
+                        console.log('SPRITE EVENT');
+                        html = $(sprite.html).attr("data-sprite-id", spriteId);
+                        _renderSprite(html);
+                    });
+                    that.pop.cue(sprite.stop/1000, function () {
+                        console.log('SPRITE DESTROY');
+                        _destroySprite(spriteId);   
+                    });
+            });
         },
         
         // Set total  time for elsapsed mediaElements to global object

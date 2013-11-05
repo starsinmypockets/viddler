@@ -17,7 +17,14 @@
         "elementURL": "http://www.viddler.com/file/bfdaca81/718a0d534025d4d8104b2f4d38fcbee1",
         "subtitleSrc": "../test.srt",
         "timeLineTag": "Bernie Intro",
-        "poster" : "http://placekitten.com/480/270",
+        "poster" : "http://placekitten.com/480/270",        
+        "sprites" : [
+            {
+                "start" : "11400",
+                "stop" : "18000",
+                "html" : "<div class='sprite sprite-1'>Viddler supports sprites!</div>"
+            }
+        ],
         "mediaElement": {},
         "transitionIn": {},
         "transitionOut": {}
