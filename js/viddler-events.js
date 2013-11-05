@@ -48,31 +48,6 @@ define(['backbone'], function(Backbone) {
 
   }
 
-  // get login view
-  Events.on('doLogin', function (e) {
-      login = new UserLoginView({
-          tmp : '#tmp-user-login-form'
-      }).render();
-  });
-
-  // get signup view
-  Events.on('doSignup', function () {
-      login = new UserSignupView({
-          tmp : '#tmp-user-signup-form'
-      }).render();
-  });
-
-  // Unauthorized view
-  Events.on('noAuth', function () {
-      login = new UserNoAuthView({
-          tmp : "#tmp-no-auth-form"
-      }).render();
-  });
-
-  // do mega timeline seek
-  Events.on('click .jp-seek-bar', function (e) {
-      console.log('my seek');
-  });
 
   return Events;
 

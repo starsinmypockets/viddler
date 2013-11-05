@@ -9,12 +9,13 @@ define(function() {
     },
 
     plugins : {
-
-      //'jplayer' : 'plugins/jplayer/jplayer-plugin',
       //'comments' : 'plugins/comments/comments-plugin'
-      //'plaincontent' : 'plugins/plaincontent/plaincontent-plugin',
+      'popcornjs' : 'plugins/popcornjs/popcornjs-main'
+    },
 
-      'popcornjs' : 'plugins/popcornjs/popcornjs-main',
+    players : {
+      'm4v' : 'players/jplayer/jplayer-main'
+      //,'html' : 'players/markup/markup-main'
     },
 
     ga_account : '',
@@ -29,7 +30,11 @@ define(function() {
     davis : {
       raiseErrors : true,
       generateRequestOnPageLoad: true
-    }
+    },
+
+    DEBUG : false,
+    tDEBUG : false
+        
 
   };
     

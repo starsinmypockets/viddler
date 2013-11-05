@@ -1,5 +1,4 @@
 define(['require', 'underscore', 'config', 
-  'viddler-player', 
   'viddler-models', 
   'viddler-views', 
   'viddler-collections',
@@ -7,7 +6,6 @@ define(['require', 'underscore', 'config',
   'viddler-manager'], function(require, _, Config) {
 
   var Viddler = {
-    Player : require("viddler-player"),
     Events : require("viddler-events"),
     Models : require("viddler-models"),
     Views: require("viddler-views"),
@@ -23,13 +21,30 @@ define(['require', 'underscore', 'config',
 
   };
 
-  // Dynamic require used to load plugins defined in Config
-  require(_.values(Config.plugins), function () {
-    Viddler.Plugins = _.object(_.keys(Config.plugins), arguments);
+  // get login view
+  Viddler.Events.on('doLogin', function (e) {
+      login = new Viddler.Views.UserLoginView({
+          tmp : '#tmp-user-login-form'
+      }).render();
   });
 
-  require(_.values(Config.extensions), function () {
-    Viddler.Extensions = _.object(_.keys(Config.extensions), arguments);
+  // get signup view
+  Viddler.Events.on('doSignup', function () {
+      login = new Viddler.Views.UserSignupView({
+          tmp : '#tmp-user-signup-form'
+      }).render();
+  });
+
+  // Unauthorized view
+  Viddler.Events.on('noAuth', function () {
+      login = new Viddler.Views.UserNoAuthView({
+          tmp : "#tmp-no-auth-form"
+      }).render();
+  });
+
+  // do mega timeline seek
+  Viddler.Events.on('click .jp-seek-bar', function (e) {
+      console.log('my seek');
   });
 
   return Viddler;

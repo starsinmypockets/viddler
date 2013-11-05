@@ -1,1 +1,0 @@
-console.log( "[Plugin] Loaded: Plain Content Module");

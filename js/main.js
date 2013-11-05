@@ -67,19 +67,30 @@ require(['config', 'viddler', 'rain_lib', 'davis', 'jquery', 'davis.hashRouting'
               
       rainReady(function() {
             console.log('rainReady');
+
+            // Dynamic require used to load plugins defined in Config
+            require(_.values(Config.plugins), function () {
+              Viddler.Plugins = _.object(_.keys(Config.plugins), arguments);
+            });
+
+            // extensions
+            require(_.values(Config.extensions), function () {
+              Viddler.Extensions = _.object(_.keys(Config.extensions), arguments);
+            });
+
             $('.user-login').on('click', function (e) {
                 e.preventDefault();
-                Viddler.Player.vent.trigger('doLogin');
+                Viddler.Events.trigger('doLogin');
                 return false;
             });
             $('.user-signup').on('click', function (e) {
                 e.preventDefault();
-              Viddler.Player.vent.trigger('doSignup');
+              Viddler.Events.trigger('doSignup');
               return false;
           });
             $('.no').on('click', function (e) {
                 e.preventDefault();
-              Viddler.Player.vent.trigger('noAuth');
+              Viddler.Events.trigger('noAuth');
               return false;
           });
               
@@ -88,7 +99,7 @@ require(['config', 'viddler', 'rain_lib', 'davis', 'jquery', 'davis.hashRouting'
 
             $doc.ajaxError(function (event, xhr) {
                 if (xhr.status == 401)
-                    Viddler.Player.vent.trigger('noAuth');
+                    Viddler.Events.trigger('noAuth');
             });
       });
 
@@ -114,7 +125,7 @@ require(['config', 'viddler', 'rain_lib', 'davis', 'jquery', 'davis.hashRouting'
     this.get('(.*)', function(req) {
       var test = new Viddler.Views.PlaylistView({
           model : new Viddler.Models.PlayListModel({
-              id : 2342213,
+              id : 2342213
           })
       });
     });
