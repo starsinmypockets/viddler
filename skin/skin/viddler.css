@@ -764,6 +764,17 @@ a.jp-comment:hover{
 	height: 23px !important;
 	position: relative;
 }
+a.jp-no-video-comment{
+	background: url('../img/comment.png');
+	opacity:0.3;
+	-webkit-background-size: 24px;
+	background-size: 24px;
+	width: 24px !important;
+	height: 23px !important;
+	position: relative;
+	top: 4px;
+	}
+	
 a.jp-full-screen {
 	background: url("../img/fullscreen.png") no-repeat;
 	-webkit-background-size: 23px;
@@ -1210,7 +1221,7 @@ MEDIA QUERIES HERE
 	position: relative;
 	right: 0px;
 	-webkit-box-shadow:none;
-box-shadow: none;
+	box-shadow: none;
 
 }
 .loginmodal img.leftarrow{
@@ -1647,7 +1658,7 @@ span.number{
 @media only screen and (max-width: 480px){
 #modal-outer {
 	background-color:rgba(255,255,255,.9); 
-	width:50%;
+	width:65%;
 	min-width:225px;
 	padding: .5em; 
 	position:absolute; 
