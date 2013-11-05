@@ -85,12 +85,17 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config', 'jplayer'], fu
                   height,
                   jPData = {
                       ready: function () {
-                          // bind events once player is ready
+                          var w;
                           if (Config.DEBUG) {
                               $('#inspector').jPlayerInspector({
                                   jPlayer : $("#jquery_jplayer_1")
                               });
                           }
+                          w =  that.$el.width();
+                          that.$('video').css({
+                              'width' : w,
+                              'min-height' : w*.56
+                          });
                           Viddler.Events.trigger("playerReady");
                       },
                       swfPath: "../js/vendor/",
@@ -102,8 +107,12 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config', 'jplayer'], fu
                   width = this.$el.width();
                   height = this.$el.height();
                   jPData.size= {
+                      width: "100%",
+                      height: "auto"
+/*
                       width : width,
                       height : height
+*/
                   }
               this.$el.jPlayer(jPData);
           },
