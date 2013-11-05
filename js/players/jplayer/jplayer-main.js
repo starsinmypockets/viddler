@@ -81,6 +81,8 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config', 'jplayer'], fu
           
           loadPlayer : function (opts) {
               var that = this,
+                  width,
+                  height,
                   jPData = {
                       ready: function () {
                           // bind events once player is ready
@@ -96,19 +98,25 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config', 'jplayer'], fu
                       backgroundColor: '#grey',
                       errorAlerts : true,
                       solution : "html, flash",
-                  },
+                  };
+                  width = this.$el.width();
+                  height = this.$el.height();
+                  jPData.size= {
+                      width : width,
+                      height : height
+                  }
+/*
                   width,
                   height;
 
                   
               if (Util.ie8) {
-                  width = this.$el.width();
-                  height = this.$el.height();
                   jPData.size = {
                       width : width,
                       height : height
                   };
               }
+*/
               this.$el.jPlayer(jPData);
           },
           
