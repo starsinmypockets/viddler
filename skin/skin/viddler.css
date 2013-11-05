@@ -1048,8 +1048,6 @@ a.also{
 /*add comment form styles*/
 
 #comment-text {
-	/*width:100%;
-	height:50px;*/
 	margin-bottom:10px;
 	color: #BBBBBB;
     font-style: italic;
@@ -1688,6 +1686,11 @@ span.number{
 	font-size: 16px;
  	display:none; /* display:block; to display comment bubbles */
 }
+
+#comment-text, #comment-play-head-pos {
+	width:98%;
+	}
+
 #modal-outer img#modaltriangle{
 	position: absolute;
 	bottom: -12px;
@@ -1803,6 +1806,11 @@ span.number{
 	display:none; !important;
 }
 }
+
+/*iphone styles*/
+
+
+
 
 
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
