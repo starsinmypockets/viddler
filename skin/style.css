@@ -72,8 +72,9 @@ img#jp_poster_0 {position:absolute; top:0; z-index:10}
 #load-wait {position:absolute; top:44%; left:50%; z-index:10000}
 
 /* Sprites */
-.sprite {font-weight:bold; background-color:#E2F5AB; padding:.4em; border-radius:2em; opacity:0.4;
-filter:alpha(opacity=40);}
+.sprite-outer {font-weight:bold; background-color:#E2F5AB; padding:.4em; border-radius:2em; border:2px solid; opacity:0.6;
+filter:alpha(opacity=60);}
+
 .viddlerSubtitle {display:block; position:absolute; left:0 !important}
 
 /* Mask */
@@ -134,7 +135,7 @@ filter:alpha(opacity=40);}
 }*/
 
 
-.cursor { cursor: pointer; }
+.cursor { cursor: pointer !important; }
 #play-overlay-button {position:absolute; cursor:pointer; top:40%;  margin-left: -25px; left: 50%;height:70px; z-index:10000; display:none;}
 
 @media only screen and (max-width: 480px){
