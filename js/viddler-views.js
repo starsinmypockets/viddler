@@ -275,7 +275,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             
             this.vP.setMedia({
                 type : stepOpts.mediaEl.elementType,
-                url : stepOpts.mediaEl.elementURL
+                url : stepOpts.mediaEl.elementURL,
+                poster : stepOpts.mediaEl.poster
             });
             
             // load step comments

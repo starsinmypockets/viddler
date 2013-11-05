@@ -105,18 +105,6 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config', 'jplayer'], fu
                       width : width,
                       height : height
                   }
-/*
-                  width,
-                  height;
-
-                  
-              if (Util.ie8) {
-                  jPData.size = {
-                      width : width,
-                      height : height
-                  };
-              }
-*/
               this.$el.jPlayer(jPData);
           },
           
@@ -129,6 +117,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config', 'jplayer'], fu
                    $('#load-wait').show();
                }
                data[opts.type] = opts.url;
+               if (opts.poster) data.poster = opts.poster;
                this.$el.jPlayer("setMedia", data);
                if (!Util.ie8) {
                    this.$el.on(($.jPlayer.event.canplay), function () {
