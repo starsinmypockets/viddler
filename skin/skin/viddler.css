@@ -1243,6 +1243,10 @@ div.jp-video div.jp-progress {
 }
 }
 @media only screen and (max-width: 850px){
+#modal-outer {
+	position:absolute; 
+	top: 20%;
+}
 div.jp-video div.jp-progress {
 	min-width:20%;	
 	width: 100%;
@@ -1288,7 +1292,10 @@ a.also{
 }
 }
 @media only screen and (max-width: 767px){
-
+#modal-outer {
+    position: absolute;
+    top: 18%;
+}
 div.jp-interface {
 	position: relative;
 	background-color:#272d33;
@@ -1581,6 +1588,11 @@ a img.videoimg{
 }
 }
 @media only screen and (max-width: 640px){
+#modal-outer {
+    position: absolute;
+    top: 15%;
+	min-width:200px;
+}
 
 div.jp-video div.jp-volume-bar {
 	display:none !important;
@@ -1632,6 +1644,53 @@ span.number{
 }
 
 @media only screen and (max-width: 480px){
+#modal-outer {
+	background-color:rgba(255,255,255,.9); 
+	width:50%;
+	min-width:225px;
+	padding: .5em; 
+	position:absolute; 
+	top: 190px;
+	left: 10px;
+	border:none; 
+	z-index:10000000;	
+	border-radius: 10px;
+	font-family: helvetica; 
+	font-weight:bold;
+	color: #585f68; 
+	font-size: 16px;
+}
+#modal-outer img#modaltriangle{
+	position: absolute;
+	bottom: -12px;
+	width: 20px;
+	margin-left: -20px;
+	left: 50%;
+}
+#modal-outer img#okbutton{
+	float:right;
+	margin-top: 5px;
+	width: 50px;
+}
+#modal-outer ul {width :100%}
+
+#modal-container{
+	background: #FFFFFF;
+	opacity: 1;
+	font-size: 12px;
+	padding: 10px 0px 5px 10px;
+	margin-top: 10px;
+	height: 50px;
+}
+.modal-close {
+	width:30px;
+	height: 30px;
+	position: absolute;
+	top: -10px;
+	right: -10px;
+	float:right;
+}
+
 div.jp-interface {
 	-webkit-border-radius: 0px;
 	border-radius: 0px; 
@@ -1714,53 +1773,6 @@ span.number{
 }
 #play-overlay-button {
 	display:none; !important;
-}
-
-#modal-outer {
-	background-color:rgba(255,255,255,.9); 
-	width:50%;
-	min-width:225px;
-	padding: .5em; 
-	position:absolute; 
-	top: 190px;
-	left: 10px;
-	border:none; 
-	z-index:10000000;	
-	border-radius: 10px;
-	font-family: helvetica; 
-	font-weight:bold;
-	color: #585f68; 
-	font-size: 16px;
-}
-#modal-outer img#modaltriangle{
-	position: absolute;
-	bottom: -12px;
-	width: 20px;
-	margin-left: -20px;
-	left: 50%;
-}
-#modal-outer img#okbutton{
-	float:right;
-	margin-top: 5px;
-	width: 50px;
-}
-#modal-outer ul {width :100%}
-
-#modal-container{
-	background: #FFFFFF;
-	opacity: 1;
-	font-size: 12px;
-	padding: 10px 0px 5px 10px;
-	margin-top: 10px;
-	height: 50px;
-}
-.modal-close {
-	width:30px;
-	height: 30px;
-	position: absolute;
-	top: -10px;
-	right: -10px;
-	float:right;
 }
 }
 
