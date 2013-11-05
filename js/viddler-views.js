@@ -668,12 +668,16 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         __render : function(data) {
             var data = data || {};
             this.setElement('.loginmodal');
+            $('#mask').width($(document).width());
+            $('#mask').height($(document).height());
+            $('#mask').show();
             //this.delegateEvents();
             this.$el.html(this.template(data));
             $('.modal-close').on('click', function (e) {
                 e.preventDefault();
                 $('.modalbg').hide();
                 $('.loginmodal').html('');
+                $('#mask').hide();
                 return false;
             });
             $('.modalbg').show();
