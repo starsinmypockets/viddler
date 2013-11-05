@@ -1015,13 +1015,12 @@ a.also{
 	font-size: 16px;
  	display:none; /* display:block; to display comment bubbles */
 }
-#modal-outer img#modaltriangle{
-	color:rgba(238, 238, 238, .9); 
-	position: absolute;
-	bottom: -12px;
-	width: 20px;
-	margin-left: -20px;
-	left: 20%;
+#modal-outer img#modaltriangle {
+    bottom: -12px;
+    color: rgba(238, 238, 238, 0.9);
+    left: 15%;
+    position: absolute;
+    width: 20px;
 }
 #modal-outer img#okbutton {
     float: right;
@@ -1694,12 +1693,12 @@ span.number{
 	width:99.5%;
 	}
 
-#modal-outer img#modaltriangle{
-	position: absolute;
-	bottom: -12px;
-	width: 20px;
-	margin-left: -20px;
-	left: 50%;
+#modal-outer img#modaltriangle {
+    bottom: -12px;
+    color: rgba(238, 238, 238, 0.9);
+    left: 15%;
+    position: absolute;
+    width: 20px;
 }
 #modal-outer img#okbutton {
     float: right;
