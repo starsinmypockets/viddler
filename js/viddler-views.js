@@ -1,13 +1,10 @@
 /**
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
-define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collections', 'helper/util', 'viddler-manager', 'jplayer'], function(_, $, Backbone, Events, Collections, Util, ViddlerManager) {
+define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collections', 'helper/util', 'viddler-manager', 'config', 'jplayer'], function(_, $, Backbone, Events, Collections, Util, ViddlerManager, Config) {
 
 
-    var DEBUG = false,
-        // output clock data:
-        tDEBUG = false,
-        Views = {};
+    var Views = {};
         
     /* Abstract */
     Views.BaseView = Backbone.View.extend({
@@ -26,15 +23,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             this.vent = opts.vent; 
         },
         
-        ie8 : function () {
-            var bad = false;
-            if (Util.browser[0] === "Firefox") bad = true;
-            if (Util.browser[0] === "MSIE" && Util.browser[1].indexOf(8) === 0) bad = true;
-            return bad;
-        }(),
-        
         initialize : function (opts) {
-            if (DEBUG) console.log('IE8 :', this.ie8)
+            if (Config.DEBUG) console.log('IE8 :', Util.ie8)
             this.__init(opts);
         },
         
@@ -53,152 +43,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         
     });
     
-    
-    /**
-     * Viddler wrapper around jPlayer
-     **/
-    Views.VPlayerView = Views.BaseView.extend({
-        timeListenerIntv : {},
-        stopListenerIntv : {},
-        
-        el : '#jquery_jplayer_1',
-        mediaEl : {}, // the currently loaded media element
-        initialize : function (opts) {
-            this.__init(opts);
-            this.mediaEl = opts.mediaEl;
-        },
-        
-        clearGuiTime : function () {
-            $('.viddler-current-time').html(Util.secs2time(Math.floor(0)));  
-        },
-        
-        setMediaEl : function (mediaEl) {
-            this.mediaEl = mediaEl;
-        },
-        
-        runTimeListener : function (opts) {
-            var that = this,
-                timeLinePercent,
-                playBarWidth;
-                
-                // update global timeline data
-                this.timeListenerIntv = setInterval(function() {
-                    ViddlerManager.tlNow = parseInt(that.$el.jPlayer().data().jPlayer.status.currentTime*1000 + ViddlerManager.tlElapsed - that.mediaEl.playheadStart, 10);
-                    if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-that.mediaEl.playheadStart >= that.mediaEl.length) {
-                        if (DEBUG) console.log("[Player]Clear Time Listener Interval");
-                        clearInterval(that.timeListenerIntv);
-                    }
-                    timeLinePercent = (ViddlerManager.tlNow / ViddlerManager.tlLength);
-                    playBarWidth = timeLinePercent*$('.jp-progress').width();
-                    
-                    if (tDEBUG ) {
-                        console.log('[Player]step: '+ViddlerManager.tlStep);
-                        console.log('[Player]current: '+ViddlerManager.tlNow);
-                        console.log('[Player]elapsed: '+ViddlerManager.tlElapsed);
-                        console.log('[Player]playheadStart: '+that.mediaEl.playheadStart);
-                        console.log('[Player]total: '+ViddlerManager.tlLength);
-                        console.log('[Player]timeline-percent: '+timeLinePercent);
-                        console.log('[Player]playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
-                    }
-                    
-                    // override for drag event on playbar
-                    if (playBarWidth > 0 && !window.vDrags) {
-                        $('.jp-mega-play-bar').width(playBarWidth);
-                    } 
-                    if (timeLinePercent > 1) {
-                        $('.jp-mega-play-bar').width('100%');
-                    }
-                    
-                    // don't update until we have good global data
-                    if (ViddlerManager.tlNow > 0) {
-                        $('.viddler-current-time').html(Util.secs2time(Math.floor(ViddlerManager.tlNow/1000)));
-                    }
-                    if (ViddlerManager.tlNow > ViddlerManager.tlLength) {
-                        $('.viddler-current-time').html(Util.secs2time(Math.floor(ViddlerManager.tlLength/1000)));                        
-                    }
-                },1000);  // run this faster in production
-        },
-        
-        // listen for global step end time 
-        runStopListener : function () {
-            var that = this;
-            if (DEBUG) console.log('[Player] stoplistener stop time', ViddlerManager.stepStop);
-            this.stopListenerIntv = setInterval(function() {
-               if (that.$el.jPlayer().data().jPlayer.status.currentTime > ViddlerManager.stepStop/1000) {
-                  if (DEBUG) console.log('stop listener stop');
-                  clearInterval(that.stopListenerIntv);
-                  // do we need to clear the time listener?
-                  clearInterval(that.timeListenerIntv);
-                  Events.trigger('stopListenerStop');
-               }
-            },1000);
-        },
-        
-        loadVPlayer : function (opts) {
-            var that = this,
-                jPData = {
-                    ready: function () {
-                        // bind events once player is ready
-                        if (DEBUG) {
-                            $('#inspector').jPlayerInspector({
-                                jPlayer : $("#jquery_jplayer_1")
-                            });
-                        }
-                        Events.trigger("playerReady");
-                    },
-                    swfPath: "../js/vendor/",
-                    supplied: "m4v",
-                    backgroundColor: '#grey',
-                    errorAlerts : true,
-                    solution : "html, flash",
-                },
-                width,
-                height;
-
-                
-            if (this.ie8) {
-                width = this.$el.width();
-                height = this.$el.height();
-                jPData.size = {
-                    width : width,
-                    height : height
-                };
-            }
-            this.$el.jPlayer(jPData);
-        },
-        
-         // Player controls 
-         setMedia : function (opts) {
-            var data = {},
-                that = this;
-                
-            if (!this.ie8) {
-                 $('#load-wait').show();
-             }
-             data[opts.type] = opts.url;
-             this.$el.jPlayer("setMedia", data);
-             if (!this.ie8) {
-                 this.$el.on(($.jPlayer.event.canplay), function () {
-                     if (DEBUG) console.log("JPLAYER EVENT: canplay");
-                     $('#load-wait').hide();
-                     Events.trigger('mediaReady');
-                 });
-             } else {
-                 if (DEBUG) console.log("IE8 / FF setMedia");
-                 Events.trigger('mediaReady');
-             }
-         },
-         
-         play : function (opts) {
-             var that = this;
-             (opts && opts.start) ? start = opts.start : start = '';
-             this.$el.jPlayer("play", start);
-         }, 
-         
-         pause : function () {
-             this.$el.jPlayer("pause");
-         }
-    });
     
     Views.VPlayerGuiView = Backbone.View.extend({
         el : ".jp-gui",
@@ -277,7 +121,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 mediaEl = {},
                 tlLength = 0;
             
-            if (DEBUG) console.log('[Player] Model Ready');
+            if (Config.DEBUG) console.log('[Player] Model Ready');
             // clear out player data
             ViddlerManager.destroy();
             
@@ -296,14 +140,18 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
 
             // wait for gui in DOM and instance player
             Events.once("playerGuiReady", function () {
-                if (DEBUG) console.log("[Player] Gui Ready");
-                that.vP = new Views.VPlayerView({mediaEl : mediaEl});
-                
-                // wait for player, load comments and continue
-                Events.once('playerReady', function () {
-                    that.onPlayerReady();
+            // IME Players
+                require(_.values(Config.players), function () {
+                    var Players = _.object(_.keys(Config.players), arguments);
+                    if (Config.DEBUG) console.log("[Player] Gui Ready");
+                    that.vP = new Players[mediaEl.elementType].View({mediaEl : mediaEl});
+                    
+                    // wait for player, load comments and continue
+                    Events.once('playerReady', function () {
+                        that.onPlayerReady();
+                    });
+                    that.vP.loadPlayer();
                 });
-                that.vP.loadVPlayer();
             });
 
             this.vPG = new Views.VPlayerGuiView();
@@ -328,7 +176,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     });
                 };
             console.log('playerready');
-            if (DEBUG) console.log('[Player] Player ready');
+            if (Config.DEBUG) console.log('[Player] Player ready');
             if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
             markers = new Views.CommentMarkerView();
             markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
@@ -359,7 +207,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 this.timelineStep(stepOpts);
             } else if (tlStep === 0) {
                 // Init timeline
-                if (DEBUG) console.log('[Player] Init timeline');
+                if (Config.DEBUG) console.log('[Player] Init timeline');
                 stepOpts.init = true;
                 this.timelineInit(stepOpts);
             } else if (tlStep < tlSteps) {
@@ -371,7 +219,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         
         timelineStep : function (opts) {
             var that = this;
-            if (DEBUG) console.log("[Player] Timeline step: "+ViddlerManager.tlStep);
+            if (Config.DEBUG) console.log("[Player] Timeline step: "+ViddlerManager.tlStep);
             
             ViddlerManager.mediaElId = opts.mediaEl.id;
             ViddlerManager.stepStop = opts.stop;
@@ -389,7 +237,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             if (!opts.init) {
                 // set media and go
                 Events.once("mediaReady", function () {
-                    if (DEBUG) console.log("[Player] Media ready");
+                    if (Config.DEBUG) console.log("[Player] Media ready");
                     that.vP.runTimeListener();
                     that.vP.runStopListener();
                 });
@@ -398,7 +246,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     url : opts.mediaEl.elementURL
                 });
             }
-            if (opts.mediaEl.subtitleSrc && !this.ie8) {
+            if (opts.mediaEl.subtitleSrc && !Util.ie8) {
                 this.doSubtitles(opts.mediaEl.subtitleSrc);
             }
 
@@ -415,7 +263,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             ViddlerManager.stepMediaId = stepOpts.mediaEl.id;
             
             Events.once("mediaReady", function () {
-                if (DEBUG) console.log("[Player] Media ready");
+                if (Config.DEBUG) console.log("[Player] Media ready");
                 that.vP.runTimeListener();
                 that.vP.runStopListener();
             });
@@ -452,14 +300,14 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     commentsView.render();
                 },
                 error : function (collection, response) {
-                    if (DEBUG) console.log("[Player] Error loading comments");
+                    if (Config.DEBUG) console.log("[Player] Error loading comments");
                     return {};
                 }  
             });
         },
         
         doSubtitles : function (subtitleSrc) {
-            if (!this.ie8) {
+            if (!Util.ie8) {
                 // clear popcorn events from previous step
                 if (this.pop.hasOwnProperty('destroy')) {
                     this.pop.destroy();
@@ -508,7 +356,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         
         // reinitialize and play timeline from seek point
         seekTo : function (tlMs) {
-            if (DEBUG) console.log("SEEK EVENT >>>>>>>>>>>>>>>>");
+            if (Config.DEBUG) console.log("SEEK EVENT >>>>>>>>>>>>>>>>");
             var mediaEls = this.timeline.mediaElements,
                 seekInf = {},
                 tlIndex = ViddlerManager.tlIndex,  // timeline start & stop by element
@@ -516,7 +364,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             // yes
             $("#play-overlay-button").hide();
             seekInfo = ViddlerManager.getElTime(tlMs);
-            if (DEBUG) console.log(seekInfo);
+            if (Config.DEBUG) console.log(seekInfo);
             
             // update the global tlStep
             ViddlerManager.tlStep = seekInfo.step;
@@ -538,7 +386,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         doEnd : function (opts) {
             var that = this;
 
-            if (DEBUG) console.log("Do end handler");
+            if (Config.DEBUG) console.log("Do end handler");
             this.vP.pause();
             Events.off("stopListenerStop");
 
@@ -689,7 +537,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 pos++; // keep track of which position we're in
             });
             data.markers = markers;
-            if (DEBUG) console.log(data);
+            if (Config.DEBUG) console.log(data);
             $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));
         },
     });
@@ -935,23 +783,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
     
     Views.SubscribeView = Views.ModalView.extend({ });
     
-    /**
-     * Simple player to test events etc
-     *
-     **/
-    Views.TestPlayerView = Backbone.View.extend({
-        el : "#jp_container_1",
-
-        initialize : function (opts) {
-            this.vPG = new Views.VPlayerGui();
-            this.vPG.render();
-            
-            this.vP = new Views.VPlayerView();
-            this.vP.loadVPlayer();
-        },
-        
-        render : function () {}
-    });
 
     return Views;
     
