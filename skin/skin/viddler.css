@@ -25,6 +25,8 @@ body{
 	border:none;
 	outline:none;
 }
+.cursor { cursor: pointer !important; }
+
 div.jp-audio,
 div.jp-audio-stream,
 div.jp-video {
