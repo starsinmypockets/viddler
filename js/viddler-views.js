@@ -364,30 +364,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             }
         },
         
-/*
-        // index timeline elements for seek events
-        // @@ put this in the manager?
-        initTlIndex : function () {
-            var mediaEls = this.timeline.mediaElements,
-                tlSteps = mediaEls.length,
-                tlIndex = [],
-                that = this;
-            
-            this.bindSeekEvents();
-            for (var i = 0; i < tlSteps; i++) {
-                function func (i) {
-                    tlIndex[i] = {};
-                    tlIndex[i].mediaElId = mediaEls[i].id;
-                    tlIndex[i].start = (i === 0) ? 0 : tlIndex[i-1]['stop'];
-                    tlIndex[i].stop = tlIndex[i]['start'] + mediaEls[i]['playheadStop'] - mediaEls[i]['playheadStart'];
-                }
-                
-                func(i);
-            }
-            ViddlerManager.setTlIndex(tlIndex);
-        },
-*/
-        
         // reinitialize and play timeline from seek point
         seekTo : function (tlMs) {
             if (Config.DEBUG) console.log("SEEK EVENT >>>>>>>>>>>>>>>>");
