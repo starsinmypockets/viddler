@@ -1687,8 +1687,11 @@ span.number{
  	display:none; /* display:block; to display comment bubbles */
 }
 
-#comment-text, #comment-play-head-pos {
+#comment-play-head-pos {
 	width:98%;
+}
+#comment-text {
+	width:99%;
 	}
 
 #modal-outer img#modaltriangle{
