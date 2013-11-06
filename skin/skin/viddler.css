@@ -1811,8 +1811,10 @@ span.number{
 .loginmodal section#modalbody form input{
 	max-width: 85%;
 }
+}
 
-#play-overlay-button {
+@media only screen and (max-width: 320px) {
+	#play-overlay-button {
     cursor: pointer;
     display: none;
     height: 70px;
@@ -1821,14 +1823,8 @@ span.number{
     position: absolute;
     top: 30%;
     z-index: 10000;
+}	
 }
-}
-
-/*iphone styles*/
-
-
-
-
 
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
 div.jp-play-bar {
