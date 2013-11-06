@@ -623,6 +623,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         
         modalClose : function () {
             $('.modalbg').hide();
+            $('#mask').hide();
             $('.loginmodal').html('');
         },
         
