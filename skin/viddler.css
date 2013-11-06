@@ -1823,13 +1823,27 @@ span.number{
 }
 
 }
-/*HTC One and Nexus 7*/
+/*HTC One*/
 @media screen and (max-width: 360px) , screen and (max-height: 640px) {
 	#play-overlay-button {
     left: 46%;
     position: absolute;
     top: 30%;
 }
+/*Nexus 7 portrait*/
+@media screen and (max-width: 640px) , screen and (max-height: 400px) {
+	#play-overlay-button {
+    left: 46%;
+    position: absolute;
+    top: 30%;
+}
+/*Nexus 7 landscape*/
+@media screen and (max-width: 640px) , screen and (max-height: 400px) {
+	/*#play-overlay-button {
+    left: 46%;
+    position: absolute;
+    top: 30%;
+}*/
   
 }
 
