@@ -1017,7 +1017,6 @@ a.also{
 }
 #modal-outer img#modaltriangle {
     bottom: -12px;
-    color: rgba(238, 238, 238, 0.9);
     left: 15%;
     position: absolute;
     width: 20px;
@@ -1799,30 +1798,37 @@ span.number{
 
 .loginmodal form input {
 	font-size:24px;
-	}
+}
 	
 .loginmodal form input:focus {
 	font-size:24px;
-	}
+}
 
 .loginmodal section#modalbody{
 	 padding: 0 15px 5px;
 }
+
 .loginmodal section#modalbody form input{
 	max-width: 85%;
 }
-}
 
-@media only screen and (max-width: 320px) {
-	#play-overlay-button {
+#play-overlay-button {
     cursor: pointer;
     display: none;
     height: 70px;
     left: 47%;
-    margin-left: -25px;
     position: absolute;
     top: 30%;
     z-index: 10000;
+}
+
+}
+
+@media only screen and (max-width: 320px) {
+#play-overlay-button {
+    left: 47%;
+    position: absolute;
+    top: 30%;
 }	
 }
 
