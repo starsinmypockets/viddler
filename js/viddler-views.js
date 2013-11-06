@@ -1,7 +1,7 @@
 /**
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
-define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collections', 'helper/util', 'viddler-manager', 'config', 'jplayer'], function(_, $, Backbone, Events, Collections, Util, ViddlerManager, Config) {
+define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collections', 'helper/util', 'viddler-manager', 'config'], function(_, $, Backbone, Events, Collections, Util, ViddlerManager, Config) {
 
 
     var Views = {};
@@ -141,6 +141,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             // wait for gui in DOM and instance player
             Events.once("playerGuiReady", function () {
             // IME Players
+            
                 require(_.values(Config.players), function () {
                     var Players = _.object(_.keys(Config.players), arguments);
                     if (Config.DEBUG) console.log("[Player] Gui Ready");
@@ -177,7 +178,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 };
             console.log('playerready');
             if (Config.DEBUG) console.log('[Player] Player ready');
-            if (Modernizr.video.h264 && Popcorn) that.pop = Popcorn("#jp_video_0");
+
             markers = new Views.CommentMarkerView();
             markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
             this.bindCommentMarkerEvents();
@@ -247,12 +248,12 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 });
             }
             
-            if (opts.mediaEl.subtitleSrc && !Util.ie8) {
-                this.doSubtitles(opts.mediaEl.subtitleSrc);
+            if (opts.mediaEl.subtitleSrc) {
+                Events.trigger('timelineStep:subtitles', that, opts.mediaEl.subtitleSrc);
             }
             
             if (opts.mediaEl.sprites && !Util.ie8) {
-                this.doSprites(opts.mediaEl.sprites);
+                Events.trigger('timelineStep:sprites', that, opts.mediaEl.sprites);
             }
             
             this.vP.play({start : opts.start/1000});
@@ -309,45 +310,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     if (Config.DEBUG) console.log("[Player] Error loading comments");
                     return {};
                 }  
-            });
-        },
-        
-        doSubtitles : function (subtitleSrc) {
-            if (!Util.ie8) {
-                // clear popcorn events from previous step
-                if (this.pop.hasOwnProperty('destroy')) {
-                    this.pop.destroy();
-                }
-                // add subtitles
-                this.pop.parseSRT(subtitleSrc);
-            }
-        },
-        
-        doSprites : function (sprites) {
-            var that = this;
-
-            function _destroySprite(id) {
-            }
-            _.each(sprites, function (sprite) {
-                    // @@ put in Util 
-                    var spriteId = Math.random().toString(36).substring(7);  // give the sprite a temp id
-                    that.pop.cue(sprite.start/1000, function () {
-                        html = _.template($('#tmp-sprite').html(), {
-                            id : spriteId,
-                            sprite : sprite.html
-                        });
-                        that.$el.append(html).find('.sprite-outer').css({
-                            position : "absolute",
-                            top : 10,
-                            left : 10
-                        });
-                        that.$('.modal-close').on('click', function (e) {
-                            $(this).parent('.sprite-outer').remove();
-                        });
-                    });
-                    that.pop.cue(sprite.stop/1000, function () {
-                        $('*[data-sprite-id="'+spriteId+'"]').remove();
-                    });
             });
         },
         

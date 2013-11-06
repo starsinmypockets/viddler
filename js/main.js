@@ -1,15 +1,11 @@
 require.config({
-  
-  baseUrl: '../js',
-    
+
     paths: {
         'jquery': 'lib/jquery',
         'backbone' : 'lib/backbone',
         'underscore' : 'lib/underscore',
         'davis' : 'lib/davis',
         'davis.hashRouting' : 'lib/davis.hashRouting',
-        'jplayer' : 'lib/jquery.jplayer.min',
-        'jplayer.inspector' : 'lib/jquery.jplayer.inspector',
         'rain_lib' : 'lib/rain_lib'
     },
 
@@ -32,11 +28,7 @@ require.config({
 
       'rain_lib' : {
         exports: 'rainReady'
-      },
-
-      // jQuery plugins
-      'jplayer' : ['jquery'],
-      'jplayer.inspector' : ['jquery']
+      }
   
   }
 

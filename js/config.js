@@ -4,12 +4,12 @@ define(function() {
 
     extensions : {
       'googleanalytics' : 'extensions/googleanalytics/googleanalytics-main',
-      'liverail' : 'extensions/liverail/liverail-main',
       'sitecatalyst' : 'extensions/sitecatalyst/sitecatalyst-main'
     },
 
     plugins : {
       //'comments' : 'plugins/comments/comments-plugin'
+      'liverail' : 'plugins/liverail/liverail-main',
       'popcornjs' : 'plugins/popcornjs/popcornjs-main'
     },
 

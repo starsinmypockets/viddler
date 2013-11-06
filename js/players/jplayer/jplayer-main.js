@@ -1,4 +1,6 @@
-define(['jquery', 'backbone', 'helper/util', 'viddler', 'config', 'jplayer'], function($, Backbone, Util, Viddler, Config) {
+define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
+  'players/jplayer/jquery.jplayer.min', 'players/jplayer/jquery.jplayer.inspector'], 
+  function($, Backbone, Util, Viddler, Config) {
 
   return {
 
@@ -92,13 +94,13 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config', 'jplayer'], fu
                               });
                           }
                           w =  that.$el.width();
-                          that.$('video').css({
+                          that.$('video, object').css({
                               'width' : w,
                               'min-height' : w*.56
                           });
-                          Viddler.Events.trigger("playerReady");
+                          Viddler.Events.trigger("playerReady", that);
                       },
-                      swfPath: "../swf/",
+                      swfPath: "swf",
                       supplied: "m4v",
                       backgroundColor: '#grey',
                       errorAlerts : true,
