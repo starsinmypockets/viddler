@@ -1826,7 +1826,7 @@ span.number{
 /*HTC One and Nexus 7*/
 @media screen and (max-width: 360px) , screen and (max-height: 640px) {
 	#play-overlay-button {
-    left: 47%;
+    left: 46%;
     position: absolute;
     top: 30%;
 }
