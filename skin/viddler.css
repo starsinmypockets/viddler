@@ -1036,6 +1036,7 @@ a.also{
     padding: 10px 5px 0 0;
 }
 .modal-close {
+    z-index:10000;
 	width:30px;
 	height: 30px;
 	position: absolute;
@@ -1715,6 +1716,7 @@ span.number{
 }
 
 .modal-close {
+    z-index:10000;
 	width:30px;
 	height: 30px;
 	position: absolute;

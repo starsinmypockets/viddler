@@ -388,27 +388,76 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             });
             
             // drag events for progress bar
-            $('#time').mousedown(function (e) {
-               e.preventDefault();
-               window.vDrags = true
+            $(document).mousedown(function (e) {
+                if ($(e.target).attr("id") === "time"){
+                    e.preventDefault();
+                    window.vDrags = true;
+                }
+            });
+            
+            $("#time").bind("touchstart", function (e) {
+                console.log("ftw");
+                _pbDragStart(e);
+            });
+            
+            $(document).bind("touchmove", function (e) {
+                _pbDragMoveB(e);
+            });
+            
+            $(document).bind("touchend", function (e) {
+                _pbDragEnd(e);
             });
             
             $(document).mousemove(function (e) {
+                _pbDragMove(e);
+            });
+            
+             $(document).mouseup(function (e) {
+                _pbDragEnd(e);
+             });
+             
+             function _pbDragStart(e) {
+                 console.log(e);
+                if ($(e.target).attr("id") === "time"){
+                    e.preventDefault();
+                    window.vDrags = true;
+                }
+             }
+             
+             function _pbDragMove(e) {
+             //   console.log(e);
+                console.log(e);
                 var barCurWidth, playbarLeft;
                 e.preventDefault();
                 // make sure we're dragging, and we're targeting appropriate elements
                 if (!window.vDrags) return;
                 if (e.target.className !== "jp-progress" && e.target.className !== "jp-mega-play-bar") return;
                 playbarLeft = $(".jp-progress").offset().left;
+                console.log(playbarLeft);
                 $('.jp-mega-play-bar').css({
                     width : ((e.clientX - playbarLeft)+'px')
                 });
-            });
+             }
             
-            $(document).mouseup(function (e) {
+            /* Mobile */
+            // @@ tested in iOS
+            function _pbDragMoveB(e) {
+             //   console.log(e);
+                console.log(e);
+                var barCurWidth, playbarLeft;
+                e.preventDefault();
+                // make sure we're dragging, and we're targeting appropriate elements
+                if (!window.vDrags) return;
+                playbarLeft = $(".jp-progress").offset().left;
+                console.log(playbarLeft);
+                $('.jp-mega-play-bar').css({
+                    width : ((e.originalEvent.pageX - playbarLeft)+'px')
+                });
+             }
+             
+             function _pbDragEnd(e) {
                 var seekPerc,
                     width;
-                
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 if (window.vDrags) {
@@ -424,7 +473,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     return false;
                 } 
                 return false;
-             });
+             }
         },
         
         bindCommentMarkerEvents : function () {
@@ -621,27 +670,28 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             this.__init(opts);
         },
         
-        modalClose : function () {
+        modalClose : function (e) {
             $('.modalbg').hide();
             $('#mask').hide();
             $('.loginmodal').html('');
+            return false;
         },
         
         __render : function(data) {
-            var data = data || {};
+            var data = data || {},
+            that = this;
+            
             this.setElement('.loginmodal');
             $('#mask').width($(document).width());
             $('#mask').height($(document).height());
             $('#mask').show();
-            //this.delegateEvents();
             this.$el.html(this.template(data));
+            
             $('.modal-close').on('click', function (e) {
                 e.preventDefault();
-                $('.modalbg').hide();
-                $('.loginmodal').html('');
-                $('#mask').hide();
-                return false;
+                that.modalClose();
             });
+            
             $('.modalbg').show();
         }
     });

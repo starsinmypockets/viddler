@@ -25,6 +25,33 @@
                 "html" : "<div class='sprite sprite-1'>Viddler supports sprites!</div>"
             }
         ],
+        "thumbs" : {
+            "spriteUrl": "#",
+            "cues": [
+                {
+                    "start": "10000",
+                    "stop": "12000",
+                    "pos": "0 0 50 50"
+                },
+                {
+                    "start": "12001",
+                    "stop": "14000",
+                    "pos": "-50 -50 50 50"
+                },                {
+                    "start": "14001",
+                    "stop": "16000",
+                    "pos": "-100 -100 50 50"
+                },                {
+                    "start": "16001",
+                    "stop": "18000",
+                    "pos": "-150 -150 50 50"
+                },                {
+                    "start": "18000",
+                    "stop": "20001",
+                    "pos": "-200 -200 50 50"
+                }
+            ]
+        },
         "mediaElement": {},
         "transitionIn": {},
         "transitionOut": {}

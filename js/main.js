@@ -69,7 +69,7 @@ require(['config', 'viddler', 'rain_lib', 'davis', 'jquery', 'davis.hashRouting'
             require(_.values(Config.extensions), function () {
               Viddler.Extensions = _.object(_.keys(Config.extensions), arguments);
             });
-
+//            touchHandlerInit();
             $('.user-login').on('click', function (e) {
                 e.preventDefault();
                 Viddler.Events.trigger('doLogin');
@@ -85,7 +85,34 @@ require(['config', 'viddler', 'rain_lib', 'davis', 'jquery', 'davis.hashRouting'
               Viddler.Events.trigger('noAuth');
               return false;
           });
-              
+          
+          // shim for mobile touch / drag events
+/*
+          function touchHandler(event) {
+            var touch = event.changedTouches[0];
+        
+            var simulatedEvent = document.createEvent("MouseEvent");
+                simulatedEvent.initMouseEvent({
+                touchstart: "mousedown",
+                touchmove: "mousemove",
+                touchend: "mouseup"
+            }[event.type], true, true, window, 1,
+                touch.screenX, touch.screenY,
+                touch.clientX, touch.clientY, false,
+                false, false, false, 0, null);
+        
+            touch.target.dispatchEvent(simulatedEvent);
+            event.preventDefault();
+        }
+
+        function touchHandlerInit() {
+            document.addEventListener("touchstart", touchHandler, true);
+            document.addEventListener("touchmove", touchHandler, true);
+            document.addEventListener("touchend", touchHandler, true);
+            document.addEventListener("touchcancel", touchHandler, true);
+        }
+*/
+
            /* Session Authentication */
             var $doc = $(document);
 
