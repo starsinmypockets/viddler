@@ -1796,6 +1796,15 @@ span.number{
 .loginmodal header{
 	padding: 10px;
 }
+
+.loginmodal form input {
+	font-size:24px;
+	}
+	
+.loginmodal form input:focus {
+	font-size:24px;
+	}
+
 .loginmodal section#modalbody{
 	 padding: 0 15px 5px;
 }
