@@ -124,13 +124,14 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               var data = {},
                   that = this;
                   
-              if (!Util.ie8) {
+               if (!Util.ie8 & !navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
                    $('#load-wait').show();
                }
                data[opts.type] = opts.url;
                if (opts.poster) data.poster = opts.poster;
                this.$el.jPlayer("setMedia", data);
                if (!Util.ie8) {
+                    // @@ this never gets called in ios
                    this.$el.on(($.jPlayer.event.canplay), function () {
                        if (Config.DEBUG) console.log("JPLAYER EVENT: canplay");
                        $('#load-wait').hide();
@@ -138,6 +139,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                    });
                } else {
                    if (Config.DEBUG) console.log("IE8 / FF setMedia");
+                   $('#load-wait').hide();
                    Viddler.Events.trigger('mediaReady');
                }
            },

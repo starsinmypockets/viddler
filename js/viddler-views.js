@@ -396,7 +396,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             });
             
             $("#time").bind("touchstart", function (e) {
-                console.log("ftw");
                 _pbDragStart(e);
             });
             
@@ -417,7 +416,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
              });
              
              function _pbDragStart(e) {
-                 console.log(e);
                 if ($(e.target).attr("id") === "time"){
                     e.preventDefault();
                     window.vDrags = true;
@@ -425,8 +423,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
              }
              
              function _pbDragMove(e) {
-             //   console.log(e);
-                console.log(e);
                 var barCurWidth, playbarLeft;
                 e.preventDefault();
                 // make sure we're dragging, and we're targeting appropriate elements
@@ -442,8 +438,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             /* Mobile */
             // @@ tested in iOS
             function _pbDragMoveB(e) {
-             //   console.log(e);
-                console.log(e);
                 var barCurWidth, playbarLeft;
                 e.preventDefault();
                 // make sure we're dragging, and we're targeting appropriate elements
