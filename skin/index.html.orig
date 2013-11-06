@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Viddler Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" type="text/css" href="skin/viddler.css">
+
+  <script src="../js/lib/modernizr-latest.js"></script>
+  <script data-main="../js/main" src="../js/lib/require.js"></script>
+
+</head>
+<body>
+<div id="mask"></div>
+<div class="wrap">
+<div id="modal-outer" style="display:none">Add Comment<img src="img/modalclose.png" alt="" class="modal-close cursor">
+    <div id="modal-container" class="clearfix">1000 Characters Limit</div>
+    <img src="img/commentTicker_x2.png" alt="comment triangle" id="modaltriangle">
+</div>
+
+<!-- login modal -->
+<div class="modalbg">
+  <div class="loginmodal">
+    <a href="#" class="closetwo"><img src="img/orangex.png" id="orangex" alt="close modal"></a>
+  <header>Lorem Ipsum</header>
+  <section id="modalbody">
+    <h1>Lorem ipsum dolor sit amet</h1>
+    <form action="">
+      <label for="username">User Name</label>
+      <input type="text">
+      <div class="passverification">
+      <img src="img/leftarrow.png" alt="left arrow" class="leftarrow">
+      Please enter correct password.
+    </div>
+      <label for="password">Password</label>
+      <input type="text">
+      <input type="submit" class="loginsubmit inactive">
+    </form>
+
+  </section>
+</div>
+</div>
+<!--end login modal-->
+        <div id="jp_container_1" class="jp-video">
+                 <div id="footnote-container"></div>
+            <div class="jp-type-single">
+                <div id="jquery_jplayer_1" class="jp-jplayer"></div>
+                <img id="play-overlay-button" src="img/btnPlay_on.png" />
+                <div class="jp-no-solution">
+                    <span>Update Required</span>
+                        To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+                </div>
+                <div id="iframe-container"></div>
+                <div id="load-wait" style="display:none"><img src="img/ajax-loader.gif" alt="loading"/></div>
+            </div> <!-- jp-type-single -->
+            <div id="map-container"></div>
+            <div class="jp-gui"></div>
+            <div id="inspector"></div>
+            <div id="account-container">
+                <a href="#" class="user-login">Login</a>
+                <a href="#" class="user-signup">Sign up</a>
+                <a href="#" class="no">No!</a>
+            </div>
+            <div id="errors"></div>
+        </div> <!-- jp_container -->
+    <div id="comment-popup-container"></div>
+    <div id="error-message-container"></div>
+    <div id="comments-container"></div>
+</div>
+
+<!-- Underscore Templates -->
+<script type="text/template" id="tmp-comments">
+  <div class="comments clearfix" id="comments-container">
+        <div class="row clearfix">
+            <a href="#" class="also">Also Viewed</a>
+            <div class="comments2">Comments <span class="number">(<%= total %>)</span></div>
+            <img src="img/viddler.png" class="logo" alt="Viddler">
+        </div>
+        <div class="row clearfix">
+        <% _.each(items, function (item) { %>
+            <div class="row clearfix">
+                <div class="avatar"><img src="<%- item.thumbnail %>" width=50px height=50px /></div>
+                <div class="commentinfo">
+                <div class="user"><%= item.userName %></div>
+                <div class="comment">
+                      <div class="words"><%= item.commentText %></div>
+                      <div class="datetime"><%= item.created %>
+                          <div class="date"><%= item.daysAgo %></div> <img src="img/orangearrow.png" alt="orange arrow" style="width: 15px; position:relative; top: 3px;"><div class="time3"><%= item.time %></div>
+                          </div>
+                      </div>
+                </div>
+            </div>
+        <% }); %>
+        <div id="comments-pager-container"></div>
+  </div>
+</script>
+
+<script type="text/template" id="tmp-comments-pager">
+    <div id="comment-pager" class="vid-pager">
+        <% if (!first) { %>
+            <div class="page-prev pager-el cursor"><</div>
+        <% } %>
+            <% for (i = 0; i < els; i++ ) { %>
+                <% if (i === current) { %>
+                    <span class="pager-el page-number cursor pager-current-page" data-page="<%= i %>"><%= i+1 %></span>
+                <% } else { %>
+                    <span class="pager-el page-number cursor" data-page="<%= i %>"><%= i+1 %></span>            
+                <% } %>
+            <% } %>
+         <% if (!last) { %>
+         <div class="page-next pager-el cursor">></div>
+        <% } %>
+    </div>
+</script>
+
+<script type="text/template" id="tmp-jplayer-gui">
+        <div class="jp-video-play">
+          <a href="javascript:;" class="jp-video-play-icon" tabindex="1">play</a>
+        </div>
+        <div class="jp-interface clearfix">
+          <div class="jp-controls-holder">
+            <ul class="jp-controls">
+              <li><a href="javascript:;" class="jp-play" id="viddler-play" tabindex="1">play</a></li>
+              <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+            </ul>
+            <div class="bar clearfix">
+                <div id="markers-container"></div>
+            <div class="jp-progress" style="position: relative; z-index: 888;">
+            <div class="jp-seek-bar" style="position: relative; z-index: 1;">
+              <div class="jp-play-bar"><img src="img/time.png" id="time" /></div>
+            </div>
+          </div>
+          <a href="javascript:;"><img src="img/mobile/search.png" alt="Search" class="searchimg"></a>
+          <div class="time">
+              <div class="jp-current-time"></div>
+              <span class="slash">/</span>
+              <div class="jp-duration"></div>
+          </div>
+        </div>
+            <ul class="jp-toggles">
+              <li><a href="javascript:;" title="comments" class="jp-comment" tabindex="1">Comments</a></li> 
+              <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute" style="display:block !important;">mute</a></li>
+              <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+               <div class="jp-volume-bar">
+              <div class="jp-volume-bar-value"></div>
+            </div>
+              <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+                <li><a href="javascript:;" class="jp-doohickey" tabindex="1" title="doohickey">Doohickey</a></li>
+              <li><a href="javascript:;" title="hd" class="jp-hd" tabindex="1" title="hd">HD</a></li>
+
+               <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute" style="display:block !important;">mute</a></li>
+              <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+
+            <li><a href="javascript:;" class="jp-full-screen" tabindex="1" title="full screen">full screen</a></li>
+            <div class="time2">
+          <div class="jp-current-time"></div>
+          <span class="slash">/</span>
+          <div class="jp-duration"></div>
+          </div>
+            </ul>
+          </div>
+        </div>
+</script>
+
+<script type="text/template" id="tmp-playlist">
+    <h2><%= update %></h2>
+</script>
+
+<script type="text/template" id="tmp-comment-popup">
+    <div class="comment-popup">
+        <form class="comment-form">
+            <ul class="modal-form">
+                <li><textarea id="comment-text" name="commentText" rows="4" cols="33">Write your comment</textarea></li>
+                <li><label for="time">Time</label><input name="time" id="comment-play-head-pos"type="text" value="<%= time %>"/></li>
+        </form>
+                <a href="#" id="comment-form-submit"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>            
+            </ul>
+    </div>
+</script>
+
+<script type="text/template" id="tmp-comment-markers">
+    <% _.each(markers, function (marker) { %>
+        <img class="orangearrow cursor" src="img/orangearrow.png" data-start="<%= marker.start %>" data-stop="<%= marker.stop %>" data-mediaid="<%= marker.mediaid %>" style="left: <%= marker.left %>%; position : absolute"/>
+    <% }); %>
+</script>
+
+<script type="text/template" id="tmp-error-msg">
+    <div class="vid-error-msg <%= type %>">
+        <span><%= msg %></span>
+    </div>
+</script>
+
+<script type="text/template" id="tmp-gate-form">
+    <span class="closetwo modal-close cursor"><img src="img/orangex.png" id="orangex" alt="close modal"></span>
+    <header><%= modalHeader %></header>
+    <section id="modalbody">
+        <div class="gate-form">
+            <%= gateForm %>
+        </div>
+    </section>
+</script>
+
+<script type="text/template" id="tmp-user-signup-form">
+    <span class="closetwo modal-close cursor"><img src="img/orangex.png" id="orangex" alt="close modal"></span>
+    <header><%= modalHeader %></header>
+    <section id="modalbody">
+        <form id="user-signup-form">
+            <ul class="modal-form">
+                <li><label for="username">Username</label><input type="text" id="username_input"/></li>
+                <li><label for="email">Email</label><input type="text" id="email_input"/></li>
+                <li><label for="password">Password</label><input type="password" id="password_input"/></li>
+                <li><label for="password-confirm">Confirm Password</label><input type="password" id="password_confirm_input"/></li>
+                <a href="#" id="user-signup-submit"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>                
+            </ul>
+        </form>
+    </section>
+</script>
+
+<script type="text/template" id="tmp-user-login-form">
+    <span class="closetwo modal-close cursor"><img src="img/orangex.png" id="orangex" alt="close modal"></span>
+    <header><%= modalHeader %></header>
+    <section id="modalbody">
+        <form id="user-login-form">
+            <ul class="modal-form">
+                <li><label for="username">Username</label><input type="text" id="username_input"/></li>
+                <li><label for="password"> Password</label><input type="password" id="password_input"/></li>
+                <a href="#" id="user-login-submit"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>                
+            </ul>
+        </form>
+    </section>
+</script>
+
+<script type="text/template" id="tmp-no-auth-form">
+    <span class="closetwo modal-close cursor"><img src="img/orangex.png" id="orangex" alt="close modal"></span>
+    <header><%= modalHeader %></header>
+    <section id="modalbody">
+        <form id="user-login-form">
+            <ul class="modal-form">
+                <li><label for="username">Username</label><input type="text" id="username_input"/></li>
+                <li><label for="password"> Password</label><input type="password" id="password_input"/></li>
+                <a href="#" id="user-login-submit"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>                
+            </ul>
+        </form>
+    </section>
+    <a href="#" class="user-signup">Sign up</a>
+    </div>
+</script>
+
+<script type="text/template" id="tmp-subscribe">
+    <div class="modalbg">
+        <span>Please subscribe to view this content</span>
+    </div>
+</script>
+
+<script type="text/template" id="tmp-sprite">
+    <div class="sprite-outer" data-sprite-id="<%= id %>">
+        <img src="img/modalclose.png" alt="close" class="modal-close cursor">
+        <%= sprite %>
+    </div>
+</script>
+
+<script type="text/template" id="tmp-mega-gui">
+    <div class="mega-timeline clearfix">
+        <div class="jp-interface clearfix">
+            <div class="jp-controls-holder">
+                <ul class="jp-controls">
+                    <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
+                    <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+                </ul>
+                      <a href="javascript:;"><img src="img/mobile/search.png" alt="Search" class="searchimg"></a>
+                <div id="jp-mega-playbar-container"></div>
+            </div>
+      
+            <ul class="jp-toggles">
+                <li><a href="javascript:;" title="comments" class="jp-comment" tabindex="1"></a></li>
+                <li><a href="javascript:;" class="jp-cc" tabindex="1" title="cc">cc</a></li>
+                <li><a href="javascript:;" class="jp-ccOff" tabindex="1" title="ccOff">ccOff</a></li>
+                <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+                <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+                <div class="jp-volume-bar">
+                    <div class="jp-volume-bar-value"></div>
+                </div>
+                <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+                <li><a href="javascript:;" class="jp-doohickey" tabindex="1" title="doohickey">Doohickey</a></li>
+                <li><a href="javascript:;" title="hd" class="jp-hd" tabindex="1" title="hd">HD</a></li>
+                <li><a href="javascript:;" class="jp-full-screen" tabindex="1" title="full screen">full screen</a></li>
+                <div class="time2">
+                    <div class="viddler-current-time"></div>
+                    <span class="slash">/</span>
+                    <div class="viddler-duration"></div>
+                </div>
+            </ul>
+            <div class="time">
+                <div class="viddler-current-time"></div>
+                <span class="slash">/</span>
+                <div class="viddler-duration"></div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/template" id="tmp-mega-timeline">
+    <div class="bar">
+        <div id="mega-markers-container"></div>
+        <div class="jp-progress" style="position: relative; z-index: 888;">
+            <div class="jp-mega-seek-bar clearfix" style="position: relative; z-index: 1;">
+                <div class="jp-mega-play-bar"><img src="img/time.png" id="time" /></div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div id="mega-track-info" class="">
+            <% _.each(elems, function (elem) { %>
+                <span class="timeline-tag" style="width : <%= elem.width %>%"><%= elem.timeLineTag %></span>
+            <% }); %>
+        </div>
+    </div>
+</script>
+
+</body>
+</html>
