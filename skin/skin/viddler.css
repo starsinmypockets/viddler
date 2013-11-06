@@ -1811,6 +1811,17 @@ span.number{
 .loginmodal section#modalbody form input{
 	max-width: 85%;
 }
+
+#play-overlay-button {
+    cursor: pointer;
+    display: none;
+    height: 70px;
+    left: 40%;
+    margin-left: -25px;
+    position: absolute;
+    top: 35%;
+    z-index: 10000;
+}
 }
 
 /*iphone styles*/
