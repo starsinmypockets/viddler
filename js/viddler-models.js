@@ -42,8 +42,8 @@ define(['backbone'], function(Backbone) {
         },
 
         url : function () {
-            //return '../json-examples/playlists/needloginresponse.json';
-            return '../json-examples/playlists/playlistexample2.json';
+            //return 'json-examples/playlists/needloginresponse.json';
+            return 'json-examples/playlists/playlistexample2.json';
         },
         parse : function (response, options) {
             var that = this;
