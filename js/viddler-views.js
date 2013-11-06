@@ -162,7 +162,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             // set Index info on manager
             ViddlerManager.initTlIndex();  //initTlIndex also binds dom seek events
             this.bindSeekEvents();
-
+            this.bindThumbnailEvents();
             // add play button overlay
             $('#play-overlay-button').show();
             
@@ -370,6 +370,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         /**
          * Playlist event bindings
          **/
+         // @@ Move to events module
         bindSeekEvents : function () {
             var that = this;
             
@@ -380,9 +381,12 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     tlMs;
                 if (window.vDrags) return false; // don't do click if we're dragging the scrubber
                 e.preventDefault();
+/*
                 clickX = e.clientX - $(this).offset().left;
                 seekPerc = clickX/($(e.currentTarget).width());
                 tlMs = seekPerc*ViddlerManager.tlLength;
+*/
+                tlMs = ViddlerManager.getTlMs(e);
                 that.seekTo(tlMs);
                 return false;
             });
@@ -429,7 +433,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 if (!window.vDrags) return;
                 if (e.target.className !== "jp-progress" && e.target.className !== "jp-mega-play-bar") return;
                 playbarLeft = $(".jp-progress").offset().left;
-                console.log(playbarLeft);
                 $('.jp-mega-play-bar').css({
                     width : ((e.clientX - playbarLeft)+'px')
                 });
@@ -470,6 +473,24 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
              }
         },
         
+        // @@ doThumbNails ??
+        // @@ Move to Events Module
+        bindThumbnailEvents : function () {
+            var that = this,
+                t,
+                _getThumbs = function (e) {
+                    console.log(e);
+                };
+            
+            $('.jp-progress').mouseenter(function (e) {
+                clearTimeout(t);
+                t = setTimeout(function () {
+                    _getThumbs(e)
+                }, 500);
+            });
+        },
+        
+        // @@ Move to Events Module
         bindCommentMarkerEvents : function () {
             var that = this;
             

@@ -71,19 +71,24 @@ img#jp_poster_0 {position:absolute; top:0; z-index:10}
 
 #load-wait {position:absolute; top:44%; left:50%; z-index:10000}
 
+/* Mask */
+.thumbnail {width:100px; height:70px; position:relative; top:-200px; z-index:10; overflow:hidden; background-image:url('sprites.jpg'); background-repeat:none; background-position:0px -100px}
+.thumb-time {text-align:center; position:relative; top:70%; left:20%; color:white;}
+
 /* Sprites */
 .sprite-outer {font-weight:bold; background-color:#E2F5AB; padding:.4em; border-radius:2em; border:2px solid; opacity:0.6;
 filter:alpha(opacity=60);}
 
 .viddlerSubtitle {display:block; position:absolute; left:0 !important}
 
-/* Mask */
-#mask {background-color:black; display:block; position:absolute; top:0; left:0; z-index:10000000; opacity:0.75; filter:alpha(opacity=65);}
-
 /* pager */
 #comment-pager {margin:10px}
 .pager-el {display:block; width:10px; text-align:center; float:left; margin:5px}
 .pager-current-page {color:yellow};
+
+/* thumbnails */
+.thumbnail {width:100; height:70; overflow:hidden; background-image:url('sprites.jpg')}
+
 /* Modals */
 
 /*this was moved to viddler.css because it would not render from here for some reason
