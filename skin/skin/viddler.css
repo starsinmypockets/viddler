@@ -768,7 +768,7 @@ a.jp-comment:hover{
 }
 a.jp-no-video-comment{
 	background: url('../img/comment.png');
-	opacity:0.3;
+	opacity:0.2;
 	-webkit-background-size: 24px;
 	background-size: 24px;
 	width: 24px !important;
@@ -1675,7 +1675,7 @@ span.number{
 	width:277px;
 	padding: .5em; 
 	position:absolute; 
-	top: 24%;
+	top: 5%;
 	border:none; 
 	z-index:10000000;	
 	border-radius: 5px;
@@ -1803,9 +1803,6 @@ span.number{
 }
 .loginmodal section#modalbody form input{
 	max-width: 85%;
-}
-#play-overlay-button {
-	display:none; !important;
 }
 }
 
