@@ -2,8 +2,6 @@
 # Viddler Player
 
 ---
-## /skin
-Main working directory.
 
 ## /js
 Core Viddler Player library.
