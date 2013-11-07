@@ -2014,6 +2014,9 @@ a.jp-doohickey:hover{
 ul.jp-toggles {
 	width:230px;/*fix toggle justify right issue*/
 	}
+.logo {
+	width:144px;
+	}
 
 }
 
