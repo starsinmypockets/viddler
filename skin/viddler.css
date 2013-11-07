@@ -1079,12 +1079,13 @@ a.also{
 	border-radius: 13px;
 	border: #fb9600 solid thick;
 }
-img#orangex{
-	width: 30px;
-	float:right;
-	position: relative;
-	top: -5px;
-	left: 5px;
+img#orangex {
+    bottom: 30px;
+    float: right;
+    left: 15px;
+    position: relative;
+    top: -15px;
+    width: 30px;
 }
 
 .loginmodal header{
