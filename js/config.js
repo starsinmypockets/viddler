@@ -32,8 +32,8 @@ define(function() {
       generateRequestOnPageLoad: true
     },
 
-    DEBUG : false,
-    tDEBUG : false
+    DEBUG : true,
+    tDEBUG : false // debug timeline clock events
         
 
   };
