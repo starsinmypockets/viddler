@@ -1675,7 +1675,8 @@ span.number{
 	width:277px;
 	padding: .5em; 
 	position:absolute; 
-	top: 3%;
+	top: 0;
+	left:0;
 	border:none; 
 	z-index:10000000;	
 	border-radius: 5px;
