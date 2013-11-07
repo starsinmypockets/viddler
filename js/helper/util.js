@@ -60,6 +60,23 @@ define(['exports'], function(exports) {
       M= M? [M[1], M[2]]: [N, navigator.appVersion,'-?'];
       return M;
   }();
+  
+  exports.matrix = function() {
+    return {
+        'flashBrowser': function () {
+                var flash = false;
+                if (exports.browser[0] === "Firefox") flash = true;
+                if (exports.browser[0] === "MSIE" && exports.browser[1].indexOf(8) === 0) flash = true;
+                return flash;            
+            }(),
+        'ios' : navigator.userAgent.match(/(iPod|iPhone|iPad)/),
+        'ie8': (exports.browser[0] === "MSIE" && exports.browser[1].indexOf(8) === 0)
+      }
+  }();
+  
+  exports.ios = function () {
+      return navigator.userAgent.match(/(iPod|iPhone|iPad)/);
+  }();
 
   // this catches ie8 and ff
   exports.ie8 = function () {

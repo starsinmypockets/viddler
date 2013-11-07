@@ -82,6 +82,16 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
         value: playerTime
       });
     });
+    
+    el.on($.jPlayer.event.canplay, function (event) {
+        var mediaName = event.jPlayer.status.src;
+        Viddler.Events.trigger('tracking:canplay', {
+            category:'jPlayer',
+            action:'Can Play',
+            label:mediaName,
+            value:true
+        });
+    });
   }
 
   return {
@@ -207,24 +217,20 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               var data = {},
                   that = this;
                   
-               if (!Util.ie8 & !navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
-                   $('#load-wait').show();
-               }
                data[opts.type] = opts.url;
                if (opts.poster) data.poster = opts.poster;
                this.$el.jPlayer("setMedia", data);
-               if (!Util.ie8) {
-                    // @@ this never gets called in ios
-                   this.$el.on(($.jPlayer.event.canplay), function () {
-                       if (Config.DEBUG) console.log("JPLAYER EVENT: canplay");
+               
+               if (!Util.matrix.flashBrowser && !Util.matrix.ios) {
+                   $('#load-wait').show();
+                   Viddler.Events.on(('tracking:canplay'), function () {
+                       if (Config.DEBUG) console.log("[jplayer] canplay event");
                        $('#load-wait').hide();
                        Viddler.Events.trigger('mediaReady');
                    });
-               } else {
-                   if (Config.DEBUG) console.log("IE8 / FF setMedia");
-                   $('#load-wait').hide();
-                   Viddler.Events.trigger('mediaReady');
+                   return;
                }
+               Viddler.Events.trigger('mediaReady');
            },
            
            play : function (opts) {
