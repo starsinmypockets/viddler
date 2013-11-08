@@ -66,9 +66,6 @@
         </div> <!-- jp_container -->
     <div id="comment-popup-container"></div>
     <div id="thumbnail-container">
-        <div class="thumbnail">
-            <span class="thumb-time">00:00:11</span>
-        </div>
     </div>
     <div id="error-message-container"></div>
     <div id="comments-container"></div>
@@ -259,10 +256,10 @@
     </div>
 </script>
 
-<script type="text/template" id="tmp-sprite">
-    <div class="sprite-outer" data-sprite-id="<%= id %>">
-        <img src="img/modalclose.png" alt="close" class="modal-close cursor">
-        <%= sprite %>
+<script type="text/template" id="tmp-thumb">
+    <div class="thumbnail">
+        <img src="<%= sprite_url %>"/>
+        <span class="thumbnail-tikme">00:00:10</span>
     </div>
 </script>
 

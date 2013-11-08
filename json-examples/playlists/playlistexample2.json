@@ -26,7 +26,7 @@
             }
         ],
         "thumbs" : {
-            "spriteUrl": "#",
+            "spriteUrl": "json-examples/sprites/test_sprite_1.png",
             "cues": [
                 {
                     "start": "10000",

@@ -196,6 +196,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 tlStep = ViddlerManager.tlStep,
                 tlSteps = ViddlerManager.tlSteps;
             
+            // @@ put this stuff into the manager   
             if (tlStep != tlSteps) {
                 mediaEl = this.timeline.mediaElements[tlStep];
                 stepOpts.mediaEl = mediaEl;
@@ -381,11 +382,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     tlMs;
                 if (window.vDrags) return false; // don't do click if we're dragging the scrubber
                 e.preventDefault();
-/*
-                clickX = e.clientX - $(this).offset().left;
-                seekPerc = clickX/($(e.currentTarget).width());
-                tlMs = seekPerc*ViddlerManager.tlLength;
-*/
                 tlMs = ViddlerManager.getTlMs(e);
                 that.seekTo(tlMs);
                 return false;
@@ -473,14 +469,22 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
              }
         },
         
-        // @@ doThumbNails ??
-        // @@ Move to Events Module
         bindThumbnailEvents : function () {
             var that = this,
                 t,
-                _getThumbs = function (e) {
-                    console.log(e);
-                };
+                _getThumbs,
+                data = {};
+            
+            _getThumbs = function (e) {
+                console.log(e);
+                tlMs = ViddlerManager.getTlMs(e);
+                elTime = ViddlerManager.getElTime(tlMs);
+                console.log(tlMs);
+                console.log(elTime);
+                console.log(ViddlerManager.mediaEls[elTime.step].thumbs.spriteUrl);
+                data.sprite_url = ViddlerManager.mediaEls[elTime.step].thumbs.spriteUrl;
+                $('#thumbnail-container').html(_.template($('#tmp-thumb').html(), data));
+            }
             
             $('.jp-progress').mouseenter(function (e) {
                 clearTimeout(t);
@@ -489,7 +493,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 }, 500);
             });
         },
-        
         // @@ Move to Events Module
         bindCommentMarkerEvents : function () {
             var that = this;
