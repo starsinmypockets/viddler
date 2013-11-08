@@ -766,7 +766,8 @@ a.jp-comment:hover{
 	height: 23px !important;
 	position: relative;
 }
-a.jp-no-video-comment{
+span.jp-no-video-comment{
+	display:block;
 	background: url('../img/comment.png');
 	opacity:0.2;
 	-webkit-background-size: 24px;

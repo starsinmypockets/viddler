@@ -55,6 +55,14 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             commentModal.render();
         },
         
+        commentOn : function () {
+            $('.comments-jp').html('<a href="javascript:;" title="comments" class="jp-comment" tabindex="1"></a>');
+        },
+        
+        commentOff : function () {
+            $('.comments-jp').html('<span class="jp-no-video-comment"></span>')
+        },
+        
         render : function(opts) {
             var data = {},
                 that=this;
@@ -74,7 +82,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 that.loadCommentPopUp();
                 return false;
             });
-            
+
             Events.trigger("playerGuiReady");
         }
     });
@@ -185,6 +193,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             this.timelinePlay();
             $('.viddler-duration').html(Util.secs2time(Math.floor(ViddlerManager.tlLength/1000)));
             this.vP.clearGuiTime();
+            this.vPG.commentOff();
         },
         
         // do timeline step queue-ing
@@ -196,6 +205,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 tlStep = ViddlerManager.tlStep,
                 tlSteps = ViddlerManager.tlSteps;
             
+//            this.vPG.commentOff();
             // @@ put this stuff into the manager   
             if (tlStep != tlSteps) {
                 mediaEl = this.timeline.mediaElements[tlStep];
@@ -240,6 +250,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 // set media and go
                 Events.once("mediaReady", function () {
                     if (Config.DEBUG) console.log("[Player] Media ready");
+                    that.vPG.commentOn();
                     that.vP.runTimeListener();
                     that.vP.runStopListener();
                 });
