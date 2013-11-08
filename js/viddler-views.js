@@ -499,6 +499,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                             data.x = cue.x;
                             data.y = cue.y;
                             data.left = e.clientX - playbarLeft;
+                            data.time = Util.secs2time(tlMs/1000);
                         }
                     });
                     $('#thumbnail-container').html(_.template($('#tmp-thumb').html(), data));
