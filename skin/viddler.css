@@ -119,11 +119,11 @@ div.jp-interface {
 	border-radius: 5px;
 	position: relative;
 	width: 97%;
-	padding: 0px 15px 0px 15px;
+	padding: 0 15px 5px;
 	height: 54px;
 	margin-top: 10px;
 	-webkit-box-shadow: inset 1px 1px 2px 2px rgba(1, 1, 1, .4);
-box-shadow: inset 1px 1px 2px rgba(1, 1, 1, .4); 
+	box-shadow: inset 1px 1px 2px rgba(1, 1, 1, .4); 
 }
 
 /* @group CONTROLS */
@@ -1338,15 +1338,14 @@ box-shadow: inset 1px 1px 2px rgba(1, 1, 1, .4);
 }
 div.jp-video ul.jp-controls,
 div.jp-interface ul.jp-controls li {
-	display:none;/*remove this to view and fix issues with adding the play button to tablet view and launch the add*/
 	float:left;
 }
 a.jp-play,
 a.jp-pause,
 a#viddler-play,
 a#viddler-pause {
-	/*width:30px !important;*/
-	height:40px /*!important;*/
+	width:30px !important;
+	height: 25px !important;
 }
 div.jp-video div.jp-progress {
 	height:11px;
@@ -1361,10 +1360,17 @@ div.jp-video div.jp-progress {
 	width: 100%;
 	display:block;
 	top: 0px;
-	margin-top: 0px;
+	margin-top:12px;
 	position: relative;
 	padding: 0px;
+	margin-left: 45px;
 }
+#mega-track-info {
+	margin-top:0px;
+	}
+#mega-markers-container {
+	width: 89%;
+	}
 ul.jp-toggles{
 	display:inline-block;
 	width: 98%;
@@ -1387,31 +1393,29 @@ ul.jp-toggles{
 }
 a.jp-play {
 	background: url("../img/mobile/play.png") no-repeat; 
-	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button and add missing button to tablet view*/ 
-	background-size: 18px;
-	margin-left:10%;
-
 }
 a.jp-play:hover {
 	background: url("../img/mobile/playhover.png") no-repeat;
-	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button and add missing button to tablet view */
-	background-size: 18px;
-	margin-left:10%;
-
 }
 a.jp-pause {
 	background: url("../img/mobile/pause.png") no-repeat;
-	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button and add missing button to tablet view */
-	background-size: 18px;
-	display: none;
-	margin-left:10%;
 }
 a.jp-pause:hover {
 	background: url("../img/mobile/pausehover.png") no-repeat;
-	-webkit-background-size: 18px; /*changed pixel width to correct chrome retina oversized play button and add missing button to tablet view */
-	background-size: 18px;
-	margin-left:10%;
 }
+
+a.jp-play, a.jp-play:hover, a.jp-pause, a.jp-pause:hover {
+	-webkit-background-size: 18px; 
+	background-size: 18px;
+	margin-left:35%;
+	margin-top:10%;
+	height:auto;
+	}
+
+div.jp-interface ul.jp-controls a {
+	top:0;
+}
+
 
 
 div.jp-play-bar {
@@ -1565,7 +1569,7 @@ div.jp-video div.jp-volume-bar {
 
 div.jp-video div.jp-progress {
 	min-width:39%;	
-	width: 85%;
+	width: 87%;
 	height:11px;
 	position: relative;
 	z-index: 1;
@@ -1574,13 +1578,12 @@ div.jp-video div.jp-progress {
 	float:left;
 	border-bottom: #42474d solid thin; 
 }
-
 div.jp-seek-bar {
 	background: #1a2025;
 	width:0px;
 	height:100%;
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(1, 1, 1, .4);
-box-shadow: inset 1px 1px 1px 1px rgba(1, 1, 1, .4);
+	box-shadow: inset 1px 1px 1px 1px rgba(1, 1, 1, .4);
 	border-radius: 10px;
 	cursor: pointer;
 }
@@ -1611,7 +1614,7 @@ a img.videoimg{
 	display:block;
 	width: 60px;
 }
-#mega-markers-container {
+#mega-track-container {
     position: relative;
     top: 0;
     width: 87%;
@@ -1748,6 +1751,15 @@ div.jp-interface ul.jp-controls li {
 	display:none;
 	float:left;
 }
+.bar {
+	margin-left: 12px;
+	}
+#mega-track-info {
+	margin-top:16px;
+	}
+div.jp-video div.jp-progress {
+	width: 89%;
+}
 ul.jp-toggles{
 	display:inline-block;
 	width: 96%;
@@ -1831,6 +1843,9 @@ span.number{
     top: 30%;
     z-index: 10000;
 }
+#mega-markers-container {
+	width:93%;
+	}
 
 }
 /*Nexus 7 portrait*/
