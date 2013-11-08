@@ -257,9 +257,8 @@
 </script>
 
 <script type="text/template" id="tmp-thumb">
-    <div class="thumbnail">
-        <img src="<%= sprite_url %>"/>
-        <span class="thumbnail-tikme">00:00:10</span>
+    <div class="thumbnail" style="background-image:url('<%= sprite_url %>'); background-position:<%= x %>px <%= y %>px; left: <%= left %>px">
+        <span class="thumbnail-time" style="">00:00:10</span>
     </div>
 </script>
 

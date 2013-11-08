@@ -72,7 +72,7 @@ img#jp_poster_0 {position:absolute; top:0; z-index:10}
 #load-wait {position:absolute; top:44%; left:50%; z-index:10000}
 
 /* Mask */
-.thumbnail {width:100px; height:70px; position:relative; top:-200px; z-index:10; overflow:hidden;}
+.thumbnail {width:50px; height:50px; position:relative; top:-200px; margin-bottom:-50px;z-index:10; overflow:hidden; margin:none; padding: none;}
 .thumb-time {text-align:center; position:relative; top:70%; left:20%; color:white;}
 
 /* Sprites */
@@ -86,8 +86,6 @@ filter:alpha(opacity=60);}
 .pager-el {display:block; width:10px; text-align:center; float:left; margin:5px}
 .pager-current-page {color:yellow};
 
-/* thumbnails */
-.thumbnail {width:100; height:70; overflow:hidden; background-image:url('sprites.jpg')}
 
 /* Modals */
 

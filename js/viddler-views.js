@@ -472,25 +472,55 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         bindThumbnailEvents : function () {
             var that = this,
                 t,
-                _getThumbs,
-                data = {};
+                i,
+                data = {},
+                thumbData = [],
+                _getThumbs;
+
+            console.log(ViddlerManager.mediaEls.length);
+            for (el in ViddlerManager.mediaEls) {
+                thumbData.push(ViddlerManager.mediaEls[el].thumbs);
+            }
+            
+            console.log(thumbData);
             
             _getThumbs = function (e) {
                 console.log(e);
                 tlMs = ViddlerManager.getTlMs(e);
-                elTime = ViddlerManager.getElTime(tlMs);
+                elTime = ViddlerManager.getElTime(tlMs); // return targeted step and tlMs of video el
                 console.log(tlMs);
                 console.log(elTime);
-                console.log(ViddlerManager.mediaEls[elTime.step].thumbs.spriteUrl);
-                data.sprite_url = ViddlerManager.mediaEls[elTime.step].thumbs.spriteUrl;
-                $('#thumbnail-container').html(_.template($('#tmp-thumb').html(), data));
+                console.log(thumbData[elTime.step]);
+                if (thumbData[elTime.step]) {
+                    data.sprite_url = thumbData[elTime.step].spriteUrl;
+                    _.each(thumbData[elTime.step].cues, function (cue) {
+                        console.log(elTime, cue);
+                        if (elTime.time >= cue.start && elTime.time < cue.stop) {
+                            data.x = cue.x;
+                            data.y = cue.y;
+                            data.left = e.offsetX;
+                            // calc left offset
+                        }
+                    });
+                    console.log(data);
+                    // calc position left
+                    // set iamge and offsets from thumbData;
+                    $('#thumbnail-container').html(_.template($('#tmp-thumb').html(), data));
+                }
             }
+            
+            // on mouse in set thumbsOn
+            // set timeout to leave this on unless definitive mouseout
+            // mousemove, update thumb image and time
             
             $('.jp-progress').mouseenter(function (e) {
                 clearTimeout(t);
                 t = setTimeout(function () {
                     _getThumbs(e)
                 }, 500);
+            });
+            $('.jp-progress').mouseout(function (e) {
+                $('.thumbnail').hide();
             });
         },
         // @@ Move to Events Module
