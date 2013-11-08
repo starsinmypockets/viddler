@@ -1848,21 +1848,13 @@ span.number{
     position: absolute;
     top: 30%;
 }
-/*Nexus 7 portrait*/
-@media screen and (max-width: 400px) , screen and (max-height: 640px) {
-	#play-overlay-button {
-    left: 46%;
-    position: absolute;
-    top: 30%;
-}
-/*Nexus 7 landscape*/
-@media screen and (max-width: 1280px) , screen and (max-height: 800px) {
+/*Nexus 7*/
+@media only screen and (min-device-width : 601px) and (max-device-width : 880px) {
 	#play-overlay-button {
      position: absolute;
      top:640px;
 	 left:400px;
-}
-  
+} 
 }
 
 @media only screen and (max-width: 320px) {
