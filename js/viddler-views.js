@@ -472,10 +472,14 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         bindThumbnailEvents : function () {
             var that = this,
                 t,
+                t2,
+                t3,
                 i,
+                barStay,
                 data = {},
                 thumbData = [],
-                _getThumbs;
+                _getThumbs,
+                playbarLeft = $(".jp-progress").offset().left;
 
             console.log(ViddlerManager.mediaEls.length);
             for (el in ViddlerManager.mediaEls) {
@@ -485,12 +489,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             console.log(thumbData);
             
             _getThumbs = function (e) {
-                console.log(e);
                 tlMs = ViddlerManager.getTlMs(e);
                 elTime = ViddlerManager.getElTime(tlMs); // return targeted step and tlMs of video el
-                console.log(tlMs);
-                console.log(elTime);
-                console.log(thumbData[elTime.step]);
                 if (thumbData[elTime.step]) {
                     data.sprite_url = thumbData[elTime.step].spriteUrl;
                     _.each(thumbData[elTime.step].cues, function (cue) {
@@ -498,29 +498,33 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                         if (elTime.time >= cue.start && elTime.time < cue.stop) {
                             data.x = cue.x;
                             data.y = cue.y;
-                            data.left = e.offsetX;
-                            // calc left offset
+                            data.left = e.clientX - playbarLeft;
                         }
                     });
-                    console.log(data);
-                    // calc position left
-                    // set iamge and offsets from thumbData;
                     $('#thumbnail-container').html(_.template($('#tmp-thumb').html(), data));
                 }
             }
             
-            // on mouse in set thumbsOn
-            // set timeout to leave this on unless definitive mouseout
-            // mousemove, update thumb image and time
-            
             $('.jp-progress').mouseenter(function (e) {
                 clearTimeout(t);
+                clearTimeout(t2);
                 t = setTimeout(function () {
                     _getThumbs(e)
+                    barStay = true;
                 }, 500);
             });
             $('.jp-progress').mouseout(function (e) {
-                $('.thumbnail').hide();
+                clearTimeout(t);
+                t2 = setTimeout(function () {
+                    $('.thumbnail').hide();
+                }, 500);
+            });
+            $('.jp-progress').mousemove(function (e) {
+                t3 = setTimeout(function () {
+                    if (barStay) {
+                        _getThumbs(e);
+                    }
+                }, 250);
             });
         },
         // @@ Move to Events Module
