@@ -221,7 +221,7 @@
 </script>
 
 <script type="text/template" id="tmp-user-login-form">
-    <img src="img/orangex.png" id="orangex" alt="close modal" class="closetwo modal-close cursor">
+    <span class="closetwo modal-close cursor"><img src="img/orangex.png" id="orangex" alt="close modal"></span>
     <header><%= modalHeader %></header>
     <section id="modalbody">
         <form id="user-login-form">
@@ -257,7 +257,9 @@
 </script>
 
 <script type="text/template" id="tmp-thumb">
-    <div class="thumbnail" style="background-image:url('<%= sprite_url %>'); background-position:<%= x %>px <%= y %>px; left: <%= left %>px">
+    <div class="thumbnail-outer" style="left: <%= left %>px">
+        <div class="thumbnail" style="background-image:url('<%= sprite_url %>'); background-position:<%= x %>px <%= y %>px;">
+        </div>
         <span class="thumbnail-time" style=""><%= time %></span>
     </div>
 </script>

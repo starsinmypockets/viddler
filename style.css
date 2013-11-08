@@ -71,9 +71,10 @@ img#jp_poster_0 {position:absolute; top:0; z-index:10}
 
 #load-wait {position:absolute; top:44%; left:50%; z-index:10000}
 
-/* Mask */
-.thumbnail {width:50px; height:50px; position:relative; top:-200px; margin-bottom:-50px;z-index:10; overflow:hidden; margin:none; padding: none;}
-.thumb-time {text-align:center; position:relative; top:70%; left:20%; color:white;}
+/* Thumbnails */
+.thumbnail-outer {position:relative; top:-200px; margin-bottom:-50px;z-index:10;}
+.thumbnail {width:50px; height:50px; overflow:hidden}
+.thumbnail-time {color:white; padding:}
 
 /* Sprites */
 .sprite-outer {font-weight:bold; background-color:#E2F5AB; padding:.4em; border-radius:2em; border:2px solid; opacity:0.6;

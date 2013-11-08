@@ -494,12 +494,11 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 if (thumbData[elTime.step]) {
                     data.sprite_url = thumbData[elTime.step].spriteUrl;
                     _.each(thumbData[elTime.step].cues, function (cue) {
-                        console.log(elTime, cue);
                         if (elTime.time >= cue.start && elTime.time < cue.stop) {
                             data.x = cue.x;
                             data.y = cue.y;
                             data.left = e.clientX - playbarLeft;
-                            data.time = Util.secs2time(tlMs/1000);
+                            data.time = Util.secs2time(Math.round(tlMs/1000));
                         }
                     });
                     $('#thumbnail-container').html(_.template($('#tmp-thumb').html(), data));
@@ -517,7 +516,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             $('.jp-progress').mouseout(function (e) {
                 clearTimeout(t);
                 t2 = setTimeout(function () {
-                    $('.thumbnail').hide();
+                    $('.thumbnail-outer').hide();
                 }, 500);
             });
             $('.jp-progress').mousemove(function (e) {
