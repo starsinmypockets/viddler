@@ -1676,7 +1676,7 @@ span.number{
 	width:277px;
 	padding: .5em; 
 	position:absolute; 
-	top: 0;
+	top: 20%;
 	left:0;
 	border:none; 
 	z-index:10000000;	
@@ -1794,7 +1794,7 @@ span.number{
 	left: 48%;
 	background: #e7e7e7;
 	position: absolute;
-	top:30%;
+	top:20%;
 	z-index: 99999999;
 	border-radius: 10px;
 	border: #fb9600 solid thick;
