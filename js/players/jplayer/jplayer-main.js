@@ -2,6 +2,98 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
   'players/jplayer/jquery.jplayer.min', 'players/jplayer/jquery.jplayer.inspector'], 
   function($, Backbone, Util, Viddler, Config) {
 
+  //  
+  /* TRACKING events */
+  //
+  var bindEvents = function(el) {
+    el.on($.jPlayer.event.play, function(event) {
+       var playerTime = Math.round(event.jPlayer.status.currentPercentAbsolute);
+       var mediaName = event.jPlayer.status.src;
+        Viddler.Events.trigger('tracking:event', {
+          category:'jPlayer', 
+          action: 'Play',
+          label: mediaName,
+          value: playerTime
+        });
+    });
+
+    //listener for a pause click
+    el.on($.jPlayer.event.pause, function(event) {
+      var playerTime = Math.round(event.jPlayer.status.currentPercentAbsolute);
+      var mediaName = event.jPlayer.status.src;
+      //We’ll only track the “pause” if the percent value is less than 100. This is because at 100%
+      //when the player ends, it will send a pause event with the end event.
+      //we don’t need that duplication in GA
+      if(playerTime<100){
+        Viddler.Events.trigger('tracking:event', {
+          category:'jPlayer', 
+          action: 'Pause',
+          label: mediaName,
+          value: playerTime
+        });
+      }
+    });
+
+    //listening for the user dragging the seek bar
+    el.on($.jPlayer.event.seeking, function(event) {
+      var playerTime = Math.round(event.jPlayer.status.currentPercentAbsolute);
+      var mediaName = event.jPlayer.status.src;
+      Viddler.Events.trigger('tracking:event', {
+        category:'jPlayer', 
+        action: 'Seeking',
+        label: mediaName,
+        value: playerTime
+      });
+    });
+
+    //listening for when the user has stopped dragging the seek bar
+    el.on($.jPlayer.event.seeked, function(event) {
+     var playerTime = Math.round(event.jPlayer.status.currentPercentAbsolute);
+     var mediaName = event.jPlayer.status.src;
+     
+     //There’s some overlap between the seeked and stopped events. When a user clicks
+     // the stop button it actually sends a “seek” to the 0 location. So if the seeked location is 0
+     // then we track it as a stop, if it’s greater than 0, it was an actual seek.
+     if(playerTime>0){
+        Viddler.Events.trigger('tracking:event', {
+          category:'jPlayer', 
+          action: 'Seeked',
+          label: mediaName,
+          value: playerTime
+        });
+     } else {
+        Viddler.Events.trigger('tracking:event', {
+          category:'jPlayer', 
+          action: 'Stopped',
+          label: mediaName,
+          value: playerTime
+        });
+     }
+    });
+
+    //listening for an end ie file completion
+    el.on($.jPlayer.event.ended, function(event) {
+      var playerTime = 100;
+      var mediaName = event.jPlayer.status.src;
+      Viddler.Events.trigger('tracking:event', {
+        category:'jPlayer', 
+        action: 'Ended',
+        label: mediaName,
+        value: playerTime
+      });
+    });
+    
+    el.on($.jPlayer.event.canplay, function (event) {
+        var mediaName = event.jPlayer.status.src;
+        Viddler.Events.trigger('tracking:canplay', {
+            category:'jPlayer',
+            action:'Can Play',
+            label:mediaName,
+            value:true
+        });
+    });
+  }
+
   return {
 
     View : Viddler.Views.BaseView.extend({
@@ -98,6 +190,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                               'width' : w,
                               'min-height' : w*.56
                           });
+                          bindEvents($(that.el));
                           Viddler.Events.trigger("playerReady", that);
                       },
                       swfPath: "swf",
@@ -124,24 +217,20 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               var data = {},
                   that = this;
                   
-               if (!Util.ie8 & !navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
-                   $('#load-wait').show();
-               }
                data[opts.type] = opts.url;
                if (opts.poster) data.poster = opts.poster;
                this.$el.jPlayer("setMedia", data);
-               if (!Util.ie8) {
-                    // @@ this never gets called in ios
-                   this.$el.on(($.jPlayer.event.canplay), function () {
-                       if (Config.DEBUG) console.log("JPLAYER EVENT: canplay");
+               
+               if (!Util.matrix.flashBrowser && !Util.matrix.ios) {
+                   $('#load-wait').show();
+                   Viddler.Events.on(('tracking:canplay'), function () {
+                       if (Config.DEBUG) console.log("[jplayer] canplay event");
                        $('#load-wait').hide();
                        Viddler.Events.trigger('mediaReady');
                    });
-               } else {
-                   if (Config.DEBUG) console.log("IE8 / FF setMedia");
-                   $('#load-wait').hide();
-                   Viddler.Events.trigger('mediaReady');
+                   return;
                }
+               Viddler.Events.trigger('mediaReady');
            },
            
            play : function (opts) {

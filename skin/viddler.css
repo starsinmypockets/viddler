@@ -1675,7 +1675,8 @@ span.number{
 	width:277px;
 	padding: .5em; 
 	position:absolute; 
-	top: 3%;
+	top: 0;
+	left:0;
 	border:none; 
 	z-index:10000000;	
 	border-radius: 5px;
@@ -1685,6 +1686,9 @@ span.number{
 	font-size: 16px;
  	display:none; /* display:block; to display comment bubbles */
 }
+#modal-outer img#modaltriangle {
+	display:none;
+	}
 
 #comment-play-head-pos {
 	width:98%;
@@ -1825,6 +1829,14 @@ span.number{
 }
 
 }
+/*Nexus 7 portrait*/
+@media screen and (max-width: 400px) , screen and (max-height: 640px) {
+	#play-overlay-button {
+    left: 46%;
+    position: absolute;
+    top: 30%;
+}
+
 /*HTC One*/
 @media screen and (max-width: 360px) , screen and (max-height: 640px) {
 	#play-overlay-button {
@@ -1833,7 +1845,7 @@ span.number{
     top: 30%;
 }
 /*Nexus 7 portrait*/
-@media screen and (max-width: 640px) , screen and (max-height: 400px) {
+@media screen and (max-width: 400px) , screen and (max-height: 640px) {
 	#play-overlay-button {
     left: 46%;
     position: absolute;
@@ -2001,6 +2013,9 @@ a.jp-doohickey:hover{
 
 ul.jp-toggles {
 	width:230px;/*fix toggle justify right issue*/
+	}
+.logo {
+	width:144px;
 	}
 
 }
