@@ -1050,6 +1050,7 @@ a.also{
 	margin-bottom:10px;
 	color: #BBBBBB;
     font-style: italic;
+	border: 0;
 	}
 
 #comment-play-head-pos {
@@ -1057,6 +1058,8 @@ a.also{
     font-style: italic;
     margin-top: 5px;
     width: 100%;
+	height: 25px;
+	border: 0;
 }
 
 
