@@ -1857,11 +1857,11 @@ span.number{
 }
 /*Nexus 7 landscape*/
 @media screen and (max-width: 640px) , screen and (max-height: 400px) {
-	/*#play-overlay-button {
-    left: 46%;
-    position: absolute;
-    top: 30%;
-}*/
+	#play-overlay-button {
+     position: absolute;
+     top:50%;
+	 left:55%;
+}
   
 }
 
