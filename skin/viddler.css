@@ -1699,9 +1699,11 @@ span.number{
 
 #comment-play-head-pos {
 	width:98%;
+	border: 0;
 }
 #comment-text {
 	width:99.5%;
+	border: 0;
 	}
 
 #modal-outer img#modaltriangle {
@@ -1865,11 +1867,11 @@ span.number{
 }
 /*Nexus 7*/
 @media only screen and (min-device-width : 601px) and (max-device-width : 880px) {
-	#play-overlay-button {
+	/*#play-overlay-button {
      position: absolute;
      top:640px;
 	 left:400px;
-} 
+} */
 }
 
 @media only screen and (max-width: 320px) {
