@@ -84,8 +84,15 @@ define([], function() {
                     func(i);
                 }
                 this.tlIndex = index;
-            }
+            },
             
+            // get tlMs from DOM event
+            getTlMs : function(e) {
+                clickX = e.clientX - $('.jp-progress').offset().left;
+                seekPerc = clickX/($(e.currentTarget).width());
+                tlMs = seekPerc*this.tlLength;
+                return tlMs;
+            }
         };
 
     return Manager;

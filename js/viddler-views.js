@@ -162,7 +162,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             // set Index info on manager
             ViddlerManager.initTlIndex();  //initTlIndex also binds dom seek events
             this.bindSeekEvents();
-
+            this.bindThumbnailEvents();
             // add play button overlay
             $('#play-overlay-button').show();
             
@@ -196,6 +196,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 tlStep = ViddlerManager.tlStep,
                 tlSteps = ViddlerManager.tlSteps;
             
+            // @@ put this stuff into the manager   
             if (tlStep != tlSteps) {
                 mediaEl = this.timeline.mediaElements[tlStep];
                 stepOpts.mediaEl = mediaEl;
@@ -370,6 +371,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         /**
          * Playlist event bindings
          **/
+         // @@ Move to events module
         bindSeekEvents : function () {
             var that = this;
             
@@ -380,9 +382,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     tlMs;
                 if (window.vDrags) return false; // don't do click if we're dragging the scrubber
                 e.preventDefault();
-                clickX = e.clientX - $(this).offset().left;
-                seekPerc = clickX/($(e.currentTarget).width());
-                tlMs = seekPerc*ViddlerManager.tlLength;
+                tlMs = ViddlerManager.getTlMs(e);
                 that.seekTo(tlMs);
                 return false;
             });
@@ -429,7 +429,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 if (!window.vDrags) return;
                 if (e.target.className !== "jp-progress" && e.target.className !== "jp-mega-play-bar") return;
                 playbarLeft = $(".jp-progress").offset().left;
-                console.log(playbarLeft);
                 $('.jp-mega-play-bar').css({
                     width : ((e.clientX - playbarLeft)+'px')
                 });
@@ -470,6 +469,66 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
              }
         },
         
+        bindThumbnailEvents : function () {
+            var that = this,
+                t,
+                t2,
+                t3,
+                i,
+                barStay,
+                data = {},
+                thumbData = [],
+                _getThumbs,
+                playbarLeft = $(".jp-progress").offset().left;
+
+            console.log(ViddlerManager.mediaEls.length);
+            for (el in ViddlerManager.mediaEls) {
+                thumbData.push(ViddlerManager.mediaEls[el].thumbs);
+            }
+            
+            console.log(thumbData);
+            
+            _getThumbs = function (e) {
+                tlMs = ViddlerManager.getTlMs(e);
+                elTime = ViddlerManager.getElTime(tlMs); // return targeted step and tlMs of video el
+                if (thumbData[elTime.step]) {
+                    data.sprite_url = thumbData[elTime.step].spriteUrl;
+                    _.each(thumbData[elTime.step].cues, function (cue) {
+                        console.log(elTime, cue);
+                        if (elTime.time >= cue.start && elTime.time < cue.stop) {
+                            data.x = cue.x;
+                            data.y = cue.y;
+                            data.left = e.clientX - playbarLeft;
+                            data.time = Util.secs2time(tlMs/1000);
+                        }
+                    });
+                    $('#thumbnail-container').html(_.template($('#tmp-thumb').html(), data));
+                }
+            }
+            
+            $('.jp-progress').mouseenter(function (e) {
+                clearTimeout(t);
+                clearTimeout(t2);
+                t = setTimeout(function () {
+                    _getThumbs(e)
+                    barStay = true;
+                }, 500);
+            });
+            $('.jp-progress').mouseout(function (e) {
+                clearTimeout(t);
+                t2 = setTimeout(function () {
+                    $('.thumbnail').hide();
+                }, 500);
+            });
+            $('.jp-progress').mousemove(function (e) {
+                t3 = setTimeout(function () {
+                    if (barStay) {
+                        _getThumbs(e);
+                    }
+                }, 250);
+            });
+        },
+        // @@ Move to Events Module
         bindCommentMarkerEvents : function () {
             var that = this;
             
