@@ -1774,7 +1774,7 @@ ul.jp-toggles{
 	padding: 2px 0px 2px 0px;	
 	border-top: 1px solid #000000;
 }
-	a.also{
+a.also{
 	background: #4aa9de;
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
@@ -1801,7 +1801,6 @@ ul.jp-toggles{
 }
 .logo{
 	float:right;
-	width: 70px;
 }
 span.number{
 	font-size: 12px;
