@@ -1799,9 +1799,6 @@ a.also{
 	margin-left: 20px;
 	margin-top: 0px;
 }
-.logo{
-	float:right;
-}
 span.number{
 	font-size: 12px;
 	font-weight: 100;
@@ -2028,10 +2025,6 @@ a.jp-doohickey:hover{
 ul.jp-toggles {
 	width:230px;/*fix toggle justify right issue*/
 	}
-.logo {
-	width:50px;
-	}
-
 }
 
 
