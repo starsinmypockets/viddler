@@ -1837,7 +1837,7 @@ span.number{
 	max-width: 85%;
 }
 
-#play-overlay-button {
+/*#play-overlay-button {
     cursor: pointer;
     display: none;
     height: 70px;
@@ -1845,7 +1845,7 @@ span.number{
     position: absolute;
     top: 30%;
     z-index: 10000;
-}
+}*/
 #mega-markers-container {
 	width:93%;
 	}
@@ -1853,19 +1853,19 @@ span.number{
 }
 /*Nexus 7 portrait*/
 @media screen and (max-width: 400px) , screen and (max-height: 640px) {
-	#play-overlay-button {
+	/*#play-overlay-button {
     left: 46%;
     position: absolute;
     top: 30%;
-}
+}*/
 
 /*HTC One*/
 @media screen and (max-width: 360px) , screen and (max-height: 640px) {
-	#play-overlay-button {
+	/*#play-overlay-button {
     left: 46%;
     position: absolute;
     top: 30%;
-}
+}*/
 /*Nexus 7*/
 @media only screen and (min-device-width : 601px) and (max-device-width : 880px) {
 	/*#play-overlay-button {
@@ -1876,11 +1876,11 @@ span.number{
 }
 
 @media only screen and (max-width: 320px) {
-#play-overlay-button {
+/*#play-overlay-button {
     left: 47%;
     position: absolute;
     top: 30%;
-}	
+}*/	
 }
 
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
