@@ -294,6 +294,9 @@ div.jp-video div.jp-progress {
 	position: relative;
 	top: 5px;
 }
+.logox2 {
+	display:none;
+	}
 div.jp-seek-bar, div.jp-mega-seek-bar {
 	background: #1a2025;
 	width:0px;
@@ -2024,6 +2027,12 @@ a.jp-doohickey:hover{
 
 ul.jp-toggles {
 	width:230px;/*fix toggle justify right issue*/
+	}
+.logo {
+	display:none
+	}
+.logox2 {
+	display:inline;
 	}
 }
 
