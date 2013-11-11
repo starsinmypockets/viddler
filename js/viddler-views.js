@@ -12,7 +12,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         tag : 'div',
         el : '<br/>',
         vent : {},  // backbone event aggregator
-        vpm : ViddlerManager, //
         
         __init : function (opts) {
             opts = opts || {};
@@ -547,7 +546,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 // gives us tl data
                 var data = $(this).data(),
                     // get data relative to mediaEl
-                    elData = that.vpm.getElTime(data.start*1000);
+                    elData = ViddlerManager.getElTime(data.start*1000);
                 
                 that.getMediaElementComments({
                     id : data.mediaid,
@@ -851,23 +850,57 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         },
         
         render : function (opts) {
-            var data = {},
-                t;
+            var that = this,
+                data = {},
+                t,
+                timeOffset,
+                comModTop,
+                margLeft,
+                tlPerc = ViddlerManager.tlNow / ViddlerManager.tlLength *100;
+            
             (ViddlerManager.tlNow < 0) ? t = 0 : t = ViddlerManager.tlNow;
             data.time = Util.secs2time(Math.floor(t/1000));
             if (data.time < 0) data.time = 0;
             this.$el.html(_.template($("#tmp-comment-popup").html(), data));
+            $('#modal-outer').hide();
             $('.comment-close').on('click', function (e) {
                 e.preventDefault();
                 $('#modal-outer').hide();
                 return false;
             });
-            $('#modal-outer').show();
+            
+            // left: 
+            // set margin based on tl time
+            if (tlPerc <= 33) {
+                $('#modal-outer').css({'margin-left' : '0'});
+            }
+            if (tlPerc > 33 && tlPerc <=66) {
+                $('#modal-outer').css({
+                    'margin-left' : '16%'
+                });
+            }
+            if (tlPerc > 66) {
+                $('#modal-outer').css({'margin-left' : '26%'});
+            }
+            
+            // point triangle at scrubber
+            timeOffset = $('#time').offset().left;
+            $('#modaltriangle').offset({
+                left : timeOffset
+            });
+            comModTop = $('.jp-progress').offset().top - $('#modal-outer').height() - 30;
+            $('#modal-outer').offset({top : comModTop});
+            $('#modal-outer').css({display:'block'});
+
             $('.modal-close').on('click', function (e) {
                 e.preventDefault();
                 $('#modal-container').html('');
                 $('#modal-outer').hide();
             });
+            
+            $(window).resize(function () {
+                that.render();
+            })
         }
     });
     
