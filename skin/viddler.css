@@ -1016,8 +1016,8 @@ a.also{
 	font-weight:bold;
 	color: #585f68; 
 	font-size: 16px;
- 	display:none; /* display:block; to display comment bubbles */
 }
+
 #modal-outer img#modaltriangle {
     bottom: -12px;
     position: absolute;

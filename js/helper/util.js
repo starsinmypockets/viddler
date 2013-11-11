@@ -1,6 +1,6 @@
 define(['exports'], function(exports) {
 
-  // Avoid `console` errors in browsers that lack a console.
+// Avoid `console` errors in browsers that lack a console.
   var method;
   exports.noop = function () {};
   var methods = [

@@ -519,8 +519,10 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 clearTimeout(t);
                 clearTimeout(t2);
                 t = setTimeout(function () {
-                    _getThumbs(e)
-                    barStay = true;
+                    if (!window.vDrags) {
+                        _getThumbs(e)
+                        barStay = true;
+                    }
                 }, 500);
             });
             $('.jp-progress').mouseout(function (e) {
@@ -858,25 +860,23 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 margLeft,
                 tlPerc = ViddlerManager.tlNow / ViddlerManager.tlLength *100;
             
+            
+            
             (ViddlerManager.tlNow < 0) ? t = 0 : t = ViddlerManager.tlNow;
             data.time = Util.secs2time(Math.floor(t/1000));
-            if (data.time < 0) data.time = 0;
+            
+            this.$el.html(_.template($("#tmp-comment-popup").html(), data));
+            
             pBL = $('.jp-progress').offset().left;
             pBW = $('.jp-progress').width();
             cMW = $('#modal-outer').width();
-            
-            this.$el.html(_.template($("#tmp-comment-popup").html(), data));
-            $('.comment-close').on('click', function (e) {
-                e.preventDefault();
-                $('#modal-outer').hide();
-                return false;
-            });
+            console.log(pBL, pBW, cMW);
+            // position modal window
             if (tlPerc <= 33) {
                 $('#modal-outer').css({'margin-left' : pBL-20});
             }  
 
             if (tlPerc > 33 && tlPerc <= 66) {
-                console.log(pBL + (pBW - cMW)/2);
                 $('#modal-outer').css({'margin-left' : pBL + (pBW - cMW)/2})
             }
             
@@ -884,12 +884,25 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 $('#modal-outer').css({'margin-left' : pBL+pBW-cMW+20});
             }
             
-            // point triangle at scrubber
+            console.log($('#modal-outer').offset());
+
+            
+            $('.comment-close').on('click', function (e) {
+                e.preventDefault();
+                $('#modal-outer').hide();
+                return false;
+            });
+            
+            
+            // position triangle relative to scrubber
             timeOffset = $('#time').offset().left;
-            console.log(timeOffset - $('#modal-outer').offset().left);
+            console.log(timeOffset);
+            ($('#modal-outer').offset({left : timeOffset - 20}));
+          //  console.log(timeOffset - $('#modal-outer').offset().left);
             $('#modaltriangle').css({
                 'margin-left' : timeOffset - $('#modal-outer').offset().left
             });
+            
             $('#modal-outer').show();
             comModTop = $('.jp-progress').offset().top - $('#modal-outer').height() - 30;
             $('#modal-outer').offset({top : comModTop});
@@ -899,10 +912,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 $('#modal-container').html('');
                 $('#modal-outer').hide();
             });
-            
-            $(window).resize(function () {
-                that.render();
-            })
         }
     });
     
