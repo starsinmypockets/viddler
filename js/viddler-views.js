@@ -861,36 +861,38 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             (ViddlerManager.tlNow < 0) ? t = 0 : t = ViddlerManager.tlNow;
             data.time = Util.secs2time(Math.floor(t/1000));
             if (data.time < 0) data.time = 0;
+            pBL = $('.jp-progress').offset().left;
+            pBW = $('.jp-progress').width();
+            cMW = $('#modal-outer').width();
+            
             this.$el.html(_.template($("#tmp-comment-popup").html(), data));
-            $('#modal-outer').hide();
             $('.comment-close').on('click', function (e) {
                 e.preventDefault();
                 $('#modal-outer').hide();
                 return false;
             });
-            
-            // left: 
-            // set margin based on tl time
             if (tlPerc <= 33) {
-                $('#modal-outer').css({'margin-left' : '0'});
+                $('#modal-outer').css({'margin-left' : pBL-20});
+            }  
+
+            if (tlPerc > 33 && tlPerc <= 66) {
+                console.log(pBL + (pBW - cMW)/2);
+                $('#modal-outer').css({'margin-left' : pBL + (pBW - cMW)/2})
             }
-            if (tlPerc > 33 && tlPerc <=66) {
-                $('#modal-outer').css({
-                    'margin-left' : '16%'
-                });
-            }
+            
             if (tlPerc > 66) {
-                $('#modal-outer').css({'margin-left' : '26%'});
+                $('#modal-outer').css({'margin-left' : pBL+pBW-cMW+20});
             }
             
             // point triangle at scrubber
             timeOffset = $('#time').offset().left;
-            $('#modaltriangle').offset({
-                left : timeOffset
+            console.log(timeOffset - $('#modal-outer').offset().left);
+            $('#modaltriangle').css({
+                'margin-left' : timeOffset - $('#modal-outer').offset().left
             });
+            $('#modal-outer').show();
             comModTop = $('.jp-progress').offset().top - $('#modal-outer').height() - 30;
             $('#modal-outer').offset({top : comModTop});
-            $('#modal-outer').css({display:'block'});
 
             $('.modal-close').on('click', function (e) {
                 e.preventDefault();
