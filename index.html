@@ -67,10 +67,7 @@
     <div id="comments-container"></div>
 
 </div>
-<div id="modal-outer" style="display:none">Add Comment<img src="img/modalclose.png" alt="" class="modal-close cursor">
-    <div id="modal-container" class="clearfix">1000 Characters Limit</div>
-    <img src="img/commentTicker_x2.png" alt="comment triangle" id="modaltriangle">
-</div>
+<div id="modal-outer"></div>
 
 <!-- Underscore Templates -->
 <script type="text/template" id="tmp-comments">
@@ -171,14 +168,17 @@
 </script>
 
 <script type="text/template" id="tmp-comment-popup">
-    <div class="comment-popup">
-        <form class="comment-form">
-            <ul class="modal-form">
-                <li><textarea id="comment-text" name="commentText" rows="4" cols="33">Write your comment</textarea></li>
-                <li><label for="time">Time</label><input name="time" id="comment-play-head-pos"type="text" value="<%= time %>"/></li>
-        </form>
-                <a href="#" id="comment-form-submit"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>            
-            </ul>
+    <img src="img/modalclose.png" alt="" class="modal-close cursor">
+    <div class="modal-container">
+        <div class="comment-popup">
+            <form class="comment-form">
+                <ul class="modal-form">
+                    <li><textarea id="comment-text" name="commentText" rows="4" cols="33">Write your comment</textarea></li>
+                    <li><label for="time">Time</label><input name="time" id="comment-play-head-pos"type="text" value="<%= time %>"/></li>
+            </form>
+                    <a href="#" id="comment-form-submit"><img src="img/okbutton.png" id="okbutton" alt="OK"></a>            
+                </ul>    <img src="img/commentTicker_x2.png" alt="comment triangle" id="modaltriangle">
+        </div>
     </div>
 </script>
 

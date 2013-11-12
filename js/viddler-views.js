@@ -49,6 +49,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         loadCommentPopUp : function (opts) {
             var data = {},
             commentModal = new Views.CreateCommentView({
+                el : "#modal-outer",
                 tmp : "#tmp-comment-popup"
             });
             commentModal.render();
@@ -848,7 +849,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         },
         
         hide : function () {
-            $('#modal-outer').hide();
+            $('#modal-outer').html('');
         },
         
         render : function (opts) {
@@ -860,17 +861,17 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 margLeft,
                 tlPerc = ViddlerManager.tlNow / ViddlerManager.tlLength *100;
             
-            
-            
             (ViddlerManager.tlNow < 0) ? t = 0 : t = ViddlerManager.tlNow;
             data.time = Util.secs2time(Math.floor(t/1000));
             
             this.$el.html(_.template($("#tmp-comment-popup").html(), data));
-            
+            //$('#modal-outer').show();
+
             pBL = $('.jp-progress').offset().left;
             pBW = $('.jp-progress').width();
             cMW = $('#modal-outer').width();
             console.log(pBL, pBW, cMW);
+            
             // position modal window
             if (tlPerc <= 33) {
                 $('#modal-outer').css({'margin-left' : pBL-20});
@@ -885,7 +886,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             }
             
             console.log($('#modal-outer').offset());
-
             
             $('.comment-close').on('click', function (e) {
                 e.preventDefault();
@@ -897,13 +897,10 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             // position triangle relative to scrubber
             timeOffset = $('#time').offset().left;
             console.log(timeOffset);
-            ($('#modal-outer').offset({left : timeOffset - 20}));
-          //  console.log(timeOffset - $('#modal-outer').offset().left);
             $('#modaltriangle').css({
                 'margin-left' : timeOffset - $('#modal-outer').offset().left
             });
             
-            $('#modal-outer').show();
             comModTop = $('.jp-progress').offset().top - $('#modal-outer').height() - 30;
             $('#modal-outer').offset({top : comModTop});
 
