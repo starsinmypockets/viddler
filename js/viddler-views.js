@@ -890,15 +890,15 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 
                 // position triangle relative to scrubber
                 timeOffset = $('#time').offset().left;
-                console.log(timeOffset);
+                console.log(timeOffset, $('#modal-outer').height());
                 $('#modaltriangle').css({
                     'margin-left' : timeOffset - $('#modal-outer').offset().left
                 });
                 
-                comModTop = $('.jp-progress').offset().top - $('#modal-outer').height() - 30;
+                comModTop = $('.jp-progress').offset().top - $('#modal-outer').height() -40;
                 $('#modal-outer').offset({top : comModTop});
             }
-            
+            console.log($('.jp-progress').offset().top)
             if ($(window).width() > 480) updateModalPos();
             $('.comment-close, .modal-close').on('click', function (e) {
                 e.preventDefault();
