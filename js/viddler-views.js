@@ -849,7 +849,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         },
         
         hide : function () {
-            $('#modal-outer').html('');
+            $('#modal-outer').html('').hide();
         },
         
         render : function (opts) {
@@ -859,56 +859,53 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 timeOffset,
                 comModTop,
                 margLeft,
-                tlPerc = ViddlerManager.tlNow / ViddlerManager.tlLength *100;
+                updateModalPos,
+                tlPerc = $('.jp-mega-play-bar').width() / $('.jp-progress').width()*100;
+                //tlPerc = ViddlerManager.tlNow / ViddlerManager.tlLength *100;
             
             (ViddlerManager.tlNow < 0) ? t = 0 : t = ViddlerManager.tlNow;
             data.time = Util.secs2time(Math.floor(t/1000));
-            
             this.$el.html(_.template($("#tmp-comment-popup").html(), data));
             //$('#modal-outer').show();
-
+            
             pBL = $('.jp-progress').offset().left;
             pBW = $('.jp-progress').width();
             cMW = $('#modal-outer').width();
-            console.log(pBL, pBW, cMW);
+            console.log(tlPerc, pBL, pBW, cMW);
             
-            // position modal window
-            if (tlPerc <= 33) {
-                $('#modal-outer').css({'margin-left' : pBL-20});
-            }  
-
-            if (tlPerc > 33 && tlPerc <= 66) {
-                $('#modal-outer').css({'margin-left' : pBL + (pBW - cMW)/2})
+            $('#modal-outer').show();
+            
+            updateModalPos = function () {
+                if (tlPerc <= 33) {
+                    $('#modal-outer').css({'margin-left' : 0});
+                }  
+                
+                if (tlPerc > 33 && tlPerc <= 66) {
+                    $('#modal-outer').css({'margin-left' : (pBW - cMW)/2});
+                }
+                
+                if (tlPerc > 66) {
+                    $('#modal-outer').css({'margin-left' : pBW-cMW+50});
+                }
+                
+                // position triangle relative to scrubber
+                timeOffset = $('#time').offset().left;
+                console.log(timeOffset);
+                $('#modaltriangle').css({
+                    'margin-left' : timeOffset - $('#modal-outer').offset().left
+                });
+                
+                comModTop = $('.jp-progress').offset().top - $('#modal-outer').height() - 30;
+                $('#modal-outer').offset({top : comModTop});
             }
             
-            if (tlPerc > 66) {
-                $('#modal-outer').css({'margin-left' : pBL+pBW-cMW+20});
-            }
-            
-            console.log($('#modal-outer').offset());
-            
-            $('.comment-close').on('click', function (e) {
+            if ($(window).width() > 480) updateModalPos();
+            $('.comment-close, .modal-close').on('click', function (e) {
                 e.preventDefault();
-                $('#modal-outer').hide();
+                that.hide();
                 return false;
             });
             
-            
-            // position triangle relative to scrubber
-            timeOffset = $('#time').offset().left;
-            console.log(timeOffset);
-            $('#modaltriangle').css({
-                'margin-left' : timeOffset - $('#modal-outer').offset().left
-            });
-            
-            comModTop = $('.jp-progress').offset().top - $('#modal-outer').height() - 30;
-            $('#modal-outer').offset({top : comModTop});
-
-            $('.modal-close').on('click', function (e) {
-                e.preventDefault();
-                $('#modal-container').html('');
-                $('#modal-outer').hide();
-            });
         }
     });
     
