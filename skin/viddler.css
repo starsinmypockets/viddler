@@ -1679,7 +1679,7 @@ span.number{
 }
 
 @media only screen and (max-width: 480px){
-#modal-outer {
+#modal-outer-mobile {
 	background-color:#eeeeee; 
 	width:277px;
 	padding: .5em; 
@@ -1849,7 +1849,7 @@ span.number{
 
 }
 /*Nexus 7 portrait*/
-@media screen and (max-width: 400px) , screen and (max-height: 640px) {
+@media screen and (max-width: 400px) and (device-height: 640px) {
 	#play-overlay-button {
     left: 46%;
     position: absolute;
@@ -1857,19 +1857,11 @@ span.number{
 }
 
 /*HTC One*/
-@media screen and (max-width: 360px) , screen and (max-height: 640px) {
+@media screen and (device-width: 360px) and (device-height: 640px) {
 	#play-overlay-button {
     left: 46%;
     position: absolute;
     top: 30%;
-}
-/*Nexus 7 landscape*/
-@media only screen and (min-device-width : 601px) and (max-device-width : 880px) {
-	/*#play-overlay-button {
-     position: absolute;
-     top:640px;
-	 left:400px;
-} */
 }
 
 @media only screen and (max-width: 320px) {
