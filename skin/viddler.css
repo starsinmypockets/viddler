@@ -1855,7 +1855,7 @@ span.number{
     position: absolute;
     top: 30%;
 }
-
+}
 /*HTC One*/
 @media screen and (device-width: 360px) and (device-height: 640px) {
 	#play-overlay-button {
@@ -1863,7 +1863,7 @@ span.number{
     position: absolute;
     top: 30%;
 }
-
+}
 @media only screen and (max-width: 320px) {
 #play-overlay-button {
     left: 47%;
