@@ -66,6 +66,9 @@ img#jp_poster_0 {position:absolute; top:0; z-index:10}
 #mega-track-info {margin-top:12px; width:100%}
 .timeline-tag {display:block; float:left; font-size:.6em}
 
+/* Mask */
+#mask {background-color:black; display:block; position:absolute; top:0; left:0; z-index:10000000; opacity:0.75; filter:alpha(opacity=65);}
+
 /* account */
 /* #account-container {margin:2em; position: absolute; z-index: 99999999; top: 0px; left: -250px;} */
 

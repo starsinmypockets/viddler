@@ -1069,6 +1069,7 @@ a.also{
 .modalbg{
 	background: rgba (0,0,0, .2);
 	width: 100%;
+	z-index:1000000;
 	position: absolute;
 	height: 100%;
 	display:none; /* display:block to enable modal */
