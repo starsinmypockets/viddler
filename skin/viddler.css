@@ -1681,21 +1681,12 @@ span.number{
 
 @media only screen and (max-width: 480px){
 #modal-outer {
-	background-color:#eeeeee; 
-	width:277px;
-	padding: .5em; 
 	position:absolute; 
 	top: 0%;
 	left:50%;
 	margin-left:-145px;
 	border:none; 
-	z-index:10000000;	
-	border-radius: 5px;
-	font-family: helvetica; 
-	font-weight:bold;
-	color: #585f68; 
-	font-size: 16px;
-}
+} 
 
 #modal-outer img#modaltriangle {
 	display:none;
@@ -1850,30 +1841,23 @@ span.number{
 
 }
 /*Nexus 7 portrait*/
-@media screen and (max-width: 400px) , screen and (max-height: 640px) {
+@media screen and (max-width: 400px) and (device-height: 640px) {
 	#play-overlay-button {
     left: 46%;
     position: absolute;
     top: 30%;
 }
 
+}
 /*HTC One*/
-@media screen and (max-width: 360px) , screen and (max-height: 640px) {
+@media screen and (device-width: 360px) and (device-height: 640px) {
 	#play-overlay-button {
     left: 46%;
     position: absolute;
     top: 30%;
 }
-/*Nexus 7 landscape*/
-@media only screen and (min-device-width : 601px) and (max-device-width : 880px) {
-	/*#play-overlay-button {
-     position: absolute;
-     top:640px;
-	 left:400px;
-} */
 }
-
-@media only screen and (max-width: 320px) {
+@media screen and (max-width: 320px) {
 #play-overlay-button {
     left: 47%;
     position: absolute;
@@ -2031,6 +2015,8 @@ ul.jp-toggles {
 	}
 .logox2 {
 	display:inline;
+	width:72px;
+	float:right;
 	}
 }
 
