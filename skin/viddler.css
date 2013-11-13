@@ -1679,22 +1679,13 @@ span.number{
 }
 
 @media only screen and (max-width: 480px){
-#modal-outer-mobile {
-	background-color:#eeeeee; 
-	width:277px;
-	padding: .5em; 
+#modal-outer {
 	position:absolute; 
 	top: 0%;
 	left:50%;
 	margin-left:-145px;
 	border:none; 
-	z-index:10000000;	
-	border-radius: 5px;
-	font-family: helvetica; 
-	font-weight:bold;
-	color: #585f68; 
-	font-size: 16px;
-}
+} 
 
 #modal-outer img#modaltriangle {
 	display:none;
