@@ -1858,20 +1858,14 @@ span.number{
 
 }
 /*HTC One*/
-@media screen and (device-width: 360px) and (device-height: 640px) and (-webkit-min-device-pixel-ratio: 2) {
+@media screen and (device-width: 360px) and (device-height: 640px) {
 	#play-overlay-button {
     left: 46%;
     position: absolute;
     top: 30%;
 }
-.logo {
-	display:inline;
-	}
-.logox2 {
-	display:none;
 }
-}
-@media only screen and (max-width: 320px) {
+@media screen and (max-width: 320px) {
 #play-overlay-button {
     left: 47%;
     position: absolute;
