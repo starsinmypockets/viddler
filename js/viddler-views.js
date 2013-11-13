@@ -340,7 +340,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         
         // reinitialize and play timeline from seek point
         seekTo : function (tlMs) {
-            if (Config.DEBUG) console.log("SEEK EVENT >>>>>>>>>>>>>>>>");
+            if (Config.DEBUG) console.log("[Player] Seek event");
             var mediaEls = this.timeline.mediaElements,
                 seekInf = {},
                 tlIndex = ViddlerManager.tlIndex,  // timeline start & stop by element
@@ -370,7 +370,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         doEnd : function (opts) {
             var that = this;
 
-            if (Config.DEBUG) console.log("Do end handler");
+            if (Config.DEBUG) console.log("[Player] End handler");
             this.vP.pause();
             Events.off("stopListenerStop");
 
@@ -623,7 +623,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 pos++; // keep track of which position we're in
             });
             data.markers = markers;
-            if (Config.DEBUG) console.log(data);
             $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));
         },
     });

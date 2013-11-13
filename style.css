@@ -67,12 +67,12 @@ img#jp_poster_0 {position:absolute; top:0; z-index:10}
 .timeline-tag {display:block; float:left; font-size:.6em}
 
 /* Mask */
-#mask {background-color:black; display:block; position:absolute; top:0; left:0; z-index:10000000; opacity:0.75; filter:alpha(opacity=65);}
+#mask {background-color:black; display:block; position:absolute; top:0; left:0; z-index:90; opacity:0.75; filter:alpha(opacity=65);}
 
 /* account */
 /* #account-container {margin:2em; position: absolute; z-index: 99999999; top: 0px; left: -250px;} */
 
-#load-wait {position:absolute; top:44%; left:50%; z-index:10000}
+#load-wait {position:absolute; top:44%; left:50%; z-index:80}
 
 /* Thumbnails */
 .thumbnail-outer {position:relative; top:-200px; margin-bottom:-50px;z-index:10;}
@@ -91,5 +91,5 @@ filter:alpha(opacity=60);}
 .pager-current-page {color:yellow};
 
 .cursor { cursor: pointer !important; }
-#play-overlay-button {position:absolute; cursor:pointer; top:40%;  margin-left: -25px; left: 50%; height:70px; z-index:10000; display:none;}
+#play-overlay-button {position:absolute; cursor:pointer; top:40%;  margin-left: -25px; left: 50%; height:70px; z-index:80; display:none;}
 
