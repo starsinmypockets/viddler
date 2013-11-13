@@ -2021,9 +2021,10 @@ ul.jp-toggles {
 .logo {
 	display:none;
 	}
-/*.logox2 {
+.logox2 {
 	display:inline;
-	}*/
+	width:72px;
+	}
 }
 
 
