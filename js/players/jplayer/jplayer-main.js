@@ -122,13 +122,15 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                   
                   // update global timeline data
                   this.timeListenerIntv = setInterval(function() {
-                      Viddler.Manager.tlNow = parseInt(that.$el.jPlayer().data().jPlayer.status.currentTime*1000 + Viddler.Manager.tlElapsed - that.mediaEl.playheadStart, 10);
+                      playerTime = that.$el.jPlayer().data().jPlayer.status.currentTime*1000;
+                      Viddler.Manager.tlNow = parseInt(playerTime + Viddler.Manager.tlElapsed - that.mediaEl.playheadStart, 10);
                       if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-that.mediaEl.playheadStart >= that.mediaEl.length) {
                           if (Config.DEBUG) console.log("[Player]Clear Time Listener Interval");
                           clearInterval(that.timeListenerIntv);
                       }
                       timeLinePercent = (Viddler.Manager.tlNow / Viddler.Manager.tlLength);
-                      playBarWidth = timeLinePercent*$('.jp-progress').width();
+                      // update playbar width once playerTime has updated
+                      if (playerTime > 0) playBarWidth = timeLinePercent*$('.jp-progress').width();
                       
                       if (Config.tDEBUG ) {
                           console.log('[Player]step: '+Viddler.Manager.tlStep);
@@ -155,7 +157,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                       if (Viddler.Manager.tlNow > Viddler.Manager.tlLength) {
                           $('.viddler-current-time').html(Util.secs2time(Math.floor(Viddler.Manager.tlLength/1000)));                        
                       }
-                  },1000);  // run this faster in production
+                  },250);  // run this faster in production
           },
           
           // listen for global step end time 
