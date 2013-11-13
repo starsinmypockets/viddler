@@ -119,28 +119,33 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               var that = this,
                   timeLinePercent,
                   playBarWidth;
+
                   
                   // update global timeline data
                   this.timeListenerIntv = setInterval(function() {
-                      playerTime = that.$el.jPlayer().data().jPlayer.status.currentTime*1000;
-                      Viddler.Manager.tlNow = parseInt(playerTime + Viddler.Manager.tlElapsed - that.mediaEl.playheadStart, 10);
-                      if ((that.$el.jPlayer().data().jPlayer.status.currentTime*1000)-that.mediaEl.playheadStart >= that.mediaEl.length) {
-                          if (Config.DEBUG) console.log("[Player]Clear Time Listener Interval");
+                        var playerTime = that.$el.jPlayer().data().jPlayer.status.currentTime*1000;
+                        // @@ we need to maintain timeline credibility during media reload!
+                        if (playerTime > 0)Viddler.Manager.tlNow = parseInt(playerTime + Viddler.Manager.tlElapsed - that.mediaEl.playheadStart, 10);
+                      if (playerTime-that.mediaEl.playheadStart >= that.mediaEl.length)                             {
+                          if (Config.DEBUG) console.log("[jPlayer]Clear Time Listener Interval");
                           clearInterval(that.timeListenerIntv);
                       }
-                      timeLinePercent = (Viddler.Manager.tlNow / Viddler.Manager.tlLength);
                       // update playbar width once playerTime has updated
-                      if (playerTime > 0) playBarWidth = timeLinePercent*$('.jp-progress').width();
                       
                       if (Config.tDEBUG ) {
-                          console.log('[Player]step: '+Viddler.Manager.tlStep);
-                          console.log('[Player]current: '+Viddler.Manager.tlNow);
-                          console.log('[Player]elapsed: '+Viddler.Manager.tlElapsed);
-                          console.log('[Player]playheadStart: '+that.mediaEl.playheadStart);
-                          console.log('[Player]total: '+Viddler.Manager.tlLength);
-                          console.log('[Player]timeline-percent: '+timeLinePercent);
-                          console.log('[Player]playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
+                          console.log('[jPlayer]step: '+Viddler.Manager.tlStep);
+                          console.log('[jPlayer]current: '+Viddler.Manager.tlNow);
+                          console.log('[jPlayer]elapsed: '+Viddler.Manager.tlElapsed);
+                          console.log('[jPlayer]playheadStart: '+that.mediaEl.playheadStart);
+                          console.log('[jPlayer]total: '+Viddler.Manager.tlLength);
+                          console.log('[jPlayer]timeline-percent: '+timeLinePercent);
+                          console.log('[jPlayer]playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
+                          console.log('[jPlayer]playerTime: '+playerTime);
                       }
+                      
+                      // redraw playabr
+                      timeLinePercent = (Viddler.Manager.tlNow / Viddler.Manager.tlLength);
+                      if (playerTime > 0) playBarWidth = timeLinePercent*$('.jp-progress').width();
                       
                       // override for drag event on playbar
                       if (playBarWidth > 0 && !window.vDrags) {
@@ -157,7 +162,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                       if (Viddler.Manager.tlNow > Viddler.Manager.tlLength) {
                           $('.viddler-current-time').html(Util.secs2time(Math.floor(Viddler.Manager.tlLength/1000)));                        
                       }
-                  },250);  // run this faster in production
+                  },500);  // run this faster in production
           },
           
           // listen for global step end time 

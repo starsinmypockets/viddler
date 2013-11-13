@@ -261,7 +261,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             }
             
             if (opts.mediaEl.subtitleSrc) {
-                Events.trigger('timelineStep:subtitles', that, opts.mediaEl.subtitleSrc);
+               // Events.trigger('timelineStep:subtitles', that, opts.mediaEl.subtitleSrc);
             }
             
             if (opts.mediaEl.sprites && !Util.ie8) {
@@ -353,7 +353,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             // update the global tlStep
             ViddlerManager.tlStep = seekInfo.step;
             Events.off("stopListenerStop");
-            clearInterval(this.timeListenerIntv);
+            clearInterval(this.vP.timeListenerIntv);
             this.timelinePlay({seek : true, start : seekInfo.time});
         },
         
