@@ -125,7 +125,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                   this.timeListenerIntv = setInterval(function() {
                         var playerTime = that.$el.jPlayer().data().jPlayer.status.currentTime*1000;
                         // @@ we need to maintain timeline credibility during media reload!
-                        if (playerTime > 0)Viddler.Manager.tlNow = parseInt(playerTime + Viddler.Manager.tlElapsed - that.mediaEl.playheadStart, 10);
+                      if (playerTime > 0)Viddler.Manager.tlNow = parseInt(playerTime + Viddler.Manager.tlElapsed - that.mediaEl.playheadStart, 10);
                       if (playerTime-that.mediaEl.playheadStart >= that.mediaEl.length)                             {
                           if (Config.DEBUG) console.log("[jPlayer]Clear Time Listener Interval");
                           clearInterval(that.timeListenerIntv);
@@ -144,6 +144,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                       }
                       
                       // redraw playabr
+                      // @@ todo move this to playergui in viddler-views or to abstract player class
                       timeLinePercent = (Viddler.Manager.tlNow / Viddler.Manager.tlLength);
                       if (playerTime > 0) playBarWidth = timeLinePercent*$('.jp-progress').width();
                       

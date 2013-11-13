@@ -33,7 +33,7 @@ define(function() {
     },
 
     DEBUG : true,
-    tDEBUG : true // debug timeline clock events
+    tDEBUG : false // debug timeline clock events
         
 
   };
