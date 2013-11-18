@@ -76,10 +76,11 @@ define([], function() {
                 var that = this,
                     elapsed = 0,
                     el = {};
+                console.log(that.tlIndex);
                 function func (i) {
                     if (tlMs >= that.tlIndex[i].start && tlMs < that.tlIndex[i].stop) {
                         el['step'] = i;
-                        el['time'] =  tlMs - elapsed + mediaEls[i].playheadStart;
+                        el['time'] =  tlMs - elapsed + that.mediaEls[i].playheadStart;
                         return;
                     }
                     elapsed += that.tlIndex[i].stop - that.tlIndex[i].start;
@@ -88,7 +89,7 @@ define([], function() {
                 for (var i = 0; i < that.tlIndex.length; i++) {
                     func(i);
                 }
-                
+                console.log(el);
                 return el;
             },
             
@@ -120,7 +121,7 @@ define([], function() {
             // return tl length in ms
             getTlLength : function () {
                 var t = 0;
-                _.each(this.mediaElements, function (el) {
+                _.each(this.mediaEls, function (el) {
                     t +=  parseInt(el.playheadStop - el.playheadStart, 10);
                 });
                 return t;

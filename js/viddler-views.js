@@ -120,15 +120,20 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 tlLength = 0;
             
             if (Config.DEBUG) console.log('[Player] Model Ready');
-            
+            console.log(that.timeline.tlCommentMarkerPos);
             // clear out manager data
             ViddlerManager.destroy();
             
             // setup timeline manager
             ViddlerManager.setMediaEls(this.timeline.mediaElements);
-            
+            Events.once("playerGuiReady", function () {
+                markers = new Views.CommentMarkerView();
+                markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
+                that.bindCommentMarkerEvents();
+            });
             // wait for gui in DOM and instance plugins
             // @@ move this further down the chain
+/*
             Events.once("playerGuiReady", function () {
             // IME Players
             
@@ -145,6 +150,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 });
             });
             
+*/
             // Render app controls
             this.vPG = new Views.VPlayerGuiView();
             this.vPG.render({mediaElements : ViddlerManager.getMediaEls()}); 
@@ -168,9 +174,12 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             if (Config.DEBUG) console.log('[Player] Player ready');
             
             
+// @@ Move to model ready
+/*
             markers = new Views.CommentMarkerView();
             markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
             this.bindCommentMarkerEvents();
+*/
             
             
             this.timelinePlay();
@@ -546,8 +555,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 that=this,
             
             numbMarkers = Math.floor($('.mega-timeline .bar').width() / 20); // [width of bar] / [ width of marker+4px ]
-            markerSecs = Math.floor(ViddlerManager.tlLength / numbMarkers); // [ length of video ] / [ number of Markers ]
-            
+            markerSecs = Math.floor(ViddlerManager.getTlLength() / numbMarkers); // [ length of video ] / [ number of Markers ]
+            console.log(markerSecs);
             // build array of marker-points with start / stop attrs
             markerArray = []; 
             markerArray[0] = {};                
@@ -576,8 +585,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 pos = 1,
                 data = {};
             
-            console.log(commentSpots);
             // now build array of populated marker positions for rendering
+            console.log(markerArray);
             _.each(markerArray, function(spot) {
                 _.each(commentSpots, function (cPos) {
                     if (cPos*1000 >= spot.start && cPos*1000 <= spot.stop) {
@@ -588,10 +597,10 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                         markers[j].left = ((100/numbMarkers)*pos)-(100/numbMarkers); // express the left value as a percent - subtract one width
                         j++;
                     }
-                   // console.log(ViddlerManager.getElTime(spot.start));
                 });
                 pos++; // keep track of which position we're in
             });
+            console.log(markers);
             data.markers = markers;
             $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));
         },
