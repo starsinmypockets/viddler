@@ -71,12 +71,16 @@ define([], function() {
                 return this.mediaEls;
             },
             
+            getTlIndex : function () {
+                console.log(this.tlIndex);
+                return this.tlIndex;
+            },
+            
             // convert timeline time to mediaElement and time
             getElTime : function (tlMs) {
                 var that = this,
                     elapsed = 0,
                     el = {};
-                console.log(that.tlIndex);
                 function func (i) {
                     if (tlMs >= that.tlIndex[i].start && tlMs < that.tlIndex[i].stop) {
                         el['step'] = i;
@@ -89,7 +93,6 @@ define([], function() {
                 for (var i = 0; i < that.tlIndex.length; i++) {
                     func(i);
                 }
-                console.log(el);
                 return el;
             },
             
@@ -131,7 +134,8 @@ define([], function() {
             getTlMs : function(e) {
                 clickX = e.clientX - $('.jp-progress').offset().left;
                 seekPerc = clickX/($(e.currentTarget).width());
-                tlMs = seekPerc*this.tlLength;
+                console.log(seekPerc);
+                tlMs = seekPerc*this.getTlLength();
                 return tlMs;
             },
         };

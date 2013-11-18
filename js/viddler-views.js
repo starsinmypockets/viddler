@@ -63,7 +63,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             // calculate track info
             data.elems = opts.mediaElements;
             _.each(data.elems, function (elem) {
-                elem.width = (((elem.playheadStop - elem.playheadStart) / ViddlerManager.tlLength)*100).toFixed(2);
+                elem.width = (((elem.playheadStop - elem.playheadStart) / ViddlerManager.getTlLength())*100).toFixed(2);
             });
             
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
@@ -183,7 +183,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             
             
             this.timelinePlay();
-            $('.viddler-duration').html(Util.secs2time(Math.floor(ViddlerManager.tlLength/1000)));
+            $('.viddler-duration').html(Util.secs2time(Math.floor(ViddlerManager.getTlLength()/1000)));
             this.vP.clearGuiTime();
             this.vPG.commentOff();
         },
@@ -322,7 +322,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             if (Config.DEBUG) console.log("[Player] Seek event");
             var mediaEls = this.timeline.mediaElements,
                 seekInf = {},
-                tlIndex = ViddlerManager.tlIndex,  // timeline start & stop by element
+                tlIndex = ViddlerManager.getTlIndex(),  // timeline start & stop by element
                 elapsed = 0;
             // yes
             $("#play-overlay-button").hide();
@@ -447,7 +447,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     if (e.target.id === "time") {
                         // play the segment on mouseup
                         seekPerc = $('.jp-mega-play-bar').width()/$('.bar .jp-progress').width();
-                        tlMs = seekPerc*ViddlerManager.tlLength;
+                        tlMs = seekPerc*ViddlerManager.getTlLength();
                         that.seekTo(tlMs);
                     }
                     setTimeout(function () {
@@ -469,18 +469,21 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 data = {},
                 thumbData = [],
                 _getThumbs,
-                playbarLeft = $(".jp-progress").offset().left;
-
-            console.log(ViddlerManager.mediaEls.length);
-            for (el in ViddlerManager.mediaEls) {
-                thumbData.push(ViddlerManager.mediaEls[el].thumbs);
+                playbarLeft = $(".jp-progress").offset().left,
+                els = ViddlerManager.getMediaEls();
+            
+            console.log(els);
+            for (el in els) {
+                thumbData.push(els[el].thumbs);
             }
             
             console.log(thumbData);
             
             _getThumbs = function (e) {
                 tlMs = ViddlerManager.getTlMs(e);
+                console.log(tlMs);
                 elTime = ViddlerManager.getElTime(tlMs); // return targeted step and tlMs of video el
+                console.log(elTime);
                 if (thumbData[elTime.step]) {
                     data.sprite_url = thumbData[elTime.step].spriteUrl;
                     _.each(thumbData[elTime.step].cues, function (cue) {
