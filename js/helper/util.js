@@ -70,6 +70,7 @@ define(['exports'], function(exports) {
                 return flash;            
             }(),
         'ios' : navigator.userAgent.match(/(iPod|iPhone|iPad)/),
+        'iPhone' : navigator.userAgent.match(/(iPhone)/),
         'ie8': (exports.browser[0] === "MSIE" && exports.browser[1].indexOf(8) === 0)
       }
   }();
