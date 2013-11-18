@@ -35,8 +35,40 @@ define([], function() {
                 this.tlNow = 0;
             },
             
+            setMediaEls : function (els) {
+                this.mediaEls = els;
+                this._initTlIndex();  // add some useful data to the manager object
+            },
+            
+            getCurrentStep : function () {
+                return this.tlStep;
+            },
+            
+            // return number of timeline steps
+            getTotalSteps : function () {
+                return this.tlSteps;
+            },
+            
+            // get total time of past timeline elements
+            getElapsedElTime : function () {
+                var tlElapsed = 0,
+                    that = this;
+                    
+                for (i = 0; i < that.tlStep; i++) {
+                    function func (i) {
+                        that.tlElapsed += that.mediaEls[i].playheadStop - that.mediaEls[i].playheadStart;
+                    }
+                    
+                    func(i);
+                }
+            },
+            
             getCurrentMedia : function () {
                 return this.mediaEls[this.tlStep];
+            },
+            
+            getMediaEls : function () {
+                return this.mediaEls;
             },
             
             // convert timeline time to mediaElement and time
@@ -65,22 +97,8 @@ define([], function() {
                 return this.mediaEls[el];
             },
             
-            // get total time of past timeline elements
-            getElapsedElTime : function () {
-                var tlElapsed = 0,
-                    that = this;
-                    
-                for (i = 0; i < that.tlStep; i++) {
-                    function func (i) {
-                        that.tlElapsed += that.mediaEls[i].playheadStop - that.mediaEls[i].playheadStart;
-                    }
-                    
-                    func(i);
-                }
-            },
-            
             // index timeline elements for seek events
-            initTlIndex : function () {
+            _initTlIndex : function () {
                 var mediaEls = this.mediaEls,
                     tlSteps = mediaEls.length,
                     index = [],
@@ -99,13 +117,22 @@ define([], function() {
                 this.tlIndex = index;
             },
             
+            // return tl length in ms
+            getTlLength : function () {
+                var t = 0;
+                _.each(this.mediaElements, function (el) {
+                    t +=  parseInt(el.playheadStop - el.playheadStart, 10);
+                });
+                return t;
+            },
+            
             // get tlMs from DOM event
             getTlMs : function(e) {
                 clickX = e.clientX - $('.jp-progress').offset().left;
                 seekPerc = clickX/($(e.currentTarget).width());
                 tlMs = seekPerc*this.tlLength;
                 return tlMs;
-            }
+            },
         };
 
     return Manager;

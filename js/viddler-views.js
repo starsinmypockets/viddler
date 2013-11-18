@@ -124,22 +124,11 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             // clear out manager data
             ViddlerManager.destroy();
             
-            mediaEls = this.timeline.mediaElements;
-            
-            // @@ do this in the timeline play 
-            mediaEl = mediaEls[ViddlerManager.tlStep];
-                
-            // calculate timeline length
-            _.each(this.timeline.mediaElements, function (el) {
-                tlLength +=  parseInt(el.playheadStop - el.playheadStart, 10);
-            });
-            
-            // initialize gui uses global timeline data
-            ViddlerManager.tlStep = 0;
-            ViddlerManager.tlSteps = mediaEls.length;
-            ViddlerManager.tlLength = tlLength;
+            // setup timeline manager
+            ViddlerManager.setMediaEls(this.timeline.mediaElements);
             
             // wait for gui in DOM and instance plugins
+            // @@ move this further down the chain
             Events.once("playerGuiReady", function () {
             // IME Players
             
@@ -155,13 +144,11 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     that.vP.loadPlayer();
                 });
             });
-
-            this.vPG = new Views.VPlayerGuiView();
-            ViddlerManager.mediaEls = mediaEls;
-            this.vPG.render({mediaElements : mediaEls}); 
             
-            // set Index info on manager
-            ViddlerManager.initTlIndex();  //initTlIndex also binds dom seek events
+            // Render app controls
+            this.vPG = new Views.VPlayerGuiView();
+            this.vPG.render({mediaElements : ViddlerManager.getMediaEls()}); 
+            
             this.bindSeekEvents();
             this.bindThumbnailEvents();
             // add play button overlay
@@ -179,10 +166,13 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 };
             console.log('playerready');
             if (Config.DEBUG) console.log('[Player] Player ready');
-
+            
+            
             markers = new Views.CommentMarkerView();
             markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
             this.bindCommentMarkerEvents();
+            
+            
             this.timelinePlay();
             $('.viddler-duration').html(Util.secs2time(Math.floor(ViddlerManager.tlLength/1000)));
             this.vP.clearGuiTime();
@@ -317,23 +307,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 }  
             });
         },
-        
-        // Set total  time for elsapsed mediaElements to global object
-        // @@ put this in the manager
-        // @@ TEST AND REMOVE
-/*
-        getElapsedTime : function () {
-            els = this.timeline.mediaElements;
-            ViddlerManager.tlElapsed = 0;
-            for (i = 0; i < ViddlerManager.tlStep; i++) {
-                function func (i) {
-                    ViddlerManager.tlElapsed += els[i].playheadStop - els[i].playheadStart;
-                }
-                
-                func(i);
-            }
-        },
-*/
         
         // reinitialize and play timeline from seek point
         seekTo : function (tlMs) {
