@@ -16,9 +16,6 @@
 body{
 	background: #464c54;
 	padding: 20px 0px 20px 0px;
-	/*zoom: 200%;
-  -moz-transform: scale(2);
-  -moz-transform-origin: 0 0; (chrome retina simulator for testing)*/
 }
 *:focus{
 	background: none;
@@ -152,9 +149,6 @@ div.jp-audio ul.jp-controls {
 div.jp-audio-stream ul.jp-controls {
 	width: 142px;
 	padding:20px 20px 0 20px;
-}
-
-div.jp-video div.jp-type-single ul.jp-controls {
 }
 
 div.jp-video div.jp-type-playlist ul.jp-controls {
@@ -297,6 +291,7 @@ div.jp-video div.jp-progress {
 .logox2 {
 	display:none;
 	}
+	
 div.jp-seek-bar, div.jp-mega-seek-bar {
 	background: #1a2025;
 	width:0px;
@@ -347,20 +342,6 @@ a.jp-volume-max {
 div.jp-audio div.jp-type-single a.jp-mute,
 div.jp-audio div.jp-type-single a.jp-unmute {
 	margin-left: 0px;
-}
-div.jp-audio div.jp-type-playlist a.jp-mute,
-div.jp-audio div.jp-type-playlist a.jp-unmute {
-
-}
-
-div.jp-audio-stream div.jp-type-single a.jp-mute,
-div.jp-audio-stream div.jp-type-single a.jp-unmute {
-
-}
-
-div.jp-audio a.jp-volume-max,
-div.jp-audio-stream a.jp-volume-max {
-
 }
 
 div.jp-video a.jp-mute,
@@ -543,11 +524,6 @@ div.jp-duration, div.viddler-duration {
 	color: #ffffff;
 }
 
-div.jp-video div.jp-current-time {
-}
-div.jp-video div.jp-duration {
-}
-
 /* @end */
 
 /* @group playlist */
@@ -561,11 +537,13 @@ div.jp-title,
 div.jp-playlist {
 	width:100%;
 }
+
 div.jp-type-single div.jp-title,
 div.jp-type-playlist div.jp-title,
 div.jp-type-single div.jp-playlist {
 	border-top:none;
 }
+
 div.jp-title ul,
 div.jp-playlist ul {
 	list-style-type:none;
@@ -578,6 +556,7 @@ div.jp-title li {
 	padding:5px 0;
 	font-weight:bold;
 }
+
 div.jp-playlist li {
 	padding:5px 0 4px 20px;
 	border-bottom:1px solid #eee;
@@ -716,9 +695,6 @@ div.jp-audio .jp-type-playlist ul.jp-toggles {
 	position: absolute;
 	left: 325px;
 	top: 50px;
-}
-
-div.jp-video ul.jp-toggles {
 }
 
 ul.jp-toggles li {
@@ -1147,7 +1123,7 @@ img#orangex {
 	position: relative;
 	right: 190px;
 	-webkit-box-shadow: 1px 1px 1px 1px rgba(1, 1, 1, .2);
-box-shadow: 1px 1px 1px 1px rgba(1, 1, 1, .2);
+	box-shadow: 1px 1px 1px 1px rgba(1, 1, 1, .2);
 }
 .loginmodal img.leftarrow{
 	position: relative;
@@ -1598,8 +1574,8 @@ div.jp-play-bar {
 	top: 1px;
 	z-index: 1;
 	left: 2px;
--webkit-border-radius: 10px 0px 0px 10px;
-border-radius: 10px 0px 0px 10px; 
+	-webkit-border-radius: 10px 0px 0px 10px;
+	border-radius: 10px 0px 0px 10px; 
 }
 a img.searchimg{
 	top: 32px;
