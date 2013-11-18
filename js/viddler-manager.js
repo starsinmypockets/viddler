@@ -46,7 +46,7 @@ define([], function() {
             
             // return number of timeline steps
             getTotalSteps : function () {
-                return this.tlSteps;
+                return this.mediaEls.length;
             },
             
             // get total time of past timeline elements
@@ -134,7 +134,6 @@ define([], function() {
             getTlMs : function(e) {
                 clickX = e.clientX - $('.jp-progress').offset().left;
                 seekPerc = clickX/($(e.currentTarget).width());
-                console.log(seekPerc);
                 tlMs = seekPerc*this.getTlLength();
                 return tlMs;
             },

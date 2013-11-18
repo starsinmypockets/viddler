@@ -117,6 +117,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         onModelReady : function () {
             var that = this,
                 mediaEl = {},
+                data = {},
                 tlLength = 0;
             
             if (Config.DEBUG) console.log('[Player] Model Ready');
@@ -157,6 +158,10 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             
             this.bindSeekEvents();
             this.bindThumbnailEvents();
+            console.log(ViddlerManager.getTotalSteps());
+            if (ViddlerManager.getCurrentStep() === 0) data.init = true;
+            if (ViddlerManager.getCurrentStep() !== ViddlerManager.getTotalSteps()) this.setupTimelineStep(data);
+
             // add play button overlay
             $('#play-overlay-button').show();
             
@@ -186,6 +191,20 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             $('.viddler-duration').html(Util.secs2time(Math.floor(ViddlerManager.getTlLength()/1000)));
             this.vP.clearGuiTime();
             this.vPG.commentOff();
+        },
+        
+        setupTimelineStep : function (opts) {
+            var tlStep = ViddlerManager.getCurrentStep();
+            
+            console.log(tlStep);
+        },
+        
+        doTimelineStep : function () {
+            
+        },
+        
+        onPluginsReady : function () {
+            
         },
         
         // do timeline step queue-ing
@@ -481,9 +500,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             
             _getThumbs = function (e) {
                 tlMs = ViddlerManager.getTlMs(e);
-                console.log(tlMs);
                 elTime = ViddlerManager.getElTime(tlMs); // return targeted step and tlMs of video el
-                console.log(elTime);
                 if (thumbData[elTime.step]) {
                     data.sprite_url = thumbData[elTime.step].spriteUrl;
                     _.each(thumbData[elTime.step].cues, function (cue) {
@@ -589,7 +606,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 data = {};
             
             // now build array of populated marker positions for rendering
-            console.log(markerArray);
             _.each(markerArray, function(spot) {
                 _.each(commentSpots, function (cPos) {
                     if (cPos*1000 >= spot.start && cPos*1000 <= spot.stop) {
@@ -603,7 +619,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 });
                 pos++; // keep track of which position we're in
             });
-            console.log(markers);
             data.markers = markers;
             $(opts.jqEl).html(_.template($('#tmp-comment-markers').html(), data));
         },
