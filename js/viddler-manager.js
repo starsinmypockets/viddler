@@ -64,9 +64,22 @@ define([], function() {
                 var el = this.getElTime(tlMs).step;
                 return this.mediaEls[el];
             },
-
+            
+            // get total time of past timeline elements
+            getElapsedElTime : function () {
+                var tlElapsed = 0,
+                    that = this;
+                    
+                for (i = 0; i < that.tlStep; i++) {
+                    function func (i) {
+                        that.tlElapsed += that.mediaEls[i].playheadStop - that.mediaEls[i].playheadStart;
+                    }
+                    
+                    func(i);
+                }
+            },
+            
             // index timeline elements for seek events
-            // @@ put this in the manager?
             initTlIndex : function () {
                 var mediaEls = this.mediaEls,
                     tlSteps = mediaEls.length,

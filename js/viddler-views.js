@@ -29,17 +29,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         
         render : function () {
             this.$el.html(this.template());
-        },
-        
-        checkAuth : function (opts) {
-            
-            return opts.isAuth;
-        },
-        
-        checkSub : function (opts) {
-            return opts.isSub;
-        }, 
-        
+        }
     });
     
     
@@ -87,7 +77,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         }
     });
 
-    // This is the outer view and houses the whole backbone app
+    // This is the outer view
     Views.PlaylistView = Views.BaseView.extend({
         el : "#jp_container_1",
         timeline : {},
@@ -130,23 +120,26 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 tlLength = 0;
             
             if (Config.DEBUG) console.log('[Player] Model Ready');
-            // clear out player data
+            
+            // clear out manager data
             ViddlerManager.destroy();
             
             mediaEls = this.timeline.mediaElements;
+            
+            // @@ do this in the timeline play 
             mediaEl = mediaEls[ViddlerManager.tlStep];
                 
             // calculate timeline length
             _.each(this.timeline.mediaElements, function (el) {
                 tlLength +=  parseInt(el.playheadStop - el.playheadStart, 10);
             });
-                        
+            
             // initialize gui uses global timeline data
             ViddlerManager.tlStep = 0;
             ViddlerManager.tlSteps = mediaEls.length;
             ViddlerManager.tlLength = tlLength;
-
-            // wait for gui in DOM and instance player
+            
+            // wait for gui in DOM and instance plugins
             Events.once("playerGuiReady", function () {
             // IME Players
             
@@ -235,7 +228,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             
             ViddlerManager.mediaElId = opts.mediaEl.id;
             ViddlerManager.stepStop = opts.stop;
-            that.getElapsedTime();
+            ViddlerManager.getElapsedElTime();
             
             Events.once('stopListenerStop', function () {
                 var i, els;
@@ -326,6 +319,9 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         },
         
         // Set total  time for elsapsed mediaElements to global object
+        // @@ put this in the manager
+        // @@ TEST AND REMOVE
+/*
         getElapsedTime : function () {
             els = this.timeline.mediaElements;
             ViddlerManager.tlElapsed = 0;
@@ -337,6 +333,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 func(i);
             }
         },
+*/
         
         // reinitialize and play timeline from seek point
         seekTo : function (tlMs) {
