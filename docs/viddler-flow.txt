@@ -1,0 +1,32 @@
+key timeline events and basic control flow
+
+loadPlaylist
+    fetch from server
+        + gate
+            submit form -> fetch from server
+                back to top
+        + modelReady
+            loadGui -> playerGuiReady
+                load player -> onPlayerReady
+                    timelinePlay
+                        + timelineInit (on first step)
+                            setMedia
+                            timelineStep (user initiated event)
+                        + timelineStep (on subsequent or seek)
+                            setMedia
+                                mediaReady
+                                    run clock
+                                    run stop listener
+                                        stopListenerStop
+                                            + timelinePlay
+                                            + doEnd (last step)
+                                                timelineInit
+                                    ~ getSubtitles
+                                    ~ getSprites
+                                    play media
+                                    ~ get media element comments
+
+key
+---
++ control structure choices
+~ configurable options
