@@ -121,7 +121,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 tlLength = 0;
             
             if (Config.DEBUG) console.log('[Player] Model Ready');
-            console.log(that.timeline.tlCommentMarkerPos);
             // clear out manager data
             ViddlerManager.destroy();
             
@@ -158,7 +157,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             
             this.bindSeekEvents();
             this.bindThumbnailEvents();
-            console.log(ViddlerManager.getTotalSteps());
             if (ViddlerManager.getCurrentStep() === 0) data.init = true;
             if (ViddlerManager.getCurrentStep() !== ViddlerManager.getTotalSteps()) this.setupTimelineStep(data);
 
@@ -175,17 +173,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                         minHeight : that.$el.width()/7
                     });
                 };
-            console.log('playerready');
             if (Config.DEBUG) console.log('[Player] Player ready');
-            
-            
-// @@ Move to model ready
-/*
-            markers = new Views.CommentMarkerView();
-            markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
-            this.bindCommentMarkerEvents();
-*/
-            
             
             this.timelinePlay();
             $('.viddler-duration').html(Util.secs2time(Math.floor(ViddlerManager.getTlLength()/1000)));
@@ -194,9 +182,25 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         },
         
         setupTimelineStep : function (opts) {
-            var tlStep = ViddlerManager.getCurrentStep();
-            
-            console.log(tlStep);
+            var that = this,
+                tlStep = ViddlerManager.getCurrentStep();
+                
+            console.log(ViddlerManager.getCurrentMedia());
+
+            require(_.values(Config.plugins), function () {
+                var Plugins = _.object(_.keys(Config.plugins), arguments);
+                if (Config.DEBUG) console.log("[Player] Gui Ready");
+                console.log('PLUGINS:', Plugins);
+                //that.vP = new Plugins[mediaEl.elementType].View({mediaEl : mediaEl});
+                
+                // wait for player, load comments and continue
+/*
+                Events.once('playerReady', function () {
+                    that.onPlayerReady();
+                });
+*/
+             //   that.vP.loadPlayer();
+            });
         },
         
         doTimelineStep : function () {

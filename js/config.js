@@ -10,7 +10,11 @@ define(function() {
     plugins : {
       //'comments' : 'plugins/comments/comments-plugin'
       'liverail' : 'plugins/liverail/liverail-main',
-      'popcornjs' : 'plugins/popcornjs/popcornjs-main'
+      'popcornjs' : 'plugins/popcornjs/popcornjs-main',
+      'subtitles' : 'plugins/subtitles/subtitles-main',
+      'thumbs' : 'plugins/thumbs/thumbs-main',
+      'sprites' : 'plugins/sprites/sprites-main',
+      'jPlayer' : 'players/jplayer/jplayer-main'
     },
 
     players : {
