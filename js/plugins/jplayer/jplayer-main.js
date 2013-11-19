@@ -120,11 +120,12 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               this.mediaEl = Viddler.Manager.getCurrentMedia();              
           },
           
-          // map event hooks to local methods
+          // map event hooks to plugin methods
           addEventListeners : function () {
               Viddler.Events.on('playerReady', this.onPlayerReady());
               Viddler.Events.on('timeline:ready', this.onTimelineReady());
               Viddler.Events.on('timeline:clickStart', this.onTimelineClickStart());
+              Viddler.Events.on('timeline:stepStart', this.onStepStart());
           },
           
           // take over the player controls
@@ -140,6 +141,14 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                 $('.jp-play').unbind('click.init');
                 return false;
             });
+          },
+          
+          onStepStart : function () {
+              var step = Viddler.Manager.getCurrentStep();
+              // autoplay on steps after the first
+              if (step > 0) {
+                  this.play();
+              }
           },
           
           onTimelineClickStart: function () {
@@ -160,22 +169,6 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                   var t = that.jPlayerData.currentTime*1000;
                   Viddler.Manager.setTime(t)
               },1000);  // run this faster in production
-          },
-          
-          // listen for global step end time
-          // @@ this should go into the manager or whatever handles tl steps
-          runStopListener : function () {
-              var that = this;
-              if (Config.DEBUG) console.log('[Player] stoplistener stop time', Viddler.Manager.stepStop);
-              this.stopListenerIntv = setInterval(function() {
-                 if (that.$el.jPlayer().data().jPlayer.status.currentTime > Viddler.Manager.stepStop/1000) {
-                    if (Config.DEBUG) console.log('stop listener stop');
-                    clearInterval(that.stopListenerIntv);
-                    // do we need to clear the time listener?
-                    clearInterval(that.timeListenerIntv);
-                    Viddler.Events.trigger('stopListenerStop');
-                 }
-              },1000);
           },
           
           loadPlayer : function (opts) {

@@ -107,7 +107,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             // calculate track info
             data.elems = opts.mediaElements;
             _.each(data.elems, function (elem) {
-                elem.width = (elem.length / Manager.getTlLength()*100).toFixed(2);
+                elem.width = (elem.elLength / Manager.getTlLength()*100).toFixed(2);
             });
             this.setTlTime();
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
@@ -139,6 +139,12 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                 markers = new Views.CommentMarkerView();
                 markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
                 that.bindCommentMarkerEvents();
+            });
+            
+            // Advance timeline
+            Events.once('timeline:stepEnd', function () {
+                console.log('STEP END >>>>');
+                this.setupTimelineStep();
             });
         },
         
@@ -196,7 +202,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             $('#play-overlay-button').show();
         },
         
-        setupTimelineStep : function (opts) {
+        setupTimelineStep : function () {
             var that = this,
                 tlStep = Manager.getCurrentStep(),
                 mediaEl = Manager.getCurrentMedia(),
@@ -204,6 +210,12 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             
             data.plugins = mediaEl.plugins;
             this.loadPlugins(data);
+            // set up stop listener for this step
+            Events.on('timeline:timeUpdate', function (t) {
+                if (t >= Manager.getStepStopTime()) {
+                    Events.trigger('timeline:stepEnd');
+                }
+            });
             Events.trigger('timeline:ready')
         },
         

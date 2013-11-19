@@ -9,8 +9,6 @@ define(['viddler-events'], function(Events) {
             tlNow : 0,
             timeline : {},
             mediaEls : {},
-            stepMedia : {},
-            stepMediaId: '',
             tlComments : {},
             tlIndex : {},
             
@@ -22,8 +20,6 @@ define(['viddler-events'], function(Events) {
                 this.tlNow = 0;
                 this.timeline = {};
                 this.mediaEls = {};
-                this.stepMedia = {};
-                this.stepMediaId = '';
                 this.tlComments = {};
                 this.tlIndex = {};
             },
@@ -55,6 +51,12 @@ define(['viddler-events'], function(Events) {
             
             getCurrentStep : function () {
                 return this.tlStep;
+            },
+            
+            getStepStopTime : function () {
+                console.log(this.tlStep)
+                console.log(this.mediaEls[this.tlStep]);
+                return this._getTlElapsed() + this.mediaEls[this.tlStep];
             },
             
             // return number of timeline steps
@@ -94,7 +96,7 @@ define(['viddler-events'], function(Events) {
                 var that = this,
                     elapsed = 0,
                     el = {};
-                    console.log(this.tlIndex);
+                    console.log(that.tlIndex);
                 function func (i) {
                     if (tlMs >= that.tlIndex[i].start && tlMs < that.tlIndex[i].stop) {
                         el['step'] = i;
@@ -107,12 +109,12 @@ define(['viddler-events'], function(Events) {
                 for (var i = 0; i < that.tlIndex.length; i++) {
                     func(i);
                 }
-                console.log(el);
                 return el;
             },
             
             getMediaElFromTlTIme : function (tlMs) {
                 var el = this.getElTime(tlMs).step;
+                console.log(el);
                 return this.mediaEls[el];
             },
             
@@ -128,7 +130,7 @@ define(['viddler-events'], function(Events) {
                         index[i] = {};
                         index[i].mediaElId = mediaEls[i].id;
                         index[i].start = (i === 0) ? 0 : index[i-1]['stop'];
-                        index[i].stop = index[i]['start'] + mediaEls[i]['length'];
+                        index[i].stop = index[i]['start'] + mediaEls[i]['elLength'];
                     }
                     
                     func(i);
@@ -141,7 +143,7 @@ define(['viddler-events'], function(Events) {
             getTlLength : function () {
                 var t = 0;
                 _.each(this.mediaEls, function (el) {
-                    t +=  parseInt(el.length, 10);
+                    t +=  parseInt(el.elLength, 10);
                 });
                 return t;
             },
