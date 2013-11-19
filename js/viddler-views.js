@@ -53,16 +53,19 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
         },
         
         updatePlaybar : function (t) {
+            var playbar,
+                playbarWidth = 0;
+            
             console.log(Manager.getTlLength());
             tlPerc = (t / Manager.getTlLength());
-            // if (playerTime > 0) playBarWidth = timeLinePercent*$('.jp-progress').width();
             
-/*
+             if (t > 0) playbarWidth = tlPerc*$('.jp-progress').width();
+            
             // override for drag event on playbar
-            if (playBarWidth > 0 && !window.vDrags) {
-              $('.jp-mega-play-bar').width(playBarWidth);
+            if (playbarWidth > 0 && !window.vDrags) {
+              $('.jp-mega-play-bar').width(playbarWidth);
             } 
-            if (timeLinePercent > 1) {
+            if (tlPerc > 1) {
               $('.jp-mega-play-bar').width('100%');
             }
             
@@ -70,11 +73,10 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             if (Manager.tlNow > 0) {
               $('.viddler-current-time').html(Util.secs2time(Math.floor(Manager.tlNow/1000)));
             }
-            if (Manager.tlNow > Manager.tlLength) {
+            if (Manager.tlNow > Manager.getTlLength()) {
               $('.viddler-current-time').html(Util.secs2time(Math.floor(Manager.tlLength/1000)));
-*/
+            }
             console.log('updateplaybar:',t, tlPerc);
-
         },
         
         loadCommentPopUp : function (opts) {
