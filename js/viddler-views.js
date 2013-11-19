@@ -88,6 +88,16 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             commentModal.render();
         },
         
+        // set time on player ui to tl length
+        setTlTime : function () {
+            playerT = Util.secs2time(Manager.getTlLength()/1000);
+            $('.viddler-duration').html(playerT);  
+        },
+        
+        clearGuiTime : function () {
+            $('.viddler-current-time').html(Util.secs2time(Math.floor(0)));  
+        },
+        
         commentOn : function () {
             $('.comments-jp').html('<a href="javascript:;" title="comments" class="jp-comment" tabindex="1"></a>');
         },
@@ -108,7 +118,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             _.each(data.elems, function (elem) {
                 elem.width = (elem.length / Manager.getTlLength()*100).toFixed(2);
             });
-            
+            this.setTlTime();
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
             this.$('.jp-comment').on('click', function (e) {
                 e.preventDefault();
@@ -179,7 +189,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             // Render app controls
             this.vPG = new Views.VPlayerGuiView();
             this.vPG.render({mediaElements : Manager.getMediaEls()}); 
-            
+            this.vPG.clearGuiTime();
             this.bindSeekEvents();
             this.bindThumbnailEvents();
             this.setupTimelineStep(data);

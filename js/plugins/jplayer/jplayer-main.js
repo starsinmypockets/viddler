@@ -157,10 +157,9 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                   playBarWidth;
                   
               this.timeListenerIntv = setInterval(function() {
-                   console.log('this');
                   var t = that.jPlayerData.currentTime*1000;
                   Viddler.Manager.setTime(t)
-              },25);  // run this faster in production
+              },1000);  // run this faster in production
           },
           
           // listen for global step end time
