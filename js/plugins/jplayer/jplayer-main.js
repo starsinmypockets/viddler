@@ -112,14 +112,12 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           
           initialize : function (opts) {
               var that = this;
-              
               this.__init(opts);
+              this.addEventListeners();
+              this.loadPlayer();
               this.pluginData = opts.pluginData;
               this.jPlayerData = this.$el.jPlayer().data().jPlayer.status;
-              this.mediaEl = Viddler.Manager.getCurrentMedia();
-              
-              this.loadPlayer();
-              this.addEventListeners();
+              this.mediaEl = Viddler.Manager.getCurrentMedia();              
           },
           
           // map event hooks to local methods
@@ -137,6 +135,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                 e.stopImmediatePropagation();
                 e.preventDefault();
                 $('#play-overlay-button').hide();
+                that.play();
                 $('.jp-play').unbind('click.init');
                 return false;
             });
@@ -268,6 +267,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                    });
                    return;
                }
+               $('#load-wait').hide();
                Viddler.Events.trigger('mediaReady');
            },
            
