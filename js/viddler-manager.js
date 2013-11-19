@@ -43,11 +43,12 @@ define(['viddler-events'], function() {
             // @param t - time in ms relative to current step start time
             setTime : function (t) {
                 data = {};
-//                data.tlNow = this.getElapsedElTime() + opts.stepTime;
+                console.log('Manager elapsed: ', this._getTlElapsed());
+                data.tlNow = this._getTlElapsed() + t;
                 data.tlNow = t;
                 this._updateTime(t);
               //  Viddler.Events.trigger('tlMsUpdate', data);
-                console.log(this.tlNow);
+                console.log('Manager now: ',this.tlNow);
             },
             
             _updateTime : function (t) {
@@ -64,17 +65,18 @@ define(['viddler-events'], function() {
             },
             
             // get total time of past timeline elements
-            getElapsedElTime : function () {
+            _getTlElapsed : function () {
                 var tlElapsed = 0,
                     that = this;
                     
                 for (i = 0; i < that.tlStep; i++) {
                     function func (i) {
-                        that.tlElapsed += that.mediaEls[i].playheadStop - that.mediaEls[i].playheadStart;
+                        tlElapsed += that.mediaEls[i].playheadStop - that.mediaEls[i].playheadStart;
                     }
                     
                     func(i);
                 }
+                return tlElapsed;
             },
             
             getCurrentMedia : function () {
