@@ -1,4 +1,4 @@
-define([], function() {
+define(['viddler-events'], function() {
    
    // manage global timeline events
     var Manager = {
@@ -38,6 +38,13 @@ define([], function() {
             setMediaEls : function (els) {
                 this.mediaEls = els;
                 this._initTlIndex();  // add some useful data to the manager object
+            },
+            
+            // takes stepTime in ms relative to current step element and updates manager timeline time
+            updateTime : function (opts) {
+                data = {};
+                data.tlNow = this.getElapsedElTime() + opts.stepTime;
+                Events.trigger('tlMsUpdate', data)
             },
             
             getCurrentStep : function () {

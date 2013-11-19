@@ -9,8 +9,8 @@ define(function() {
 
     plugins : {
       //'comments' : 'plugins/comments/comments-plugin'
-      'liverail' : 'plugins/liverail/liverail-main',
-      'popcornjs' : 'plugins/popcornjs/popcornjs-main',
+      //'liverail' : 'plugins/liverail/liverail-main',
+      //'popcornjs' : 'plugins/popcornjs/popcornjs-main',
       'subtitles' : 'plugins/subtitles/subtitles-main',
       'thumbs' : 'plugins/thumbs/thumbs-main',
       'sprites' : 'plugins/sprites/sprites-main',
@@ -35,7 +35,7 @@ define(function() {
       raiseErrors : true,
       generateRequestOnPageLoad: true
     },
-
+    
     DEBUG : true,
     tDEBUG : false // debug timeline clock events
         

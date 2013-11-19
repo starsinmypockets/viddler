@@ -14,7 +14,9 @@ window.testLiveRail = function () {
     id: 'liverail-iframe',
     src: iframeUrl
   }).appendTo('body');
-
+  return {
+      isView : false;
+  }
 };
 
 console.log( "[Plugin] Loaded: LiveRail");

@@ -82,7 +82,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         el : "#jp_container_1",
         timeline : {},
         stepComments : [],
-        
+        plugins : [],
         initialize : function (opts) {
             this.__init(opts);
             this.loadPlayList();
@@ -126,6 +126,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             
             // setup timeline manager
             ViddlerManager.setMediaEls(this.timeline.mediaElements);
+            console.log(ViddlerManager.getTlIndex());
             Events.once("playerGuiReady", function () {
                 markers = new Views.CommentMarkerView();
                 markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
@@ -150,7 +151,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 });
             });
             
-*/
+*/          
             // Render app controls
             this.vPG = new Views.VPlayerGuiView();
             this.vPG.render({mediaElements : ViddlerManager.getMediaEls()}); 
@@ -183,15 +184,33 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         
         setupTimelineStep : function (opts) {
             var that = this,
-                tlStep = ViddlerManager.getCurrentStep();
-                
-            console.log(ViddlerManager.getCurrentMedia());
-
+                tlStep = ViddlerManager.getCurrentStep(),
+                mediaEl = ViddlerManager.getCurrentMedia(),
+                data = {};
+            
+            console.log(mediaEl);
+            data.plugins = mediaEl.plugins;
+            this.loadPlugins(data);
+/*
             require(_.values(Config.plugins), function () {
                 var Plugins = _.object(_.keys(Config.plugins), arguments);
+                var i = 0;
                 if (Config.DEBUG) console.log("[Player] Gui Ready");
                 console.log('PLUGINS:', Plugins);
-                //that.vP = new Plugins[mediaEl.elementType].View({mediaEl : mediaEl});
+                _.each(Plugins, function (plugin) {
+                    console.log(plugin);
+                    if (plugin.isView) {
+                        opts = {};
+                        console.log(Plugins[i]);
+                    }
+                });
+*/
+                /*
+                    For each enabled plugin
+                        instantiate plugin with configuration data
+                    end for each
+                */
+              //  that.vP = new Plugins[mediaEl.elementType].View({mediaEl : mediaEl});
                 
                 // wait for player, load comments and continue
 /*
@@ -200,10 +219,38 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 });
 */
              //   that.vP.loadPlayer();
+        },
+        
+        loadPlugins : function (opts) {
+            var that = this;
+
+            require(_.values(Config.plugins), function () {
+                var Plugins = _.object(_.keys(Config.plugins), arguments);
+                if (Config.DEBUG) console.log("[Player] Gui Ready");
+                _.each(opts.plugins, function (plugin) {
+                    var data;
+                    if (plugin.isView) {
+                        data = plugin.data;
+                        console.log(data);
+                        that.plugins[plugin.pluginType] = new Plugins[plugin.pluginType].View(data);
+                        that.plugins[plugin.pluginType].render();
+                    }
+                });
+                console.log(that.plugins);
+                //that.vP = new Plugins[mediaEl.elementType].View({mediaEl : mediaEl});
+                
             });
         },
         
         doTimelineStep : function () {
+            
+        },
+        
+        tearDownTimelineStep : function () {
+            
+        },
+        
+        resetTimeline : function () {
             
         },
         

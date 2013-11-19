@@ -49,7 +49,10 @@ define(['underscore', 'viddler-events', 'plugins/popcornjs/popcorn-complete'], f
     });
 
   });
-
+  
+  return {
+      isView : false;
+  }
   console.log( "[Plugin] Loaded: Popcornjs");
 
 });

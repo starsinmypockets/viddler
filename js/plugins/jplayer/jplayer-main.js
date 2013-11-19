@@ -70,6 +70,10 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
         });
      }
     });
+    
+    el.on($.jPlayer.event.timeupdate, function (event) {
+        console.log(e);
+    });
 
     //listening for an end ie file completion
     el.on($.jPlayer.event.ended, function(event) {
@@ -95,7 +99,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
   }
 
   return {
-
+    isView : true,
     View : Viddler.Views.BaseView.extend({
           timeListenerIntv : {},
           stopListenerIntv : {},
@@ -119,7 +123,8 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               var that = this,
                   timeLinePercent,
                   playBarWidth;
-
+                  
+                  
                   
                   // update global timeline data
                   this.timeListenerIntv = setInterval(function() {
