@@ -39,8 +39,16 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
     });
 */
     
-    Views.VPlayerGuiView = Backbone.View.extend({
+    Views.VPlayerGuiView = Views.BaseView.extend({
         el : ".jp-gui",
+        
+        initialize : function (opts) {
+            console.log('intit gui ');
+            this.__init(opts);
+            Events.on('timeline:timeUpdate', function (t) {
+                console.log('timeupdate event', t);
+            })
+        },
         
         loadCommentPopUp : function (opts) {
             var data = {},
@@ -251,6 +259,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             }
         },
         
+        // @@ Blow this stuff away
         timelineStep : function (opts) {
             var that = this;
             if (Config.DEBUG) console.log("[Player] Timeline step: "+ViddlerManager.tlStep);

@@ -1,4 +1,4 @@
-define(['viddler-events'], function() {
+define(['viddler-events'], function(Events) {
    
    // manage global timeline events
     var Manager = {
@@ -52,6 +52,7 @@ define(['viddler-events'], function() {
             },
             
             _updateTime : function (t) {
+                Events.trigger('timeline:timeUpdate', t);
                 this.tlNow = t;
             },
             

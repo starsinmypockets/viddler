@@ -168,18 +168,6 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                           clearInterval(that.timeListenerIntv);
                       }
 */
-                      // update playbar width once playerTime has updated
-                      
-/*
-                          console.log('[jPlayer]step: '+Viddler.Manager.tlStep);
-                          console.log('[jPlayer]current: '+Viddler.Manager.tlNow);
-                          console.log('[jPlayer]elapsed: '+Viddler.Manager.tlElapsed);
-                          console.log('[jPlayer]playheadStart: '+that.mediaEl.playheadStart);
-                          console.log('[jPlayer]total: '+Viddler.Manager.tlLength);
-                          console.log('[jPlayer]timeline-percent: '+timeLinePercent);
-                          console.log('[jPlayer]playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
-                          console.log('[jPlayer]playerTime: '+playerTime);
-*/
                       
                       // redraw playabr
                       // @@ todo move this to playergui in viddler-views or to abstract player class
