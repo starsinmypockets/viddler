@@ -14,7 +14,7 @@ define(function() {
       'subtitles' : 'plugins/subtitles/subtitles-main',
       'thumbs' : 'plugins/thumbs/thumbs-main',
       'sprites' : 'plugins/sprites/sprites-main',
-      'jPlayer' : 'players/jplayer/jplayer-main'
+      'jPlayer' : 'plugins/jplayer/jplayer-main'
     },
 
     players : {

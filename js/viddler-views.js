@@ -223,7 +223,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         
         loadPlugins : function (opts) {
             var that = this;
-
+            
             require(_.values(Config.plugins), function () {
                 var Plugins = _.object(_.keys(Config.plugins), arguments);
                 if (Config.DEBUG) console.log("[Player] Gui Ready");
@@ -231,14 +231,11 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     var data;
                     if (plugin.isView) {
                         data = plugin.data;
-                        console.log(data);
                         that.plugins[plugin.pluginType] = new Plugins[plugin.pluginType].View(data);
-                        that.plugins[plugin.pluginType].render();
+                        console.log(that.plugins[plugin.pluginType]);
+                        that.plugins[plugin.pluginType].initialize(data);
                     }
                 });
-                console.log(that.plugins);
-                //that.vP = new Plugins[mediaEl.elementType].View({mediaEl : mediaEl});
-                
             });
         },
         
@@ -621,13 +618,12 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         },
         
         _calcMarkerPos : function () {
-            console.log('hit');
             var markerArray, numbMarkers, markerSecs,
                 that=this,
             
             numbMarkers = Math.floor($('.mega-timeline .bar').width() / 20); // [width of bar] / [ width of marker+4px ]
             markerSecs = Math.floor(ViddlerManager.getTlLength() / numbMarkers); // [ length of video ] / [ number of Markers ]
-            console.log(markerSecs);
+
             // build array of marker-points with start / stop attrs
             markerArray = []; 
             markerArray[0] = {};                

@@ -99,16 +99,23 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
   }
 
   return {
-    isView : true,
     View : Viddler.Views.BaseView.extend({
           timeListenerIntv : {},
           stopListenerIntv : {},
           
+          // @@ TODO  this should be defined in config.js
           el : '#jquery_jplayer_1',
-          mediaEl : {}, // the currently loaded media element
+          // @@ TODO this too
+//          mediaEl : {}, // the currently loaded media element
+          
           initialize : function (opts) {
-              this.__init(opts);
+              console.log('player init');
+              //this.__init(opts);
               this.mediaEl = opts.mediaEl;
+              Viddler.Events.on('playerReady', function () {
+                  console.log('player ready');
+              });
+              this.loadPlayer();
           },
           
           clearGuiTime : function () {
@@ -123,8 +130,6 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               var that = this,
                   timeLinePercent,
                   playBarWidth;
-                  
-                  
                   
                   // update global timeline data
                   this.timeListenerIntv = setInterval(function() {
@@ -192,6 +197,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                   height,
                   jPData = {
                       ready: function () {
+                          console.log('ready!!');
                           var w;
                           if (Config.DEBUG) {
                               $('#inspector').jPlayerInspector({
@@ -217,10 +223,6 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                   jPData.size= {
                       width: "100%",
                       height: "auto"
-/*
-                      width : width,
-                      height : height
-*/
                   }
               this.$el.jPlayer(jPData);
           },
