@@ -130,7 +130,8 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           // take over the player controls
           onTimelineReady : function () {
               var that = this;
-              //this.runTimeListener();
+              clearInterval(this.timeListenerIntv);
+              this.runTimeListener();
               $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
                 e.stopImmediatePropagation();
                 e.preventDefault();
@@ -157,12 +158,15 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                   
                   // update global timeline data
                   this.timeListenerIntv = setInterval(function() {
-                      var playerTime = that.jPlayerData.currentTime*1000;
+                        var                  t = that.jPlayerData.currentTime*1000;
+                      console.log(t);
+/*
                       if (playerTime > 0)Viddler.Manager.tlNow = parseInt(playerTime + Viddler.Manager.tlElapsed - that.mediaEl.playheadStart, 10);
                       if (playerTime-that.mediaEl.playheadStart >= that.mediaEl.length)                             {
                           if (Config.DEBUG) console.log("[jPlayer]Clear Time Listener Interval");
                           clearInterval(that.timeListenerIntv);
                       }
+*/
                       // update playbar width once playerTime has updated
                       
 /*
@@ -179,7 +183,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                       // redraw playabr
                       // @@ todo move this to playergui in viddler-views or to abstract player class
                       timeLinePercent = (Viddler.Manager.tlNow / Viddler.Manager.tlLength);
-                      if (playerTime > 0) playBarWidth = timeLinePercent*$('.jp-progress').width();
+                     // if (playerTime > 0) playBarWidth = timeLinePercent*$('.jp-progress').width();
                       
                       // override for drag event on playbar
                       if (playBarWidth > 0 && !window.vDrags) {
