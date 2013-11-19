@@ -138,11 +138,14 @@ define(['viddler-events'], function(Events) {
                 this.tlIndex = index;
             },
             
+            // @@ prob don't use playhead here
             // return tl length in ms
             getTlLength : function () {
                 var t = 0;
+                console.log(this.mediaEls);
                 _.each(this.mediaEls, function (el) {
-                    t +=  parseInt(el.playheadStop - el.playheadStart, 10);
+                    console.log(el);
+                    t +=  parseInt(el.length, 10);
                 });
                 return t;
             },

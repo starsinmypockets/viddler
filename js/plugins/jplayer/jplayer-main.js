@@ -171,24 +171,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                       
                       // redraw playabr
                       // @@ todo move this to playergui in viddler-views or to abstract player class
-                      timeLinePercent = (Viddler.Manager.tlNow / Viddler.Manager.tlLength);
-                     // if (playerTime > 0) playBarWidth = timeLinePercent*$('.jp-progress').width();
                       
-                      // override for drag event on playbar
-                      if (playBarWidth > 0 && !window.vDrags) {
-                          $('.jp-mega-play-bar').width(playBarWidth);
-                      } 
-                      if (timeLinePercent > 1) {
-                          $('.jp-mega-play-bar').width('100%');
-                      }
-                      
-                      // don't update until we have good global data
-                      if (Viddler.Manager.tlNow > 0) {
-                          $('.viddler-current-time').html(Util.secs2time(Math.floor(Viddler.Manager.tlNow/1000)));
-                      }
-                      if (Viddler.Manager.tlNow > Viddler.Manager.tlLength) {
-                          $('.viddler-current-time').html(Util.secs2time(Math.floor(Viddler.Manager.tlLength/1000)));                        
-                      }
                   },1000);  // run this faster in production
           },
           

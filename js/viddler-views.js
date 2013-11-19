@@ -1,7 +1,7 @@
 /**
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
-define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collections', 'helper/util', 'viddler-manager', 'config'], function(_, $, Backbone, Events, Collections, Util, ViddlerManager, Config) {
+define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddler-events', 'helper/util', 'config'], function (_, $, Backbone, Viddler, Manager, Events, Util, Config) {
 
 
     var Views = {};
@@ -53,7 +53,28 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         },
         
         updatePlaybar : function (t) {
-            console.log('updateplaybar:',t);
+            console.log(Manager.getTlLength());
+            tlPerc = (t / Manager.getTlLength());
+            // if (playerTime > 0) playBarWidth = timeLinePercent*$('.jp-progress').width();
+            
+/*
+            // override for drag event on playbar
+            if (playBarWidth > 0 && !window.vDrags) {
+              $('.jp-mega-play-bar').width(playBarWidth);
+            } 
+            if (timeLinePercent > 1) {
+              $('.jp-mega-play-bar').width('100%');
+            }
+            
+            // don't update until we have good global data
+            if (Manager.tlNow > 0) {
+              $('.viddler-current-time').html(Util.secs2time(Math.floor(Manager.tlNow/1000)));
+            }
+            if (Manager.tlNow > Manager.tlLength) {
+              $('.viddler-current-time').html(Util.secs2time(Math.floor(Manager.tlLength/1000)));
+*/
+            console.log('updateplaybar:',t, tlPerc);
+
         },
         
         loadCommentPopUp : function (opts) {
@@ -83,7 +104,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             // calculate track info
             data.elems = opts.mediaElements;
             _.each(data.elems, function (elem) {
-                elem.width = (((elem.playheadStop - elem.playheadStart) / ViddlerManager.getTlLength())*100).toFixed(2);
+                elem.width = (((elem.playheadStop - elem.playheadStart) / Manager.getTlLength())*100).toFixed(2);
             });
             
             $('#jp-mega-playbar-container').html(_.template($('#tmp-mega-timeline').html(), data));
@@ -141,12 +162,12 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 data = {},
                 tlLength = 0;
             
-            if (Config.DEBUG) console.log('[Player] Model Ready');
+//            if (Config.DEBUG) console.log('[Player] Model Ready');
             // clear out manager data
-            ViddlerManager.destroy();
+            Manager.destroy();
             
             // setup timeline manager
-            ViddlerManager.setMediaEls(this.timeline.mediaElements);
+            Manager.setMediaEls(this.timeline.mediaElements);
             Events.once("gui:ready", function () {
                 markers = new Views.CommentMarkerView();
                 markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
@@ -155,7 +176,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
        
             // Render app controls
             this.vPG = new Views.VPlayerGuiView();
-            this.vPG.render({mediaElements : ViddlerManager.getMediaEls()}); 
+            this.vPG.render({mediaElements : Manager.getMediaEls()}); 
             
             this.bindSeekEvents();
             this.bindThumbnailEvents();
@@ -200,8 +221,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         
         setupTimelineStep : function (opts) {
             var that = this,
-                tlStep = ViddlerManager.getCurrentStep(),
-                mediaEl = ViddlerManager.getCurrentMedia(),
+                tlStep = Manager.getCurrentStep(),
+                mediaEl = Manager.getCurrentMedia(),
                 data = {};
             
             data.plugins = mediaEl.plugins;
@@ -238,8 +259,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 opts = opts || {},
                 that = this,
                 stepOpts = {},
-                tlStep = ViddlerManager.tlStep,
-                tlSteps = ViddlerManager.tlSteps;
+                tlStep = Manager.tlStep,
+                tlSteps = Manager.tlSteps;
             
 //            this.vPG.commentOff();
             // @@ put this stuff into the manager   
@@ -268,15 +289,15 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         // @@ Blow this stuff away
         timelineStep : function (opts) {
             var that = this;
-            if (Config.DEBUG) console.log("[Player] Timeline step: "+ViddlerManager.tlStep);
+            if (Config.DEBUG) console.log("[Player] Timeline step: "+Manager.tlStep);
             
-            ViddlerManager.mediaElId = opts.mediaEl.id;
-            ViddlerManager.stepStop = opts.stop;
-            ViddlerManager.getElapsedElTime();
+            Manager.mediaElId = opts.mediaEl.id;
+            Manager.stepStop = opts.stop;
+            Manager.getElapsedElTime();
             
             Events.once('stopListenerStop', function () {
                 var i, els;
-                ViddlerManager.tlStep++;
+                Manager.tlStep++;
                 // continue
                 that.timelinePlay();
             });
@@ -369,15 +390,15 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             if (Config.DEBUG) console.log("[Player] Seek event");
             var mediaEls = this.timeline.mediaElements,
                 seekInf = {},
-                tlIndex = ViddlerManager.getTlIndex(),  // timeline start & stop by element
+                tlIndex = Manager.getTlIndex(),  // timeline start & stop by element
                 elapsed = 0;
             // yes
             $("#play-overlay-button").hide();
-            seekInfo = ViddlerManager.getElTime(tlMs);
+            seekInfo = Manager.getElTime(tlMs);
             if (Config.DEBUG) console.log(seekInfo);
             
             // update the global tlStep
-            ViddlerManager.tlStep = seekInfo.step;
+            Manager.tlStep = seekInfo.step;
             Events.off("stopListenerStop");
             clearInterval(this.vP.timeListenerIntv);
             this.timelinePlay({seek : true, start : seekInfo.time});
@@ -401,7 +422,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             Events.off("stopListenerStop");
 
             // reset global player data
-            ViddlerManager.tlReset();
+            Manager.tlReset();
             that.timelinePlay();
         },
         
@@ -419,7 +440,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     tlMs;
                 if (window.vDrags) return false; // don't do click if we're dragging the scrubber
                 e.preventDefault();
-                tlMs = ViddlerManager.getTlMs(e);
+                tlMs = Manager.getTlMs(e);
                 that.seekTo(tlMs);
                 return false;
             });
@@ -494,7 +515,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     if (e.target.id === "time") {
                         // play the segment on mouseup
                         seekPerc = $('.jp-mega-play-bar').width()/$('.bar .jp-progress').width();
-                        tlMs = seekPerc*ViddlerManager.getTlLength();
+                        tlMs = seekPerc*Manager.getTlLength();
                         that.seekTo(tlMs);
                     }
                     setTimeout(function () {
@@ -517,7 +538,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 thumbData = [],
                 _getThumbs,
                 playbarLeft = $(".jp-progress").offset().left,
-                els = ViddlerManager.getMediaEls();
+                els = Manager.getMediaEls();
             
             console.log(els);
             for (el in els) {
@@ -527,8 +548,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             console.log(thumbData);
             
             _getThumbs = function (e) {
-                tlMs = ViddlerManager.getTlMs(e);
-                elTime = ViddlerManager.getElTime(tlMs); // return targeted step and tlMs of video el
+                tlMs = Manager.getTlMs(e);
+                elTime = Manager.getElTime(tlMs); // return targeted step and tlMs of video el
                 if (thumbData[elTime.step]) {
                     data.sprite_url = thumbData[elTime.step].spriteUrl;
                     _.each(thumbData[elTime.step].cues, function (cue) {
@@ -576,7 +597,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 // gives us tl data
                 var data = $(this).data(),
                     // get data relative to mediaEl
-                    elData = ViddlerManager.getElTime(data.start*1000);
+                    elData = Manager.getElTime(data.start*1000);
                 
                 that.getMediaElementComments({
                     id : data.mediaid,
@@ -602,7 +623,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 that=this,
             
             numbMarkers = Math.floor($('.mega-timeline .bar').width() / 20); // [width of bar] / [ width of marker+4px ]
-            markerSecs = Math.floor(ViddlerManager.getTlLength() / numbMarkers); // [ length of video ] / [ number of Markers ]
+            markerSecs = Math.floor(Manager.getTlLength() / numbMarkers); // [ length of video ] / [ number of Markers ]
 
             // build array of marker-points with start / stop attrs
             markerArray = []; 
@@ -639,7 +660,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                         markers[j] = {};
                         markers[j].start = Math.floor(spot.start/1000);
                         markers[j].stop = Math.floor(spot.stop/1000);
-                        markers[j].mediaid = ViddlerManager.getMediaElFromTlTIme(spot.start).id;
+                        markers[j].mediaid = Manager.getMediaElFromTlTIme(spot.start).id;
                         markers[j].left = ((100/numbMarkers)*pos)-(100/numbMarkers); // express the left value as a percent - subtract one width
                         j++;
                     }
@@ -886,7 +907,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 tlPerc = $('.jp-mega-play-bar').width() / $('.jp-progress').width()*100;
                 //tlPerc = ViddlerManager.tlNow / ViddlerManager.tlLength *100;
             
-            (ViddlerManager.tlNow < 0) ? t = 0 : t = ViddlerManager.tlNow;
+            (Manager.tlNow < 0) ? t = 0 : t = Manager.tlNow;
             data.time = Util.secs2time(Math.floor(t/1000));
             this.$el.html(_.template($("#tmp-comment-popup").html(), data));
             //$('#modal-outer').show();
