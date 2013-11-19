@@ -1,7 +1,7 @@
 /**
  * NOTE: All times in ms; convert to seconds as needed at point of use
  */
-define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddler-events', 'helper/util', 'config'], function (_, $, Backbone, Viddler, Manager, Events, Util, Config) {
+define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddler-events', 'viddler-collections', 'helper/util', 'config'], function (_, $, Backbone, Viddler, Manager, Events, Collections, Util, Config) {
 
 
     var Views = {};
@@ -595,7 +595,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                 }, 250);
             });
         },
-        // @@ Move to Events Module
+        
         bindCommentMarkerEvents : function () {
             var that = this;
             

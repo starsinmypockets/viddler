@@ -94,10 +94,11 @@ define(['viddler-events'], function(Events) {
                 var that = this,
                     elapsed = 0,
                     el = {};
+                    console.log(this.tlIndex);
                 function func (i) {
                     if (tlMs >= that.tlIndex[i].start && tlMs < that.tlIndex[i].stop) {
                         el['step'] = i;
-                        el['time'] =  tlMs - elapsed + that.mediaEls[i].playheadStart;
+                        el['time'] =  tlMs - elapsed;
                         return;
                     }
                     elapsed += that.tlIndex[i].stop - that.tlIndex[i].start;
@@ -106,6 +107,7 @@ define(['viddler-events'], function(Events) {
                 for (var i = 0; i < that.tlIndex.length; i++) {
                     func(i);
                 }
+                console.log(el);
                 return el;
             },
             
