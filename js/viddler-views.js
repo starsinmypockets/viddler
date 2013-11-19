@@ -43,11 +43,17 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         el : ".jp-gui",
         
         initialize : function (opts) {
-            console.log('intit gui ');
             this.__init(opts);
-            Events.on('timeline:timeUpdate', function (t) {
-                console.log('timeupdate event', t);
-            })
+            this.addEventListeners();
+        },
+        
+        addEventListeners : function () {
+            var that = this;
+            Events.on('timeline:timeUpdate', function (t) { that.updatePlaybar(t)});
+        },
+        
+        updatePlaybar : function (t) {
+            console.log('updateplaybar:',t);
         },
         
         loadCommentPopUp : function (opts) {
