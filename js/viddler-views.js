@@ -132,26 +132,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
                 that.bindCommentMarkerEvents();
             });
-            // wait for gui in DOM and instance plugins
-            // @@ move this further down the chain
-/*
-            Events.once("playerGuiReady", function () {
-            // IME Players
-            
-                require(_.values(Config.players), function () {
-                    var Players = _.object(_.keys(Config.players), arguments);
-                    if (Config.DEBUG) console.log("[Player] Gui Ready");
-                    that.vP = new Players[mediaEl.elementType].View({mediaEl : mediaEl});
-                    
-                    // wait for player, load comments and continue
-                    Events.once('playerReady', function () {
-                        that.onPlayerReady();
-                    });
-                    that.vP.loadPlayer();
-                });
-            });
-            
-*/          
+       
             // Render app controls
             this.vPG = new Views.VPlayerGuiView();
             this.vPG.render({mediaElements : ViddlerManager.getMediaEls()}); 
