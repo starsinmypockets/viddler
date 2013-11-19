@@ -196,36 +196,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             $('#play-overlay-button').show();
         },
         
-
-// @@ this is in the jplayer-main SNIP
-/*
-        onPlayerReady : function () {
-            var timeOut = null,
-                that = this,
-                setPlayerHeight = function() {
-                    that.$el.css({
-                        minHeight : that.$el.width()/7
-                    });
-                };
-            if (Config.DEBUG) console.log('[Player] Player ready');
-            
-            this.timelinePlay();
-            $('.viddler-duration').html(Util.secs2time(Math.floor(ViddlerManager.getTlLength()/1000)));
-            this.vP.clearGuiTime();
-            this.vPG.commentOff();
-        },
-*/
-// SNIP
-
-        
-// @@ this goes somewhere
-        /*
-          
-          clearGuiTime : function () {
-              $('.viddler-current-time').html(Util.secs2time(Math.floor(0)));  
-          },
-*/        
-        
         setupTimelineStep : function (opts) {
             var that = this,
                 tlStep = Manager.getCurrentStep(),
@@ -269,7 +239,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                 tlStep = Manager.tlStep,
                 tlSteps = Manager.tlSteps;
             
-//            this.vPG.commentOff();
             // @@ put this stuff into the manager   
             if (tlStep != tlSteps) {
                 mediaEl = this.timeline.mediaElements[tlStep];
@@ -338,41 +307,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             // load step comments
             this.getMediaElementComments({id : opts.mediaEl.id});
         },
-        
-/*
-        timelineInit : function (stepOpts) {
-            var that = this;
-            stepOpts.init = true;
-            ViddlerManager.stepStop = stepOpts.stop;
-            ViddlerManager.stepMediaId = stepOpts.mediaEl.id;
-            
-            Events.once("mediaReady", function () {
-                if (Config.DEBUG) console.log("[Player] Media ready");
-                that.vP.runTimeListener();
-                that.vP.runStopListener();
-            });
-            
-            this.vP.setMedia({
-                type : stepOpts.mediaEl.elementType,
-                url : stepOpts.mediaEl.elementURL,
-                poster : stepOpts.mediaEl.poster
-            });
-            
-            // load step comments
-            this.getMediaElementComments({id : stepOpts.mediaEl.id});
-            
-            $('#play-overlay-button').show();
-            // ios needs user initiated action to enable timeline js behaviors
-            $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
-                e.stopImmediatePropagation();
-                e.preventDefault();
-                that.timelineStep(stepOpts);
-                $('#play-overlay-button').hide();
-                $('.jp-play').unbind('click.init');
-                return false;
-            });
-        },
-*/
         
         getMediaElementComments : function (opts) {
             var that = this,
@@ -551,8 +485,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             for (el in els) {
                 thumbData.push(els[el].thumbs);
             }
-            
-            console.log(thumbData);
             
             _getThumbs = function (e) {
                 tlMs = Manager.getTlMs(e);
