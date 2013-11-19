@@ -36,6 +36,7 @@ define(function() {
       generateRequestOnPageLoad: true
     },
     
+    SAMPLE_RATE : 500, // samples per second
     DEBUG : true,
     tDEBUG : true // debug timeline clock events
         

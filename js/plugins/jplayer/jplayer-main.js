@@ -150,32 +150,21 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               this.setMedia(this.pluginData);
           },
           
-          // @@ this should call timeupdate on manager
+          // update app with current step time
           runTimeListener : function (opts) {
               var that = this,
                   timeLinePercent,
                   playBarWidth;
                   
-                  // update global timeline data
-                  this.timeListenerIntv = setInterval(function() {
-                        var                  t = that.jPlayerData.currentTime*1000;
-                      console.log(t);
-                      Viddler.Manager.setTime(t)
-/*
-                      if (playerTime > 0)Viddler.Manager.tlNow = parseInt(playerTime + Viddler.Manager.tlElapsed - that.mediaEl.playheadStart, 10);
-                      if (playerTime-that.mediaEl.playheadStart >= that.mediaEl.length)                             {
-                          if (Config.DEBUG) console.log("[jPlayer]Clear Time Listener Interval");
-                          clearInterval(that.timeListenerIntv);
-                      }
-*/
-                      
-                      // redraw playabr
-                      // @@ todo move this to playergui in viddler-views or to abstract player class
-                      
-                  },1000);  // run this faster in production
+              this.timeListenerIntv = setInterval(function() {
+                   console.log('this');
+                  var t = that.jPlayerData.currentTime*1000;
+                  Viddler.Manager.setTime(t)
+              },25);  // run this faster in production
           },
           
-          // listen for global step end time 
+          // listen for global step end time
+          // @@ this should go into the manager or whatever handles tl steps
           runStopListener : function () {
               var that = this;
               if (Config.DEBUG) console.log('[Player] stoplistener stop time', Viddler.Manager.stepStop);
