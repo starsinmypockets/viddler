@@ -185,8 +185,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     if (plugin.isView) {
                         data.pluginData = plugin.data;
                         that.plugins[plugin.pluginType] = new Plugins[plugin.pluginType].View(data);
-                        console.log(that.plugins[plugin.pluginType]);
-                        console.log(data);
                         that.plugins[plugin.pluginType].initialize(data);
                     }
                 });

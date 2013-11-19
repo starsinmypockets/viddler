@@ -72,7 +72,8 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
     });
     
     el.on($.jPlayer.event.timeupdate, function (event) {
-        console.log(e);
+        // @@ this works
+        //console.log(event);
     });
 
     //listening for an end ie file completion
@@ -110,21 +111,29 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           pluginData : {},
           
           initialize : function (opts) {
+              var that = this;
+              
               console.log('player init');
               console.log(opts);
               this.__init(opts);
               this.pluginData = opts.pluginData;
               Viddler.Events.on('playerReady', function () {
+                  that.onPlayerReady();
                   console.log('player ready');
               });
               this.loadPlayer();
               this.mediaEl = Viddler.Manager.getCurrentMedia();
-              console.log(this.pluginData);
-              this.setMedia(this.pluginData);
           },
+          // @@ this should go in views / gui
+/*
           
           clearGuiTime : function () {
               $('.viddler-current-time').html(Util.secs2time(Math.floor(0)));  
+          },
+*/
+          onPlayerReady : function () {
+              console.log(this.pluginData);
+              this.setMedia(this.pluginData);
           },
           
           runTimeListener : function (opts) {
@@ -230,6 +239,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           
            // Player controls 
            setMedia : function (opts) {
+              console.log(opts);
               var data = {},
                   that = this;
                   
