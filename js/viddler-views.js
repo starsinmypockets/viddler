@@ -181,11 +181,12 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 var Plugins = _.object(_.keys(Config.plugins), arguments);
                 if (Config.DEBUG) console.log("[Player] Gui Ready");
                 _.each(opts.plugins, function (plugin) {
-                    var data;
+                    var data = {};
                     if (plugin.isView) {
-                        data = plugin.data;
+                        data.pluginData = plugin.data;
                         that.plugins[plugin.pluginType] = new Plugins[plugin.pluginType].View(data);
                         console.log(that.plugins[plugin.pluginType]);
+                        console.log(data);
                         that.plugins[plugin.pluginType].initialize(data);
                     }
                 });

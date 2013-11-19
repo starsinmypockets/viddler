@@ -107,23 +107,24 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           el : '#jquery_jplayer_1',
           // @@ TODO this too
           mediaEl : {}, // the currently loaded media element
+          pluginData : {},
           
           initialize : function (opts) {
               console.log('player init');
-              //this.__init(opts);
-              this.mediaEl = opts.mediaEl;
+              console.log(opts);
+              this.__init(opts);
+              this.pluginData = opts.pluginData;
               Viddler.Events.on('playerReady', function () {
                   console.log('player ready');
               });
               this.loadPlayer();
+              this.mediaEl = Viddler.Manager.getCurrentMedia();
+              console.log(this.pluginData);
+              this.setMedia(this.pluginData);
           },
           
           clearGuiTime : function () {
               $('.viddler-current-time').html(Util.secs2time(Math.floor(0)));  
-          },
-          
-          setMediaEl : function (mediaEl) {
-              this.mediaEl = mediaEl;
           },
           
           runTimeListener : function (opts) {
@@ -232,7 +233,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               var data = {},
                   that = this;
                   
-               data[opts.type] = opts.url;
+               data[opts.elementType] = opts.elementURL;
                if (opts.poster) data.poster = opts.poster;
                this.$el.jPlayer("setMedia", data);
                
@@ -260,5 +261,4 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
       })
 
   }
-
 });
