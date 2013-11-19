@@ -103,7 +103,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
     View : Viddler.Views.BaseView.extend({
           timeListenerIntv : {},
           stopListenerIntv : {},
-          
+          jPlayerData : {},
           // @@ TODO  this should be defined in config.js
           el : '#jquery_jplayer_1',
           // @@ TODO this too
@@ -113,29 +113,44 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           initialize : function (opts) {
               var that = this;
               
-              console.log('player init');
-              console.log(opts);
               this.__init(opts);
               this.pluginData = opts.pluginData;
-              Viddler.Events.on('playerReady', function () {
-                  that.onPlayerReady();
-                  console.log('player ready');
-              });
-              this.loadPlayer();
+              this.jPlayerData = this.$el.jPlayer().data().jPlayer.status;
               this.mediaEl = Viddler.Manager.getCurrentMedia();
+              
+              this.loadPlayer();
+              this.addEventListeners();
           },
-          // @@ this should go in views / gui
-/*
           
-          clearGuiTime : function () {
-              $('.viddler-current-time').html(Util.secs2time(Math.floor(0)));  
+          // map event hooks to local methods
+          addEventListeners : function () {
+              Viddler.Events.on('playerReady', this.onPlayerReady());
+              Viddler.Events.on('timeline:ready', this.onTimelineReady());
+              Viddler.Events.on('timeline:clickStart', this.onTimelineClickStart());
           },
-*/
+          
+          // take over the player controls
+          onTimelineReady : function () {
+              var that = this;
+              //this.runTimeListener();
+              $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                $('#play-overlay-button').hide();
+                $('.jp-play').unbind('click.init');
+                return false;
+            });
+          },
+          
+          onTimelineClickStart: function () {
+              //this.play();
+          },
+          
           onPlayerReady : function () {
-              console.log(this.pluginData);
               this.setMedia(this.pluginData);
           },
           
+          // @@ this should call timeupdate on manager
           runTimeListener : function (opts) {
               var that = this,
                   timeLinePercent,
@@ -143,8 +158,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                   
                   // update global timeline data
                   this.timeListenerIntv = setInterval(function() {
-                        var playerTime = that.$el.jPlayer().data().jPlayer.status.currentTime*1000;
-                        // @@ we need to maintain timeline credibility during media reload!
+                      var playerTime = that.jPlayerData.currentTime*1000;
                       if (playerTime > 0)Viddler.Manager.tlNow = parseInt(playerTime + Viddler.Manager.tlElapsed - that.mediaEl.playheadStart, 10);
                       if (playerTime-that.mediaEl.playheadStart >= that.mediaEl.length)                             {
                           if (Config.DEBUG) console.log("[jPlayer]Clear Time Listener Interval");
@@ -152,7 +166,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                       }
                       // update playbar width once playerTime has updated
                       
-                      if (Config.tDEBUG ) {
+/*
                           console.log('[jPlayer]step: '+Viddler.Manager.tlStep);
                           console.log('[jPlayer]current: '+Viddler.Manager.tlNow);
                           console.log('[jPlayer]elapsed: '+Viddler.Manager.tlElapsed);
@@ -161,7 +175,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                           console.log('[jPlayer]timeline-percent: '+timeLinePercent);
                           console.log('[jPlayer]playerTime: '+that.$el.jPlayer().data().jPlayer.status.currentTime);
                           console.log('[jPlayer]playerTime: '+playerTime);
-                      }
+*/
                       
                       // redraw playabr
                       // @@ todo move this to playergui in viddler-views or to abstract player class
@@ -183,7 +197,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                       if (Viddler.Manager.tlNow > Viddler.Manager.tlLength) {
                           $('.viddler-current-time').html(Util.secs2time(Math.floor(Viddler.Manager.tlLength/1000)));                        
                       }
-                  },500);  // run this faster in production
+                  },1000);  // run this faster in production
           },
           
           // listen for global step end time 
@@ -207,7 +221,6 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                   height,
                   jPData = {
                       ready: function () {
-                          console.log('ready!!');
                           var w;
                           if (Config.DEBUG) {
                               $('#inspector').jPlayerInspector({
@@ -239,7 +252,6 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           
            // Player controls 
            setMedia : function (opts) {
-              console.log(opts);
               var data = {},
                   that = this;
                   

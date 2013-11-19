@@ -7,6 +7,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
     var Views = {};
         
     /* Abstract */
+    // this is basically a noop for potential future convenience
     Views.BaseView = Backbone.View.extend({
         id : 'content',
         tag : 'div',
@@ -23,7 +24,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         },
         
         initialize : function (opts) {
-            if (Config.DEBUG) console.log('IE8 :', Util.ie8)
             this.__init(opts);
         },
         
@@ -32,6 +32,12 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
         }
     });
     
+    // Extend this to create Plugin views
+/*
+    Views.PluginView = Views.BaseView.extend({
+        addEventListeners : 
+    });
+*/
     
     Views.VPlayerGuiView = Backbone.View.extend({
         el : ".jp-gui",
@@ -73,7 +79,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 return false;
             });
 
-            Events.trigger("playerGuiReady");
+            Events.trigger("gui:ready");
         }
     });
 
@@ -88,6 +94,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             this.loadPlayList();
         },
         
+        // Get playlist manifest from server
         loadPlayList : function (opts) {
             var that = this;
             this.model.fetch({
@@ -126,8 +133,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             
             // setup timeline manager
             ViddlerManager.setMediaEls(this.timeline.mediaElements);
-            console.log(ViddlerManager.getTlIndex());
-            Events.once("playerGuiReady", function () {
+            Events.once("gui:ready", function () {
                 markers = new Views.CommentMarkerView();
                 markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
                 that.bindCommentMarkerEvents();
@@ -139,14 +145,18 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             
             this.bindSeekEvents();
             this.bindThumbnailEvents();
-            if (ViddlerManager.getCurrentStep() === 0) data.init = true;
-            if (ViddlerManager.getCurrentStep() !== ViddlerManager.getTotalSteps()) this.setupTimelineStep(data);
+            this.setupTimelineStep(data);
+//            if (ViddlerManager.getCurrentStep() === 0) data.init = true;
+//            if (ViddlerManager.getCurrentStep() !== ViddlerManager.getTotalSteps()) this.setupTimelineStep(data);
 
             // add play button overlay
             $('#play-overlay-button').show();
             
         },
         
+
+// @@ this is in the jplayer-main SNIP
+/*
         onPlayerReady : function () {
             var timeOut = null,
                 that = this,
@@ -162,6 +172,17 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             this.vP.clearGuiTime();
             this.vPG.commentOff();
         },
+*/
+// SNIP
+
+        
+// @@ this goes somewhere
+        /*
+          
+          clearGuiTime : function () {
+              $('.viddler-current-time').html(Util.secs2time(Math.floor(0)));  
+          },
+*/        
         
         setupTimelineStep : function (opts) {
             var that = this,
@@ -172,6 +193,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             console.log(mediaEl);
             data.plugins = mediaEl.plugins;
             this.loadPlugins(data);
+            Events.trigger('timeline:ready')
         },
         
         loadPlugins : function (opts) {
@@ -189,6 +211,12 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     }
                 });
             });
+        },
+        
+        // @@ maybe check for plugins we still need and leave them?
+        teardownTimelineStep : function () {
+            // reset plugins object
+            // remove views?
         },
         
         // do timeline step queue-ing
@@ -260,7 +288,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             }
             
             if (opts.mediaEl.sprites && !Util.ie8) {
-                Events.trigger('timelineStep:sprites', that, opts.mediaEl.sprites);
+                //Events.trigger('timelineStep:sprites', that, opts.mediaEl.sprites);
             }
             
             this.vP.play({start : opts.start/1000});
@@ -269,6 +297,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             this.getMediaElementComments({id : opts.mediaEl.id});
         },
         
+/*
         timelineInit : function (stepOpts) {
             var that = this;
             stepOpts.init = true;
@@ -301,6 +330,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 return false;
             });
         },
+*/
         
         getMediaElementComments : function (opts) {
             var that = this,
