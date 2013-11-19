@@ -190,7 +190,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                 mediaEl = ViddlerManager.getCurrentMedia(),
                 data = {};
             
-            console.log(mediaEl);
             data.plugins = mediaEl.plugins;
             this.loadPlugins(data);
             Events.trigger('timeline:ready')

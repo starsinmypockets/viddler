@@ -160,6 +160,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                   this.timeListenerIntv = setInterval(function() {
                         var                  t = that.jPlayerData.currentTime*1000;
                       console.log(t);
+                      Viddler.Manager.setTime(t)
 /*
                       if (playerTime > 0)Viddler.Manager.tlNow = parseInt(playerTime + Viddler.Manager.tlElapsed - that.mediaEl.playheadStart, 10);
                       if (playerTime-that.mediaEl.playheadStart >= that.mediaEl.length)                             {
