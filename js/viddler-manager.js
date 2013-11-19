@@ -43,12 +43,9 @@ define(['viddler-events'], function(Events) {
             // @param t - time in ms relative to current step start time
             setTime : function (t) {
                 data = {};
-                console.log('Manager elapsed: ', this._getTlElapsed());
                 data.tlNow = this._getTlElapsed() + t;
                 data.tlNow = t;
                 this._updateTime(t);
-              //  Viddler.Events.trigger('tlMsUpdate', data);
-                console.log('Manager now: ',this.tlNow);
             },
             
             _updateTime : function (t) {
@@ -89,7 +86,6 @@ define(['viddler-events'], function(Events) {
             },
             
             getTlIndex : function () {
-                console.log(this.tlIndex);
                 return this.tlIndex;
             },
             
@@ -130,7 +126,7 @@ define(['viddler-events'], function(Events) {
                         index[i] = {};
                         index[i].mediaElId = mediaEls[i].id;
                         index[i].start = (i === 0) ? 0 : index[i-1]['stop'];
-                        index[i].stop = index[i]['start'] + mediaEls[i]['playheadStop'] - mediaEls[i]['playheadStart'];
+                        index[i].stop = index[i]['start'] + mediaEls[i]['length'];
                     }
                     
                     func(i);
@@ -142,9 +138,7 @@ define(['viddler-events'], function(Events) {
             // return tl length in ms
             getTlLength : function () {
                 var t = 0;
-                console.log(this.mediaEls);
                 _.each(this.mediaEls, function (el) {
-                    console.log(el);
                     t +=  parseInt(el.length, 10);
                 });
                 return t;

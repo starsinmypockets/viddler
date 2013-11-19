@@ -32,13 +32,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
         }
     });
     
-    // Extend this to create Plugin views
-/*
-    Views.PluginView = Views.BaseView.extend({
-        addEventListeners : 
-    });
-*/
-    
     Views.VPlayerGuiView = Views.BaseView.extend({
         el : ".jp-gui",
         
@@ -54,10 +47,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
         
         updatePlaybar : function (t) {
             var playbar,
-                playbarWidth = 0;
-            
-            console.log(Manager.getTlLength());
-            tlPerc = (t / Manager.getTlLength());
+                playbarWidth = 0,
+                tlPerc = (t / Manager.getTlLength());
             
              if (t > 0) playbarWidth = tlPerc*$('.jp-progress').width();
             
@@ -76,7 +67,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             if (Manager.tlNow > Manager.getTlLength()) {
               $('.viddler-current-time').html(Util.secs2time(Math.floor(Manager.tlLength/1000)));
             }
-            console.log('updateplaybar:',t, tlPerc);
+            // console.log('updateplaybar:',t, tlPerc);
         },
         
         loadCommentPopUp : function (opts) {
@@ -125,7 +116,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                 that.loadCommentPopUp();
                 return false;
             });
-
             Events.trigger("gui:ready");
         }
     });
@@ -138,7 +128,18 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
         plugins : [],
         initialize : function (opts) {
             this.__init(opts);
+            this.addEventListeners();
             this.loadPlayList();
+        },
+        
+        addEventListeners : function () {
+            var that = this;
+            Events.on("gui:ready", function () {
+                console.log(that.timeline);
+                markers = new Views.CommentMarkerView();
+                markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
+                that.bindCommentMarkerEvents();
+            });
         },
         
         // Get playlist manifest from server
@@ -174,31 +175,25 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                 data = {},
                 tlLength = 0;
             
-//            if (Config.DEBUG) console.log('[Player] Model Ready');
             // clear out manager data
             Manager.destroy();
             
             // setup timeline manager
             Manager.setMediaEls(this.timeline.mediaElements);
-            Events.once("gui:ready", function () {
-                markers = new Views.CommentMarkerView();
-                markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
-                that.bindCommentMarkerEvents();
-            });
        
             // Render app controls
             this.vPG = new Views.VPlayerGuiView();
             this.vPG.render({mediaElements : Manager.getMediaEls()}); 
             this.vPG.clearGuiTime();
+            
             this.bindSeekEvents();
             this.bindThumbnailEvents();
             this.setupTimelineStep(data);
-//            if (ViddlerManager.getCurrentStep() === 0) data.init = true;
-//            if (ViddlerManager.getCurrentStep() !== ViddlerManager.getTotalSteps()) this.setupTimelineStep(data);
+            if (Manager.getCurrentStep() === 0) data.init = true;
+            if (Manager.getCurrentStep() !== Manager.getTotalSteps()) this.setupTimelineStep(data);
 
             // add play button overlay
             $('#play-overlay-button').show();
-            
         },
         
 
