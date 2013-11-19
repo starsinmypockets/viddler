@@ -191,34 +191,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
             console.log(mediaEl);
             data.plugins = mediaEl.plugins;
             this.loadPlugins(data);
-/*
-            require(_.values(Config.plugins), function () {
-                var Plugins = _.object(_.keys(Config.plugins), arguments);
-                var i = 0;
-                if (Config.DEBUG) console.log("[Player] Gui Ready");
-                console.log('PLUGINS:', Plugins);
-                _.each(Plugins, function (plugin) {
-                    console.log(plugin);
-                    if (plugin.isView) {
-                        opts = {};
-                        console.log(Plugins[i]);
-                    }
-                });
-*/
-                /*
-                    For each enabled plugin
-                        instantiate plugin with configuration data
-                    end for each
-                */
-              //  that.vP = new Plugins[mediaEl.elementType].View({mediaEl : mediaEl});
-                
-                // wait for player, load comments and continue
-/*
-                Events.once('playerReady', function () {
-                    that.onPlayerReady();
-                });
-*/
-             //   that.vP.loadPlayer();
         },
         
         loadPlugins : function (opts) {
@@ -237,22 +209,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler-events', 'viddler-collectio
                     }
                 });
             });
-        },
-        
-        doTimelineStep : function () {
-            
-        },
-        
-        tearDownTimelineStep : function () {
-            
-        },
-        
-        resetTimeline : function () {
-            
-        },
-        
-        onPluginsReady : function () {
-            
         },
         
         // do timeline step queue-ing

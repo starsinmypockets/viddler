@@ -106,7 +106,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           // @@ TODO  this should be defined in config.js
           el : '#jquery_jplayer_1',
           // @@ TODO this too
-//          mediaEl : {}, // the currently loaded media element
+          mediaEl : {}, // the currently loaded media element
           
           initialize : function (opts) {
               console.log('player init');
