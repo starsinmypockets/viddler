@@ -154,7 +154,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                 Manager.incrementStep();
                 this.setupTimelineStep();
             } else {
-                Events.trigger('timeline:ended');
+                Events.trigger('timeline:timelineEnd');
             }
         },
         

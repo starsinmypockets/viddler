@@ -121,10 +121,12 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           
           // map event hooks to plugin methods
           addEventListeners : function () {
-              Viddler.Events.on('jplayer:ready', this.onPlayerReady());
-              Viddler.Events.on('timeline:clickStart', this.onTimelineClickStart());
-              Viddler.Events.on('timeline:stepStart', this.onStepStart());
-              Viddler.Events.on('timeline:stepEnd', this.onStepEnd());
+              var that = this;
+              Viddler.Events.on('jplayer:ready', function () {that.onPlayerReady()});
+              Viddler.Events.on('timeline:clickStart', function () {that.onTimelineClickStart()});
+              Viddler.Events.on('timeline:stepStart', function () {that.onStepStart()});
+              Viddler.Events.on('timeline:stepEnd', function () {that.onStepEnd()});
+              Viddler.Events.on('timeline:timelineEnd', function () {that.onTimelineEnd()});
           },
           
           // take over the player controls
@@ -167,17 +169,21 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               //this.play();
           },
           
+          onTimelineEnd : function () {
+              console.log('jplayer end hook');
+              this.stop();
+          },
+          
           // update app with current step time
           runTimeListener : function (opts) {
               console.log('hit timelist');
               var that = this,
                   timeLinePercent,
                   playBarWidth;
-                  jPlayerData = that.$el.jPlayer().data().jPlayer.status;
                   
               this.timeListenerIntv = setInterval(function() {
-                  var t = jPlayerData.currentTime*1000;
-                  console.log(t, jPlayerData);
+                  var t = that.$el.jPlayer().data().jPlayer.status.currentTime*1000;
+                  console.log(t, that.$el.jPlayer().data().jPlayer.status);
                   Viddler.Manager.setTime(t)
               },1000);  // run this faster in production
           },
@@ -244,6 +250,10 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                (opts && opts.start) ? start = opts.start : start = '';
                this.$el.jPlayer("play", start);
            }, 
+           
+           stop : function () {
+               this.$el.jPlayer("stop");
+           },
            
            pause : function () {
                this.$el.jPlayer("pause");
