@@ -191,6 +191,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                 data = {},
                 tlLength = 0;
             
+            Manager.setMediaEls(this.timeline.mediaElements);
+            
             // Render app controls
             this.vPG = new Views.VPlayerGuiView();
             this.vPG.render({mediaElements : Manager.getMediaEls()}); 
@@ -229,7 +231,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
         timelineInit : function () {
             // reinitialize manager data
             Manager.destroy();
-            Manager.setMediaEls(this.timeline.mediaElements);
             
             // add play button overlay
             Events.trigger('timeline:timelineReady', this);
