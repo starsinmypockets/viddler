@@ -160,7 +160,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           },
           
           onStepEnd : function () {
-              clearInterval(this.timeListenerIntv);
+             // clearInterval(this.timeListenerIntv);
           },
           
           onTimelineClickStart: function () {
@@ -169,13 +169,15 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           
           // update app with current step time
           runTimeListener : function (opts) {
+              console.log('hit timelist');
               var that = this,
                   timeLinePercent,
                   playBarWidth;
+                  jPlayerData = that.$el.jPlayer().data().jPlayer.status;
                   
               this.timeListenerIntv = setInterval(function() {
-                  var t = that.jPlayerData.currentTime*1000;
-                  console.log(t);
+                  var t = jPlayerData.currentTime*1000;
+                  console.log(t, jPlayerData);
                   Viddler.Manager.setTime(t)
               },1000);  // run this faster in production
           },
@@ -197,8 +199,8 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                               'width' : w,
                               'min-height' : w*.56
                           });
-                          Viddler.Events.trigger("jplayer:ready", that);
                           bindEvents($(that.el));
+                          Viddler.Events.trigger("jplayer:ready", that);
                       },
                       swfPath: "swf",
                       supplied: "m4v",
