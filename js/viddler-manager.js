@@ -41,10 +41,16 @@ define(['underscore', 'viddler-events'], function(_, Events) {
             // Update plugin status and check for allPluginsReady event condition
             // @param opts.plugin - the name of the plugin
             // @param opts.status - boolean
+            // @return true on success, false on fail
             pluginLoaded : function (pluginName) {
-                this.plugins[pluginName] = {loaded : true};
-                if (this.allPluginsSet) {
-                    Events.trigger('manager:allPluginsReady', this.plugins);
+                if (_.isString(pluginName) && this.plugins[pluginName]) {
+                    this.plugins[pluginName] = {loaded : true};
+                    if (this.allPluginsSet) {
+                        Events.trigger('manager:allPluginsReady', this.plugins);
+                    }
+                    return true;
+                } else {
+                    return false;
                 }
             },
            
@@ -59,7 +65,9 @@ define(['underscore', 'viddler-events'], function(_, Events) {
                 return allSet;
             },
             
-            
+            getPluginRegistry : function () {
+                return this.plugins;
+            },
             /**
              * Timing
              **/

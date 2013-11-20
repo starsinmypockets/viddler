@@ -233,7 +233,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             });
             
             Manager.registerPlugins(registry);
-            
             // instantiate plugins
             require(_.values(Config.plugins), function () {
                 var Plugins = _.object(_.keys(Config.plugins), arguments);
@@ -245,6 +244,9 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                         that.plugins[plugin.pluginType] = new Plugins[plugin.pluginType].View(data);
                     }
                 });
+                
+                            console.log(Manager.getPluginRegistry());
+
             });
         },
         
