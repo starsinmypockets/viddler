@@ -177,6 +177,16 @@ define(['underscore', 'viddler-events'], function(_, Events) {
                 return this.tlStep;
             },
             
+            // return number of timeline steps
+            getTotalSteps : function () {
+                return this.mediaEls.length;
+            },
+            
+            isLastStep : function () {
+                console.log('Is LAST???', this.tlStep, this.mediaEls.length-1);
+                return (this.tlStep === this.mediaEls.length-1);
+            },
+            
             getStepStopTime : function () {
                 return this._getTlElapsed() + this.mediaEls[this.tlStep].elLength;
             },
@@ -185,10 +195,6 @@ define(['underscore', 'viddler-events'], function(_, Events) {
                     this.tlStep++;
             },
             
-            // return number of timeline steps
-            getTotalSteps : function () {
-                return this.mediaEls.length;
-            },
             
             // reinitialize timeline
             tlReset : function () {

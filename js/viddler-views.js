@@ -145,10 +145,17 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             // Advance timeline
             Events.on('timeline:stepEnd', function () {
                 console.log('STEP END >>>>');
-                Manager.incrementStep();
-                console.log(Manager.getCurrentStep());
-                that.setupTimelineStep();
+                that.updateTimelineStep();
             });
+        },
+        
+        updateTimelineStep : function () {
+            if (!Manager.isLastStep()) {
+                Manager.incrementStep();
+                this.setupTimelineStep();
+            } else {
+                Events.trigger('timeline:ended');
+            }
         },
         
         // Get playlist manifest from server
@@ -212,13 +219,13 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             
             data.plugins = mediaEl.plugins;
             this.loadPlugins(data);
+
             // set up stop listener for this step
-            // @@ This is firing before plugins are fully loaded
             Events.on('manager:allPluginsReady', function () {
                 Events.trigger('timeline:stepStart')
             });
             Events.on('timeline:timeUpdate', function (t) {
-                //Manager.debug();
+                Manager.debug();
                 if (t >= Manager.getStepStopTime()) {
                     Events.trigger('timeline:stepEnd');
                 }
