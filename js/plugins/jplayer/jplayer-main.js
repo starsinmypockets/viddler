@@ -106,14 +106,14 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           pluginData : {},
           
           initialize : function (opts) {
-                console.log('init');
+                console.log('init', opts);
               var that = this;
               this.__init(opts);
-              this.addEventListeners();
               this.loadPlayer();
               this.pluginData = opts.pluginData;
               this.jPlayerData = this.$el.jPlayer().data().jPlayer.status;
               this.mediaEl = Viddler.Manager.getCurrentMedia();              
+              this.addEventListeners();
           },
           
           // map event hooks to plugin methods
@@ -140,6 +140,10 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
             });
           },
           
+          onPlayerReady : function () {
+              this.setMedia(this.pluginData);
+          },
+          
           onStepStart : function () {
               var that = this,
                   step = Viddler.Manager.getCurrentStep();
@@ -159,10 +163,6 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           
           onTimelineClickStart: function () {
               //this.play();
-          },
-          
-          onPlayerReady : function () {
-              this.setMedia(this.pluginData);
           },
           
           // update app with current step time
@@ -194,8 +194,8 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                               'width' : w,
                               'min-height' : w*.56
                           });
-                          bindEvents($(that.el));
                           Viddler.Events.trigger("jplayer:ready", that);
+                          bindEvents($(that.el));
                       },
                       swfPath: "swf",
                       supplied: "m4v",
@@ -216,7 +216,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
            setMedia : function (opts) {
               var data = {},
                   that = this;
-                  
+                console.log('setMedia', opts);
                data[opts.elementType] = opts.elementURL;
                if (opts.poster) data.poster = opts.poster;
                this.$el.jPlayer("setMedia", data);
@@ -230,8 +230,8 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                    });
                    return;
                }
-               $('#load-wait').hide();
-               Viddler.Events.trigger('mediaReady');
+              // $('#load-wait').hide();
+              // Viddler.Events.trigger('mediaReady');
            },
            
            play : function (opts) {

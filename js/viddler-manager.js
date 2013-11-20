@@ -106,7 +106,6 @@ define(['viddler-events'], function(Events) {
                 var that = this,
                     elapsed = 0,
                     el = {};
-                    console.log(that.tlIndex);
                 function func (i) {
                     if (tlMs >= that.tlIndex[i].start && tlMs < that.tlIndex[i].stop) {
                         el['step'] = i;
