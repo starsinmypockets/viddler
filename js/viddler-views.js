@@ -214,15 +214,16 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             this.loadPlugins(data);
             // set up stop listener for this step
             // @@ This is firing before plugins are fully loaded
-            Events.trigger('timeline:stepStart')
+            Events.on('manager:allPluginsReady', function () {
+                Events.trigger('timeline:stepStart')
+            });
             Events.on('timeline:timeUpdate', function (t) {
                 //Manager.debug();
                 if (t >= Manager.getStepStopTime()) {
                     Events.trigger('timeline:stepEnd');
                 }
             });
-                        console.log(Manager.getPluginRegistry());
-
+            console.log(Manager.getPluginRegistry());
         },
         
         loadPlugins : function (opts) {
@@ -233,8 +234,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             _.each(opts.plugins, function (plugin) {
                 registry.push(plugin.pluginType);
             });
-                        Events.on('manager:allPluginsReady', function () {console.log('All Plugins ready')});
-
+            
             Manager.registerPlugins(registry);
             // instantiate plugins
             require(_.values(Config.plugins), function () {
