@@ -51,10 +51,10 @@ define(['underscore', 'viddler-events'], function(_, Events) {
              **/
             
             // @param opts - an array of plugin names
-            setPlugins = function (opts) {
+            registerPlugins = function (opts) {
                 //
                 var that = this;
-                _.each(opts.plugins, function (plugin) {
+                _.each(opts, function (plugin) {
                     that.plugins[plugin] = { loaded : false }
                 })
                         

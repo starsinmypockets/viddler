@@ -224,8 +224,17 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
         },
         
         loadPlugins : function (opts) {
-            var that = this;
+            var that = this,
+                registry = [];
             
+            // register plugins with Manager
+            _.each(opts.plugins, function (plugin) {
+                registry.push(plugin.pluginType);
+            });
+            
+            Manager.registerPlugins(registry);
+            
+            // instantiate plugins
             require(_.values(Config.plugins), function () {
                 var Plugins = _.object(_.keys(Config.plugins), arguments);
                 if (Config.DEBUG) console.log("[Player] Gui Ready");
