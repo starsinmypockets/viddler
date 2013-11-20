@@ -97,7 +97,6 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
   return {
     View : Viddler.Views.BaseView.extend({
           timeListenerIntv : {},
-          stopListenerIntv : {},
           jPlayerData : {},
           // @@ TODO  this should be defined in config.js
           el : '#jquery_jplayer_1',
@@ -119,6 +118,8 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               if (Config.DEBUG) console.log('[jplayer]: instantiated');
           },
           
+          // @@ we could subclass this for convenience
+          // @@ & write noops that plugins could override
           // map event hooks to plugin methods
           addEventListeners : function () {
               var that = this;
@@ -147,11 +148,13 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           },
           
           onStepStart : function () {
+                           
               var that = this,
                   step = Viddler.Manager.getCurrentStep();
               clearInterval(this.timeListenerIntv);
               this.runTimeListener();
               console.log('step start');
+              if (step === 0)  $('#play-overlay-button').show();
               // autoplay on steps after the first
               if (step > 0) {
                   Viddler.Events.on('mediaReady', function () {
@@ -169,9 +172,11 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               //this.play();
           },
           
+          // do cleanup / teardown
           onTimelineEnd : function () {
               console.log('jplayer end hook');
               this.stop();
+              clearInterval(this.timeListenerIntv);
           },
           
           // update app with current step time
@@ -185,7 +190,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                   var t = that.$el.jPlayer().data().jPlayer.status.currentTime*1000;
                   console.log(t, that.$el.jPlayer().data().jPlayer.status);
                   Viddler.Manager.setTime(t)
-              },1000);  // run this faster in production
+              },100);  // run this faster in production
           },
           
           loadPlayer : function (opts) {

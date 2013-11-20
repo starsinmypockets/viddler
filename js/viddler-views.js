@@ -191,12 +191,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                 data = {},
                 tlLength = 0;
             
-            // clear out manager data
-            Manager.destroy();
-            
-            // setup timeline manager
-            Manager.setMediaEls(this.timeline.mediaElements);
-       
             // Render app controls
             this.vPG = new Views.VPlayerGuiView();
             this.vPG.render({mediaElements : Manager.getMediaEls()}); 
@@ -204,33 +198,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             
             this.bindSeekEvents();
             this.bindThumbnailEvents();
-            if (Manager.getCurrentStep() === 0) data.init = true;
-            if (Manager.getCurrentStep() !== Manager.getTotalSteps()) this.setupTimelineStep(data);
-
-            // add play button overlay
-            $('#play-overlay-button').show();
-        },
-        
-        setupTimelineStep : function () {
-            var that = this,
-                tlStep = Manager.getCurrentStep(),
-                mediaEl = Manager.getCurrentMedia(),
-                data = {};
             
-            data.plugins = mediaEl.plugins;
-            this.loadPlugins(data);
-
-            // set up stop listener for this step
-            Events.on('manager:allPluginsReady', function () {
-                Events.trigger('timeline:stepStart')
-            });
-            Events.on('timeline:timeUpdate', function (t) {
-                Manager.debug();
-                if (t >= Manager.getStepStopTime()) {
-                    Events.trigger('timeline:stepEnd');
-                }
-            });
-            console.log(Manager.getPluginRegistry());
+            this.timelineInit();
         },
         
         loadPlugins : function (opts) {
@@ -246,7 +215,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             // instantiate plugins
             require(_.values(Config.plugins), function () {
                 var Plugins = _.object(_.keys(Config.plugins), arguments);
-                if (Config.DEBUG) console.log("[Player] Gui Ready");
                 _.each(opts.plugins, function (plugin) {
                     var data = {};
                     if (plugin.isView) {
@@ -256,6 +224,42 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                 });
             console.log(Manager.getPluginRegistry());
             });
+        },
+        
+        timelineInit : function () {
+            // reinitialize manager data
+            Manager.destroy();
+            Manager.setMediaEls(this.timeline.mediaElements);
+            
+            // add play button overlay
+            Events.trigger('timeline:timelineReady', this);
+            
+            // launch first step
+            this.setupTimelineStep();
+        },
+        
+        setupTimelineStep : function () {
+            var that = this,
+                tlStep = Manager.getCurrentStep(),
+                mediaEl = Manager.getCurrentMedia(),
+                data = {};
+            
+            data.plugins = mediaEl.plugins;
+            this.loadPlugins(data);
+            
+            // set up stop listener for this step
+            Events.on('manager:allPluginsReady', function () {
+                Events.trigger('timeline:stepStart', that);
+            });
+            
+            // Listen for step stop
+            Events.on('timeline:timeUpdate', function (t) {
+                Manager.debug();
+                if (t >= Manager.getStepStopTime()) {
+                    Events.trigger('timeline:stepEnd');
+                }
+            });
+            console.log(Manager.getPluginRegistry());
         },
         
         // @@ maybe check for plugins we still need and leave them?
