@@ -115,7 +115,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               this.mediaEl = Viddler.Manager.getCurrentMedia();              
               this.updatePlayerControls();
               this.addEventListeners();
-              Viddler.Manager.pluginLoaded(['jPlayer']);
+              Viddler.Manager.pluginLoaded('jPlayer');
               if (Config.DEBUG) console.log('[jplayer]: instantiated');
           },
           

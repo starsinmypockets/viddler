@@ -43,9 +43,10 @@ define(['underscore', 'viddler-events'], function(_, Events) {
             // @param opts.status - boolean
             // @return true on success, false on fail
             pluginLoaded : function (pluginName) {
+                var that = this;
                 if (_.isString(pluginName) && this.plugins[pluginName]) {
                     this.plugins[pluginName] = {loaded : true};
-                    if (this.allPluginsSet) {
+                    if (that.allPluginsLoaded()) {
                         Events.trigger('manager:allPluginsReady', this.plugins);
                     }
                     return true;
@@ -55,7 +56,7 @@ define(['underscore', 'viddler-events'], function(_, Events) {
             },
            
             // Check if all plugins are ready
-            allPluginsReady : function () {
+            allPluginsLoaded : function () {
                 allSet = true; // if any plugins unset, switch to false
                 _.each(this.plugins, function (plugin) {
                     if (plugin.loaded === false) {

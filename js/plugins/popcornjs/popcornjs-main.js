@@ -49,13 +49,12 @@ define(['underscore', 'viddler-events', 'plugins/popcornjs/popcorn-complete'], f
     });
 
   });
-  
-  return {
-      isView : false;
-  }
-  console.log( "[Plugin] Loaded: Popcornjs");
-
 });
 
 
 }
+      console.log(Viddler.Manager.pluginLoaded('popcornjs'));
+    console.log( "[Plugin] Loaded: popcornjs");
+  console.log( "[Plugin] Loaded: Popcornjs");
+    return {};
+

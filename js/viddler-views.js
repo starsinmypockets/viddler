@@ -221,6 +221,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                     Events.trigger('timeline:stepEnd');
                 }
             });
+                        console.log(Manager.getPluginRegistry());
+
         },
         
         loadPlugins : function (opts) {
@@ -231,7 +233,8 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             _.each(opts.plugins, function (plugin) {
                 registry.push(plugin.pluginType);
             });
-            
+                        Events.on('manager:allPluginsReady', function () {console.log('All Plugins ready')});
+
             Manager.registerPlugins(registry);
             // instantiate plugins
             require(_.values(Config.plugins), function () {
@@ -244,9 +247,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                         that.plugins[plugin.pluginType] = new Plugins[plugin.pluginType].View(data);
                     }
                 });
-                
-                            console.log(Manager.getPluginRegistry());
-
+            console.log(Manager.getPluginRegistry());
             });
         },
         
