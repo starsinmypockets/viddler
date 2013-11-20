@@ -134,17 +134,20 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
         
         addEventListeners : function () {
             var that = this;
+            console.log('Add event listeners');
             Events.on("gui:ready", function () {
-                console.log(that.timeline);
+                console.log('pvents:',that.timeline);
                 markers = new Views.CommentMarkerView();
                 markers.renderCommentMarkers({commentSpots : that.timeline.tlCommentMarkerPos, jqEl : "#mega-markers-container"});
                 that.bindCommentMarkerEvents();
             });
             
             // Advance timeline
-            Events.once('timeline:stepEnd', function () {
+            Events.on('timeline:stepEnd', function () {
                 console.log('STEP END >>>>');
-                this.setupTimelineStep();
+                Manager.incrementStep();
+                console.log(Manager.getCurrentStep());
+                that.setupTimelineStep();
             });
         },
         
@@ -194,7 +197,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             
             this.bindSeekEvents();
             this.bindThumbnailEvents();
-            this.setupTimelineStep(data);
             if (Manager.getCurrentStep() === 0) data.init = true;
             if (Manager.getCurrentStep() !== Manager.getTotalSteps()) this.setupTimelineStep(data);
 
@@ -211,12 +213,14 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             data.plugins = mediaEl.plugins;
             this.loadPlugins(data);
             // set up stop listener for this step
+            Events.trigger('timeline:stepStart')
             Events.on('timeline:timeUpdate', function (t) {
+                Manager.debug();
                 if (t >= Manager.getStepStopTime()) {
                     Events.trigger('timeline:stepEnd');
                 }
             });
-            Events.trigger('timeline:ready')
+           // Events.trigger('timeline:ready')
         },
         
         loadPlugins : function (opts) {
@@ -230,7 +234,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                     if (plugin.isView) {
                         data.pluginData = plugin.data;
                         that.plugins[plugin.pluginType] = new Plugins[plugin.pluginType].View(data);
-                        that.plugins[plugin.pluginType].initialize(data);
                     }
                 });
             });
@@ -242,7 +245,9 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             // remove views?
         },
         
+        // @@ Blow this stuff away
         // do timeline step queue-ing
+/*
         timelinePlay : function (opts) {
             var mediaEl,
                 opts = opts || {},
@@ -273,8 +278,10 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                 this.doEnd();
             }
         },
+*/
         
         // @@ Blow this stuff away
+/*
         timelineStep : function (opts) {
             var that = this;
             if (Config.DEBUG) console.log("[Player] Timeline step: "+Manager.tlStep);
@@ -319,6 +326,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             // load step comments
             this.getMediaElementComments({id : opts.mediaEl.id});
         },
+*/
         
         getMediaElementComments : function (opts) {
             var that = this,

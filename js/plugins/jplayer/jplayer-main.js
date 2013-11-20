@@ -71,11 +71,6 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
      }
     });
     
-    el.on($.jPlayer.event.timeupdate, function (event) {
-        // @@ this works
-        //console.log(event);
-    });
-
     //listening for an end ie file completion
     el.on($.jPlayer.event.ended, function(event) {
       var playerTime = 100;
@@ -111,6 +106,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           pluginData : {},
           
           initialize : function (opts) {
+                console.log('init');
               var that = this;
               this.__init(opts);
               this.addEventListeners();
@@ -122,17 +118,18 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           
           // map event hooks to plugin methods
           addEventListeners : function () {
-              Viddler.Events.on('playerReady', this.onPlayerReady());
+              Viddler.Events.on('jplayer:ready', this.onPlayerReady());
               Viddler.Events.on('timeline:ready', this.onTimelineReady());
               Viddler.Events.on('timeline:clickStart', this.onTimelineClickStart());
               Viddler.Events.on('timeline:stepStart', this.onStepStart());
+              Viddler.Events.on('timeline:stepEnd', this.onStepEnd());
           },
           
           // take over the player controls
           onTimelineReady : function () {
               var that = this;
-              clearInterval(this.timeListenerIntv);
               this.runTimeListener();
+              clearInterval(this.timeListenerIntv);
               $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
                 e.stopImmediatePropagation();
                 e.preventDefault();
@@ -144,11 +141,20 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           },
           
           onStepStart : function () {
-              var step = Viddler.Manager.getCurrentStep();
+              var that = this,
+                  step = Viddler.Manager.getCurrentStep();
+              console.log('step start');
               // autoplay on steps after the first
               if (step > 0) {
-                  this.play();
+                  Viddler.Events.on('mediaReady', function () {
+                      console.log('stepStart media ready');// get playhead start
+                      that.play();
+                  });
               }
+          },
+          
+          onStepEnd : function () {
+              clearInterval(this.timeListenerIntv);
           },
           
           onTimelineClickStart: function () {
@@ -189,7 +195,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                               'min-height' : w*.56
                           });
                           bindEvents($(that.el));
-                          Viddler.Events.trigger("playerReady", that);
+                          Viddler.Events.trigger("jplayer:ready", that);
                       },
                       swfPath: "swf",
                       supplied: "m4v",

@@ -47,7 +47,6 @@ define(['backbone'], function(Backbone) {
         },
         parse : function (response, options) {
             var that = this;
-            console.log(response);
             if (response.gate) {
                 that.gate = response.gate;
             }

@@ -54,9 +54,11 @@ define(['viddler-events'], function(Events) {
             },
             
             getStepStopTime : function () {
-                console.log(this.tlStep)
-                console.log(this.mediaEls[this.tlStep]);
-                return this._getTlElapsed() + this.mediaEls[this.tlStep];
+                return this._getTlElapsed() + this.mediaEls[this.tlStep].elLength;
+            },
+            
+            incrementStep : function () {
+                    this.tlStep++;
             },
             
             // return number of timeline steps
@@ -71,7 +73,7 @@ define(['viddler-events'], function(Events) {
                     
                 for (i = 0; i < that.tlStep; i++) {
                     function func (i) {
-                        tlElapsed += that.mediaEls[i].playheadStop - that.mediaEls[i].playheadStart;
+                        tlElapsed += that.mediaEls[i].elLength;
                     }
                     
                     func(i);
@@ -89,6 +91,14 @@ define(['viddler-events'], function(Events) {
             
             getTlIndex : function () {
                 return this.tlIndex;
+            },
+            
+            debug : function () {
+                console.log({
+                    'step' : this.tlStep,
+                    'stop' : this.getStepStopTime(),
+                    'now' : this.tlNow
+                });
             },
             
             // convert timeline time to mediaElement and time
