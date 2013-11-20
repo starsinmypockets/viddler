@@ -113,23 +113,22 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
               this.pluginData = opts.pluginData;
               this.jPlayerData = this.$el.jPlayer().data().jPlayer.status;
               this.mediaEl = Viddler.Manager.getCurrentMedia();              
+              this.updatePlayerControls();
               this.addEventListeners();
+              if (Config.DEBUG) console.log('[jplayer]: instantiated');
           },
           
           // map event hooks to plugin methods
           addEventListeners : function () {
               Viddler.Events.on('jplayer:ready', this.onPlayerReady());
-              Viddler.Events.on('timeline:ready', this.onTimelineReady());
               Viddler.Events.on('timeline:clickStart', this.onTimelineClickStart());
               Viddler.Events.on('timeline:stepStart', this.onStepStart());
               Viddler.Events.on('timeline:stepEnd', this.onStepEnd());
           },
           
           // take over the player controls
-          onTimelineReady : function () {
+          updatePlayerControls : function () {
               var that = this;
-              this.runTimeListener();
-              clearInterval(this.timeListenerIntv);
               $('.jp-play, #play-overlay-button').bind('click.init', function (e) {
                 e.stopImmediatePropagation();
                 e.preventDefault();
@@ -147,6 +146,8 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
           onStepStart : function () {
               var that = this,
                   step = Viddler.Manager.getCurrentStep();
+              clearInterval(this.timeListenerIntv);
+              this.runTimeListener();
               console.log('step start');
               // autoplay on steps after the first
               if (step > 0) {
@@ -173,6 +174,7 @@ define(['jquery', 'backbone', 'helper/util', 'viddler', 'config',
                   
               this.timeListenerIntv = setInterval(function() {
                   var t = that.jPlayerData.currentTime*1000;
+                  console.log(t);
                   Viddler.Manager.setTime(t)
               },1000);  // run this faster in production
           },

@@ -213,14 +213,14 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             data.plugins = mediaEl.plugins;
             this.loadPlugins(data);
             // set up stop listener for this step
+            // @@ This is firing before plugins are fully loaded
             Events.trigger('timeline:stepStart')
             Events.on('timeline:timeUpdate', function (t) {
-                Manager.debug();
+                //Manager.debug();
                 if (t >= Manager.getStepStopTime()) {
                     Events.trigger('timeline:stepEnd');
                 }
             });
-           // Events.trigger('timeline:ready')
         },
         
         loadPlugins : function (opts) {

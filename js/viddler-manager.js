@@ -1,4 +1,4 @@
-define(['viddler-events'], function(Events) {
+define(['underscore', 'viddler-events'], function(_, Events) {
    
    // manage global timeline events
     var Manager = {
@@ -11,6 +11,7 @@ define(['viddler-events'], function(Events) {
             mediaEls : {},
             tlComments : {},
             tlIndex : {},
+            plugins : {},
             
             destroy : function () {
                 this.tlStep = 0;
@@ -43,6 +44,40 @@ define(['viddler-events'], function(Events) {
                 data.tlNow = t;
                 this._updateTime(t);
             },
+            
+            
+            /**
+             * Plugins
+             **/
+            
+            // @param opts - an array of plugin names
+            setPlugins = function (opts) {
+                //
+                var that = this;
+                _.each(opts.plugins, function (plugin) {
+                    that.plugins[plugin] = { loaded : false }
+                })
+                        
+            // Update plugin status and check for allPluginsReady event condition
+            // @param opts.plugin - the name of the plugin
+            // @param opts.status - boolean
+            pluginLoaded : function (pluginName) {
+                this.plugins[pluginName] = {loaded : true};
+                if (this.allPluginsSet) {
+                    Events.trigger('manager:allPluginsReady', this.plugins);
+                }
+            },
+           
+            // Check if all plugins are ready
+            allPluginsReady : function () {
+                allSet = true; // if any plugins unset, switch to false
+                _.each(this.plugins, function (plugin) {
+                    if (plugin.loaded === false) {
+                        allSet = false;
+                    }
+                });
+                return allSet;
+            }
             
             _updateTime : function (t) {
                 Events.trigger('timeline:timeUpdate', t);
