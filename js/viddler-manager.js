@@ -103,7 +103,6 @@ define(['underscore', 'viddler-events'], function(_, Events) {
             
             getMediaElFromTlTIme : function (tlMs) {
                 var el = this.getElTime(tlMs).step;
-                console.log(el);
                 return this.mediaEls[el];
             },
              

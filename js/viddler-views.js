@@ -191,7 +191,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                 data = {},
                 tlLength = 0;
             
-            Manager.setMediaEls(this.timeline.mediaElements);
+            this.initializeManager(this.timeline.mediaElements);
             
             // Render app controls
             this.vPG = new Views.VPlayerGuiView();
@@ -202,6 +202,12 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
             this.bindThumbnailEvents();
             
             this.timelineInit();
+        },
+        
+        initializeManager : function (opts) {
+            // reinitialize manager data
+            Manager.destroy();
+            Manager.setMediaEls(opts);    
         },
         
         loadPlugins : function (opts) {
@@ -229,8 +235,6 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
         },
         
         timelineInit : function () {
-            // reinitialize manager data
-            Manager.destroy();
             
             // add play button overlay
             Events.trigger('timeline:timelineReady', this);
@@ -245,7 +249,7 @@ define(['underscore', 'jquery', 'backbone', 'viddler', 'viddler-manager', 'viddl
                 mediaEl = Manager.getCurrentMedia(),
                 data = {};
             
-            data.plugins = mediaEl.plugins;
+            data.plugins = Manager.getCurrentMedia().plugins;
             this.loadPlugins(data);
             
             // set up stop listener for this step
